@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"reflect"
+	// "time"
+	"context"
 
-	// "github.com/Danil-114195722/HamstersShaver/ton_api/wallet"
-	"github.com/Danil-114195722/HamstersShaver/ton_api/account"
+	"github.com/Danil-114195722/HamstersShaver/ton_api/wallet"
+	// "github.com/Danil-114195722/HamstersShaver/ton_api/account"
 )
 
 
@@ -19,16 +21,18 @@ func ShowStructure(s interface{}) {
 }
 
 func main() {
-	// walletInfo := wallet.GetWallet()
+	// ctxMain, ctxCancel := context.WithTimeout(context.Background(), 30*time.Second)
+    // defer ctxCancel()
 
-	// balance, err := wallet.GetWalletBalance(walletInfo)
-	// if err != nil {
-	// 	fmt.Println("ERROR")
-	// } else {
-	// 	fmt.Println("balance:", balance)
-	// }
+	walletInfo := wallet.GetWallet()
 
-	acc := account.GetAccount()
+	// ПОКА ЭТА ФУНКЦИЯ НЕ РАБОТАЕТ
+	balance, err := wallet.GetWalletBalanceFloat64(context.Background(), walletInfo)
+	if err == nil {
+		fmt.Println("balance: %f | balance + 1: %f", balance, balance + 1)
+	}
+
+	// acc := account.GetAccount(ctxMain)
 
 	// fmt.Printf("State: %s\n", acc.State)
 	// fmt.Printf("Data: %s\n", acc.Data)
@@ -36,14 +40,16 @@ func main() {
 	// fmt.Printf("LastTxLT: %s\n", acc.LastTxLT)
 	// fmt.Printf("LastTxHash: %s\n", acc.LastTxHash)
 
-	fmt.Printf("Balance: %s TON\n", acc.State.Balance)
-	fmt.Printf("ExtraCurrencies: %s\n", acc.State.ExtraCurrencies)
-	fmt.Printf("StorageInfo: %s\n", acc.State.StorageInfo)
-	fmt.Printf("AccountStorage: %s\n", acc.State.AccountStorage)
+	// fmt.Printf("Balance: %s TON\n", acc.State.Balance)
+	// fmt.Printf("ExtraCurrencies: %s\n", acc.State.ExtraCurrencies)
+	// fmt.Printf("StorageInfo: %s\n", acc.State.StorageInfo)
+	// fmt.Printf("AccountStorage: %s\n", acc.State.AccountStorage)
 
 	// fmt.Printf("ExtraCurrencies: %s\n", acc.State.ExtraCurrencies.keySz)
 	// fmt.Printf("ExtraCurrencies: %s\n", acc.State.ExtraCurrencies.root)
 
-	ShowStructure(acc.State.ExtraCurrencies)
-	ShowStructure(acc.State)
+	// ShowStructure(acc.State.ExtraCurrencies)
+	// ShowStructure(acc.State)
+	// ShowStructure(acc.State.Balance)
+	// ShowStructure(balance)
 }

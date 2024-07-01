@@ -10,7 +10,7 @@ import (
 )
 
 
-type JsonWallet struct {
+type JsonWalletData struct {
 	Hash		string	`json:"hash"`
 	SeedPhrase	string	`json:"seed_phrase"`
 }
@@ -19,14 +19,14 @@ type JsonWallet struct {
 var pathToWalletData string = "./settings/config/wallet.json"
 
 // получение данных о кошельке из JSON-файла
-func GetJsonWallet() JsonWallet {
-	var jsonWallet JsonWallet
+func getJsonWallet() JsonWalletData {
+	var jsonWallet JsonWalletData
 
 	// открытие файла
 	fileData, err := os.ReadFile(pathToWalletData)
 	DieIf(err)
 
-	// перевод данных из JSON в структуру JsonWallet
+	// перевод данных из JSON в структуру JsonWalletData
 	err = json.Unmarshal(fileData, &jsonWallet)
 	DieIf(err)
 
@@ -40,15 +40,11 @@ func GetJsonWallet() JsonWallet {
 var tonConfigUrl string = "https://ton.org/global.config.json"
 
 // создание клиента TON
-func GetTonClient() ton.APIClientWrapped {
+func getTonClient() ton.APIClientWrapped {
 	client := liteclient.NewConnectionPool()
 
-	// получение конфига
-	cfg, err := liteclient.GetConfigFromUrl(context.Background(), tonConfigUrl)
-	DieIf(err)
-
-	// подключение с полученным конфигом
-	err = client.AddConnectionsFromConfig(context.Background(), cfg)
+	// подключение с URL-конфигом
+	err := client.AddConnectionsFromConfigUrl(context.Background(), tonConfigUrl)
 	DieIf(err)
 
 	// API-клиент с полной проверкой
@@ -56,3 +52,9 @@ func GetTonClient() ton.APIClientWrapped {
 
 	return api
 }
+
+
+// создание API клиента TON
+var TonAPI ton.APIClientWrapped = getTonClient()
+// данные кошелька из JSON-конфига
+var JsonWallet JsonWalletData = getJsonWallet()
