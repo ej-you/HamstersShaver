@@ -18,8 +18,8 @@ func GetWallet() *ton_wallet.Wallet {
 	// делим сид-фразу на список из слов
 	seedList := strings.Split(settings.JsonWallet.SeedPhrase, " ")
 
-	// получаем доступ к кошельку (TonAPI, список слов сид-фразы, версия конфига)
-	realWallet, err := ton_wallet.FromSeed(settings.TonAPI, seedList, ton_wallet.V4R2)
+	// получаем доступ к кошельку (TonutilsTonAPI, список слов сид-фразы, версия конфига)
+	realWallet, err := ton_wallet.FromSeed(settings.TonutilsTonAPI, seedList, ton_wallet.V4R2)
 	settings.DieIf(err)
 
 	return realWallet
@@ -28,7 +28,7 @@ func GetWallet() *ton_wallet.Wallet {
 // получение баланса кошелька
 func GetWalletBalance(ctx context.Context, wallet *ton_wallet.Wallet) (tlb.Coins, error) {
 	// получение главного блока
-	block, err := settings.TonAPI.CurrentMasterchainInfo(ctx)
+	block, err := settings.TonutilsTonAPI.CurrentMasterchainInfo(ctx)
 	if err != nil {
 		settings.ErrorLog.Println("Failed to get masterchain info: ", err.Error())
 		return tlb.Coins{}, err

@@ -2,8 +2,11 @@ info_log = "/logs/info-log.log"
 error_log = "/logs/error-log.log"
 
 
-dev:
-	go run ./main.go
+tongo:
+	go run ./main_tongo.go
+
+tonutils:
+	go run ./main_tonutils.go
 
 migrate:
 	go run ./main.go migrate

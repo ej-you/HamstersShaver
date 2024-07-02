@@ -14,14 +14,14 @@ import (
 // получение аккаунта по данным из JSON-конфига
 func GetAccount(ctx context.Context) *tlb.Account {
 	// получение главного блока
-	block, err := settings.TonAPI.CurrentMasterchainInfo(ctx)
+	block, err := settings.TonutilsTonAPI.CurrentMasterchainInfo(ctx)
 	settings.DieIf(err)
 
 	// парсим адрес
 	addr := address.MustParseAddr(settings.JsonWallet.Hash)
 
 	// получение аккаунта
-	acc, err := settings.TonAPI.WaitForBlock(block.SeqNo).GetAccount(ctx, block, addr)
+	acc, err := settings.TonutilsTonAPI.WaitForBlock(block.SeqNo).GetAccount(ctx, block, addr)
 	settings.DieIf(err)
 
 	// проверка того, что аккаунт активен

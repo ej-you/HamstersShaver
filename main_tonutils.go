@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"reflect"
-	// "time"
+	"time"
 	"context"
 
-	"github.com/Danil-114195722/HamstersShaver/ton_api/wallet"
-	// "github.com/Danil-114195722/HamstersShaver/ton_api/account"
+	"github.com/Danil-114195722/HamstersShaver/ton_api_tonutils/wallet"
+	"github.com/Danil-114195722/HamstersShaver/ton_api_tonutils/account"
 )
 
 
@@ -21,8 +21,8 @@ func ShowStructure(s interface{}) {
 }
 
 func main() {
-	// ctxMain, ctxCancel := context.WithTimeout(context.Background(), 30*time.Second)
-    // defer ctxCancel()
+	ctxMain, ctxCancel := context.WithTimeout(context.Background(), 60*time.Second)
+    defer ctxCancel()
 
 	walletInfo := wallet.GetWallet()
 
@@ -32,15 +32,15 @@ func main() {
 		fmt.Println("balance: %f | balance + 1: %f", balance, balance + 1)
 	}
 
-	// acc := account.GetAccount(ctxMain)
+	acc := account.GetAccount(ctxMain)
 
-	// fmt.Printf("State: %s\n", acc.State)
+	fmt.Printf("State: %s\n", acc.State)
 	// fmt.Printf("Data: %s\n", acc.Data)
 	// fmt.Printf("Code: %s\n", acc.Code)
 	// fmt.Printf("LastTxLT: %s\n", acc.LastTxLT)
 	// fmt.Printf("LastTxHash: %s\n", acc.LastTxHash)
 
-	// fmt.Printf("Balance: %s TON\n", acc.State.Balance)
+	fmt.Printf("Balance: %s TON\n", acc.State.Balance)
 	// fmt.Printf("ExtraCurrencies: %s\n", acc.State.ExtraCurrencies)
 	// fmt.Printf("StorageInfo: %s\n", acc.State.StorageInfo)
 	// fmt.Printf("AccountStorage: %s\n", acc.State.AccountStorage)
