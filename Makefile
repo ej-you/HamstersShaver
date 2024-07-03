@@ -4,9 +4,11 @@ error_log = "/logs/error-log.log"
 
 tongo:
 	go run ./main_tongo.go
-
 tonutils:
 	go run ./main_tonutils.go
+tonapi:
+	go run ./main_tonapi.go
+
 
 migrate:
 	go run ./main.go migrate

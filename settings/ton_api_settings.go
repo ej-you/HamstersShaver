@@ -10,6 +10,8 @@ import (
 	"github.com/xssnick/tonutils-go/ton"
 
 	"github.com/tonkeeper/tongo/liteapi"
+
+	tonapi "github.com/tonkeeper/tonapi-go"
 )
 
 
@@ -94,6 +96,31 @@ func getTonClientTongo(conType string) *liteapi.Client {
 	}
 }
 
+// создание клиента TON для tonapi-go
+func getTonClientTonapi(conType string) *tonapi.Client {
+	var client *tonapi.Client
+
+	// тестовый конфиг
+	if conType == "testnet" {
+		client, err := tonapi.NewClient(tonapi.TestnetTonApiURL)
+		DieIf(err)
+		InfoLog.Println("(tonapi) Connected to testnet TON node")
+		return client
+	// основной конфиг
+	} else if conType == "mainnet" {
+		client, err := tonapi.New()
+		DieIf(err)
+		InfoLog.Println("(tonapi) Connected to mainnet TON node")
+		return client
+	// неправильный параметр конфига
+	} else {
+		conTypeError := errors.New("(tonapi) Invalid conType parameter was given")
+		DieIf(conTypeError)
+		return client
+	}
+}
+
+
 // создание API клиента TON для tongo
 // var TonAPI *liteapi.Client = getTonClient("testnet")
 var TongoTonAPI *liteapi.Client = getTonClientTongo("mainnet")
@@ -101,6 +128,10 @@ var TongoTonAPI *liteapi.Client = getTonClientTongo("mainnet")
 // создание API клиента TON для tonutils-go
 // var TonutilsTonAPI ton.APIClientWrapped = getTonClientTonutils("testnet")
 var TonutilsTonAPI ton.APIClientWrapped = getTonClientTonutils("mainnet")
+
+// создание API клиента TON для tonapi-go
+// var TonapiTonAPI *tonapi.Client = getTonClientTonapi("testnet")
+var TonapiTonAPI *tonapi.Client = getTonClientTonapi("mainnet")
 
 // данные кошелька из JSON-конфига
 var JsonWallet JsonWalletData = getJsonWallet()
