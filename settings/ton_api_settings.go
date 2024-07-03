@@ -123,11 +123,11 @@ func getTonClientTonapi(conType string) *tonapi.Client {
 
 // создание API клиента TON для tongo
 // var TonAPI *liteapi.Client = getTonClient("testnet")
-var TongoTonAPI *liteapi.Client = getTonClientTongo("mainnet")
+// var TongoTonAPI *liteapi.Client = getTonClientTongo("mainnet")
 
 // создание API клиента TON для tonutils-go
 // var TonutilsTonAPI ton.APIClientWrapped = getTonClientTonutils("testnet")
-var TonutilsTonAPI ton.APIClientWrapped = getTonClientTonutils("mainnet")
+// var TonutilsTonAPI ton.APIClientWrapped = getTonClientTonutils("mainnet")
 
 // создание API клиента TON для tonapi-go
 // var TonapiTonAPI *tonapi.Client = getTonClientTonapi("testnet")

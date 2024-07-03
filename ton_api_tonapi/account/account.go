@@ -3,6 +3,7 @@ package account
 import (
 	"context"
 	"errors"
+	// "math"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
@@ -44,8 +45,12 @@ func GetBalanceTON(ctx context.Context) (float64, error) {
 	if err != nil {
 		return tonBalance, err
 	}
+	
 	// преобразование баланса из нано-числа в число с точкой
 	tonBalance = float64(account.Balance) / 1e9
+
+	// преобразование баланса из нано-числа в число с точкой с округлением до 2 знаков
+	// tonBalance = math.Round(float64(account.Balance) / 1e7) / 100
 
 	return tonBalance, nil
 }

@@ -3,23 +3,13 @@ package main
 import (
 	"fmt"
 	"context"
-	// "time"
 
 	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/account"
+	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/jettons"
 )
 
 
 func main() {
-	// ctxMain, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-    // defer cancel()
-
-	// walletInfo := wallet.GetWallet()
-
-	// balance, err := wallet.GetWalletBalance(context.Background(), walletInfo)
-	// if err == nil {
-	// 	fmt.Printf("balance: %v | balance + 1: %v\n", balance, balance + 1)
-	// }
-
 	acc, err := account.GetAccount(context.Background())
 	if err == nil {
 		// fmt.Println("account:", acc)
@@ -36,5 +26,12 @@ func main() {
 	tonBalance, err := account.GetBalanceTON(context.Background())
 	if err == nil {
 		fmt.Printf("tonBalance: %v TON\n", tonBalance)
+	}
+
+	accountJettons, err := jettons.GetBalanceJettons(context.Background())
+	if err == nil {
+		for _, accJetton := range accountJettons {
+			fmt.Printf("Symbol: %s | Balance: %f\n", accJetton.Symbol, accJetton.Balance)
+		}
 	}
 }
