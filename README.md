@@ -10,7 +10,9 @@
 
 ```json
 {
+	// wallet address
 	"hash": "sample4ch9wko3g3rkjowfw3lpgfkejg5h49eomi45g",
+	// wallet mnemonics
 	"seed_phrase": "your long seed phrase containing twenty four words"
 }
 ```

@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/joho/godotenv v1.5.1
-	github.com/xssnick/tonutils-go v1.9.8
+	github.com/tonkeeper/tonapi-go v0.0.4
 )
 
 require (
@@ -24,10 +24,8 @@ require (
 	github.com/ogen-go/ogen v0.77.0 // indirect
 	github.com/r3labs/sse/v2 v2.10.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	github.com/sigurn/crc16 v0.0.0-20211026045750-20ab5afb07e3 // indirect
 	github.com/snksoft/crc v1.1.0 // indirect
-	github.com/tonkeeper/tonapi-go v0.0.4 // indirect
-	github.com/tonkeeper/tongo v1.8.15 // indirect
+	github.com/tonkeeper/tongo v1.7.0 // indirect
 	go.opentelemetry.io/otel v1.19.0 // indirect
 	go.opentelemetry.io/otel/metric v1.19.0 // indirect
 	go.opentelemetry.io/otel/trace v1.19.0 // indirect

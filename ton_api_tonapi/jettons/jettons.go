@@ -2,6 +2,7 @@ package jettons
 
 import (
 	"context"
+	"errors"
 	"math"
 	"strconv"
 
@@ -23,10 +24,11 @@ func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
 
 	// переменные для перебора монет в цикле
 	var loopAccountJetton AccountJetton
-	var intLoopJettonBalance int
-	var roundedFloatLoopJettonBalance float64
-	var floatDevider int
 	var loopJettonSymbol string
+	var intLoopJettonBalance int
+	var floatDevider int
+	var floatLoopJettonBalance float64
+	var loopErr error
 	// переменная для сохранения информации о монетах в виде списка структур AccountJetton
 	accountJettonsList := []AccountJetton{}
 
@@ -45,19 +47,26 @@ func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
 		loopJettonSymbol = rawJetton.Jetton.Symbol
 
 		// перевод баланса монеты из строкового целого представления в int
-		intLoopJettonBalance, err = strconv.Atoi(rawJetton.Balance)
-		if err != nil {
-			settings.ErrorLog.Printf("Failed to parse float64 from string jetton %q balance: %v", loopJettonSymbol, err.Error())
+		intLoopJettonBalance, loopErr = strconv.Atoi(rawJetton.Balance)
+		if loopErr != nil {
+			settings.ErrorLog.Printf("Failed to parse float64 from string jetton %q balance: %v", loopJettonSymbol, loopErr.Error())
 			continue
 		}
 		// на это нужно делить, чтобы получить число с точкой
 		floatDevider = rawJetton.Jetton.Decimals
 		// преобразование баланса во float64
-		roundedFloatLoopJettonBalance = float64(intLoopJettonBalance) / math.Pow10(floatDevider)
+		floatLoopJettonBalance = float64(intLoopJettonBalance) / math.Pow10(floatDevider)
 
 		// создание структуры для новой монеты и добавление её в список к остальным
-		loopAccountJetton = AccountJetton{Symbol: loopJettonSymbol, Balance: roundedFloatLoopJettonBalance}
+		loopAccountJetton = AccountJetton{Symbol: loopJettonSymbol, Balance: floatLoopJettonBalance}
 		accountJettonsList = append(accountJettonsList, loopAccountJetton)
 	}
+
+	if len(accountJettonsList) == 0 {
+		emptyJetonsListError := errors.New("no one account jetton was gotten")
+		settings.ErrorLog.Println("Empty account jettons list:", emptyJetonsListError.Error())
+		return accountJettonsList, emptyJetonsListError
+	}
+
 	return accountJettonsList, nil
 }

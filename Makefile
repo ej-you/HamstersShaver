@@ -2,13 +2,8 @@ info_log = "/logs/info-log.log"
 error_log = "/logs/error-log.log"
 
 
-tongo:
-	go run ./main_tongo.go
-tonutils:
-	go run ./main_tonutils.go
-tonapi:
-	go run ./main_tonapi.go
-
+dev:
+	go run ./main.go
 
 migrate:
 	go run ./main.go migrate
@@ -17,6 +12,8 @@ compile:
 	go build -o ./HamstersShaver ./main.go
 
 prod:
+	@echo "Running migrations..."
+	/root/HamstersShaver
 	@echo "Running main app..."
 	/root/HamstersShaver >> $(info_log) 2>> $(error_log)
 
