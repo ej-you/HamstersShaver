@@ -10,28 +10,16 @@ import (
 
 
 func main() {
-	acc, err := account.GetAccount(context.Background())
-	if err == nil {
-		// fmt.Println("account:", acc)
-	
-		// fmt.Println("Address:", acc.Address)
-		// fmt.Println("Balance:", acc.Balance)
-		// fmt.Println("Name:", acc.Name)
-		// fmt.Println("GetMethods:", acc.GetMethods)
-		// fmt.Println("IsWallet:", acc.IsWallet)
-
-		fmt.Printf("Status: %v | type: %T\n", acc.Status, acc.Status)
-	}
-
 	tonBalance, err := account.GetBalanceTON(context.Background())
 	if err == nil {
-		fmt.Printf("tonBalance: %v TON\n", tonBalance)
+		fmt.Printf("tonBalance: %v TON | Balance: %d\n", tonBalance.BeautyBalance, tonBalance.Balance)
 	}
 
 	accountJettons, err := jettons.GetBalanceJettons(context.Background())
 	if err == nil {
 		for _, accJetton := range accountJettons {
-			fmt.Printf("Symbol: %s | Balance: %f\n", accJetton.Symbol, accJetton.Balance)
+			fmt.Printf("Symbol: %s | BeautyBalance: %s", accJetton.Symbol, accJetton.BeautyBalance)
+			fmt.Printf(" | Balance: %d | Decimals: %d\n", accJetton.Balance, accJetton.Decimals)
 		}
 	}
 }

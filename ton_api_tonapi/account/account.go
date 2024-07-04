@@ -1,15 +1,21 @@
 package account
 
 import (
+	"fmt"
 	"context"
 	"errors"
-	// "math"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
+
+type TonJetton struct {
+	Balance int64
+	Decimals int
+	BeautyBalance string
+}
 
 // получение аккаунта по данным из JSON-конфига
 func GetAccount(ctx context.Context) (*tonapi.Account, error) {
@@ -37,20 +43,21 @@ func GetAccount(ctx context.Context) (*tonapi.Account, error) {
 
 
 // получение баланса аккаунта в тонах
-func GetBalanceTON(ctx context.Context) (float64, error) {
-	var tonBalance float64
+func GetBalanceTON(ctx context.Context) (TonJetton, error) {
+	var tonBalance string
+	var tonJetton TonJetton
 
 	// получение аккаунта
 	account, err := GetAccount(ctx)
 	if err != nil {
-		return tonBalance, err
+		return tonJetton, err
 	}
 	
-	// преобразование баланса из нано-числа в число с точкой
-	tonBalance = float64(account.Balance) / 1e9
+	// преобразование баланса из нано-числа в число с точкой с округлением до 2 знаков (в виде строки)
+	tonBalance = fmt.Sprintf("%.2f", float64(account.Balance) / 1e9)
 
-	// преобразование баланса из нано-числа в число с точкой с округлением до 2 знаков
-	// tonBalance = math.Round(float64(account.Balance) / 1e7) / 100
+	// создание экзземпляра структуры TonJetton
+	tonJetton = TonJetton{Balance: account.Balance, Decimals: 9, BeautyBalance: tonBalance}
 
-	return tonBalance, nil
+	return tonJetton, nil
 }

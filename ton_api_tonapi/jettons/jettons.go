@@ -3,18 +3,20 @@ package jettons
 import (
 	"context"
 	"errors"
-	"math"
 	"strconv"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
+	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/services"
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
 
 type AccountJetton struct {
 	Symbol string
-	Balance float64
+	Balance int64
+	Decimals int
+	BeautyBalance string
 }
 
 
@@ -25,9 +27,9 @@ func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
 	// переменные для перебора монет в цикле
 	var loopAccountJetton AccountJetton
 	var loopJettonSymbol string
-	var intLoopJettonBalance int
-	var floatDevider int
-	var floatLoopJettonBalance float64
+	var intJettonBalance int64
+	var jettonDecimals int
+	var beautyLoopJettonBalance string
 	var loopErr error
 	// переменная для сохранения информации о монетах в виде списка структур AccountJetton
 	accountJettonsList := []AccountJetton{}
@@ -42,26 +44,33 @@ func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
 		return accountJettonsList, err
 	}
 
+	// перебор всех найденных монет аккаунта
 	for _, rawJetton := range rawJettons.Balances {
 		// краткое название монеты (полное название - rawJetton.Jetton.Name)
 		loopJettonSymbol = rawJetton.Jetton.Symbol
 
-		// перевод баланса монеты из строкового целого представления в int
-		intLoopJettonBalance, loopErr = strconv.Atoi(rawJetton.Balance)
+		// перевод баланса монеты из строкового целого представления в int64
+		intJettonBalance, loopErr = strconv.ParseInt(rawJetton.Balance, 10, 64)
 		if loopErr != nil {
-			settings.ErrorLog.Printf("Failed to parse float64 from string jetton %q balance: %v", loopJettonSymbol, loopErr.Error())
+			settings.ErrorLog.Printf("Failed to parse int64 from string jetton %q balance: %v", loopJettonSymbol, loopErr.Error())
 			continue
 		}
 		// на это нужно делить, чтобы получить число с точкой
-		floatDevider = rawJetton.Jetton.Decimals
-		// преобразование баланса во float64
-		floatLoopJettonBalance = float64(intLoopJettonBalance) / math.Pow10(floatDevider)
+		jettonDecimals = rawJetton.Jetton.Decimals
+		// преобразование баланса в строку с точкой
+		beautyLoopJettonBalance = services.JettonBalanceFormat(intJettonBalance, jettonDecimals)
 
 		// создание структуры для новой монеты и добавление её в список к остальным
-		loopAccountJetton = AccountJetton{Symbol: loopJettonSymbol, Balance: floatLoopJettonBalance}
+		loopAccountJetton = AccountJetton{
+			Symbol: loopJettonSymbol,
+			Balance: intJettonBalance,
+			Decimals: jettonDecimals,
+			BeautyBalance: beautyLoopJettonBalance,
+		}
 		accountJettonsList = append(accountJettonsList, loopAccountJetton)
 	}
 
+	// если ни одна монета не была найдена на счету аккаунта
 	if len(accountJettonsList) == 0 {
 		emptyJetonsListError := errors.New("no one account jetton was gotten")
 		settings.ErrorLog.Println("Empty account jettons list:", emptyJetonsListError.Error())
