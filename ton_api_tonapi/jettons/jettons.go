@@ -11,7 +11,7 @@ import (
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
-
+// описывает монету (кроме TON), имеющуюся у аккаунта
 type AccountJetton struct {
 	Symbol string
 	Balance int64

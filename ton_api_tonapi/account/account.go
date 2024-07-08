@@ -11,11 +11,13 @@ import (
 )
 
 
+// описывает TON монету, имеющуюся у аккаунта
 type TonJetton struct {
 	Balance int64
 	Decimals int
 	BeautyBalance string
 }
+
 
 // получение аккаунта по данным из JSON-конфига
 func GetAccount(ctx context.Context) (*tonapi.Account, error) {
@@ -39,6 +41,38 @@ func GetAccount(ctx context.Context) (*tonapi.Account, error) {
 	}
 
 	return account, nil
+}
+
+
+// получение структуры AccountAddress по данным аккаунта
+func GetAccountAddressStruct(ctx context.Context) (tonapi.AccountAddress, error) {
+	var accountAddr tonapi.AccountAddress
+
+	// получение аккаунта
+	account, err := GetAccount(ctx)
+	if err != nil {
+		settings.ErrorLog.Println("Failed to get account:", err.Error())
+		return accountAddr, err
+	}
+
+	// получаем значение параметра IsScam из данных аккаунта
+	var isScamParam bool
+	if !account.IsScam.Set {
+		isScamParam = false
+	} else {
+		isScamParam = account.IsScam.Value
+	}
+
+	// создание структуры tonapi.AccountAddress и заполнение её данными аккаунта
+	accountAddr = tonapi.AccountAddress{
+		Address: account.Address,
+		Name: account.Name,
+		IsScam: isScamParam,
+		Icon: account.Icon,
+		IsWallet: account.IsWallet,
+	}
+
+	return accountAddr, nil
 }
 
 

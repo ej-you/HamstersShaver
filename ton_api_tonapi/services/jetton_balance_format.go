@@ -9,7 +9,7 @@ import (
 
 
 // чистка нулей после точки, кроме первого
-// (543.000 - удалится только 2 последних нуля)
+// (543.000 - удалятся только 2 последних нуля)
 // (8673.567000 - удалятся все нули)
 // (8673.560006 - ничего не удалится)
 func clearZerosEnd(number string) string {
@@ -26,8 +26,8 @@ func JettonBalanceFormat(balance int64, decimals int) string {
 	// преобразование в строку
 	stringBalance := fmt.Sprintf("%f", floatBalance)
 
-	// округляем до 4 знаков
-	roundedBalance := fmt.Sprintf("%.4f", floatBalance)
+	// округляем до 3 знаков
+	roundedBalance := fmt.Sprintf("%.3f", floatBalance)
 	roundedFloatBalance, _ := strconv.ParseFloat(roundedBalance, 64)
 
 	// если целая часть числа меньше 10 и после округления после точки остались только нули
