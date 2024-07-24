@@ -5,6 +5,7 @@ import (
 	"errors"
 	"encoding/json"
 
+	"github.com/tonkeeper/tongo/liteapi"
 	tonapi "github.com/tonkeeper/tonapi-go"
 )
 
@@ -56,10 +57,39 @@ func getTonClientTonapi(conType string) *tonapi.Client {
 	}
 }
 
+// создание клиента TON для tongo
+func getTonClientTongo(conType string) *liteapi.Client {
+	var client *liteapi.Client
+
+	// тестовый конфиг
+	if conType == "testnet" {
+		client, err := liteapi.NewClientWithDefaultTestnet()
+		DieIf(err)
+		InfoLog.Println("(tongo) Connected to testnet TON node")
+		return client
+	// основной конфиг
+	} else if conType == "mainnet" {
+		client, err := liteapi.NewClientWithDefaultMainnet()
+		DieIf(err)
+		InfoLog.Println("(tongo) Connected to mainnet TON node")
+		return client
+	// неправильный параметр конфига
+	} else {
+		conTypeError := errors.New("(tongo) Invalid conType parameter was given")
+		DieIf(conTypeError)
+		return client
+	}
+}
+
 
 // создание API клиента TON для tonapi-go
 // var TonapiTonAPI *tonapi.Client = getTonClientTonapi("testnet")
 var TonapiTonAPI *tonapi.Client = getTonClientTonapi("mainnet")
+
+// создание API клиента TON для tongo
+// var TonAPI *liteapi.Client = getTonClient("testnet")
+var TongoTonAPI *liteapi.Client = getTonClientTongo("mainnet")
+
 
 // данные кошелька из JSON-конфига
 var JsonWallet JsonWalletData = getJsonWallet()

@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"context"
 
-	tonapi "github.com/tonkeeper/tonapi-go"
-
 	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/account"
 	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/jettons"
-	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/transactions"
+	"github.com/Danil-114195722/HamstersShaver/ton_api_tongo/transactions"
 )
 
 
@@ -28,10 +26,15 @@ func main() {
 		}
 	}
 
-	stonfi := tonapi.JettonSwapActionDexStonfi
+	// stonfi := tonapi.JettonSwapActionDexStonfi
+	// jettonCA := "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT"
+	// err := transactions.CellJetton(context.Background(), stonfi, jettonCA, cellNot, 10.0)
+	// if err == nil {
+	// 	fmt.Println("GREAT!!")
+	// }
 	jettonCA := "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT"
-	err := transactions.CellJetton(context.Background(), stonfi, jettonCA, cellNot, 10.0)
+	err := transactions.CellJetton(context.Background(), jettonCA, cellNot, 10.0)
 	if err == nil {
-		fmt.Println("GREAT!!")
+		fmt.Println("GREAT!!!")
 	}
 }
