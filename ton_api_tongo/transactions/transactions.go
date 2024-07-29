@@ -1,45 +1,97 @@
 package transactions
 
 import (
+	"fmt"
 	"context"
+	"reflect"
 
-	// "github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/account"
-	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/jettons"
-	// "github.com/Danil-114195722/HamstersShaver/settings"
+	"github.com/tonkeeper/tongo"
+	tongoJettons "github.com/tonkeeper/tongo/contract/jetton"
+	tongoTlb "github.com/tonkeeper/tongo/tlb"
 
+	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/jettons"
+	
+	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api_tongo/wallet"
+	myTongoJettons "github.com/Danil-114195722/HamstersShaver/ton_api_tongo/jettons"
+	
+	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
 
-type TransferMessage struct {
-	// адрес монеты
-	Jetton              *Jetton
-	// адрес отправителя
-	Sender              ton.AccountID
-	// количество Jetton токенов, которые вы хотите обменять.
-	JettonAmount        *big.Int
-	// адрес получателя (может совпадать с адресом отправителя)
-	Destination         ton.AccountID
-	// необязательное поле, представляющее адрес, куда будет отправлен ответ после выполнения транзакции.
-	ResponseDestination *ton.AccountID
-	// Количество TON, которое вы прикрепляете к транзакции.
-	// Эти средства могут использоваться для покрытия газовых сборов транзакции.
-	// Это значение должно быть достаточно большим, чтобы покрыть все необходимые сборы, связанные с транзакцией.
-	AttachedTon         tlb.Grams
-	// количество TON, которое будет отправлено дальше к другому контракту или аккаунту, как часть сложной транзакции.
-	ForwardTonAmount    tlb.Grams
-	// может отсутствовать
-	ForwardPayload      *boc.Cell
-	// может отсутствовать
-	CustomPayload       *boc.Cell
-}
+// type TransferMessage struct {
+// 	// адрес монеты и ещё что-то с блокчейном
+// 	Jetton              *Jetton
+// 	// адрес отправителя
+// 	Sender              ton.AccountID
+// 	// количество Jetton токенов, которые вы хотите обменять.
+// 	JettonAmount        *big.Int
+// 	// адрес получателя (может совпадать с адресом отправителя)
+// 	Destination         ton.AccountID
+// 	// необязательное поле, представляющее адрес, куда будет отправлен ответ после выполнения транзакции.
+// 	ResponseDestination *ton.AccountID
+// 	// Количество TON, которое вы прикрепляете к транзакции.
+// 	// Эти средства могут использоваться для покрытия газовых сборов транзакции.
+// 	// Это значение должно быть достаточно большим, чтобы покрыть все необходимые сборы, связанные с транзакцией.
+// 	AttachedTon         tlb.Grams
+// 	// количество TON, которое будет отправлено дальше к другому контракту или аккаунту, как часть сложной транзакции.
+// 	ForwardTonAmount    tlb.Grams
+// 	// может отсутствовать
+// 	ForwardPayload      *boc.Cell
+// 	// может отсутствовать
+// 	CustomPayload       *boc.Cell
+// }
 
 
 // продажа монет
-func CellJetton(ctx context.Context, jettonCA string, jetton jettons.AccountJetton, amount float64) error {
-	// количество монет на продажу в минимальных единицах монеты (в виде строки)
-	// realAmount := strconv.Itoa(int(amount * math.Pow10(jetton.Decimals)))
+func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.AccountJetton, amount float64) error {
+	// получение данных о кошельке через tongo
+	realWallet, err := myTongoWallet.GetWallet()
+	if err != nil {
+		return err
+	}
+	// fmt.Println("realWallet.blockchain", realWallet.blockchain)
+	// fmt.Println("\n")
+	// val1 := reflect.ValueOf(realWallet)
+	// if val1.Kind() == reflect.Ptr {
+	// 	val1 = val1.Elem()
+	// }
+	// for i := 0; i < val1.NumField(); i++ {
+	// 	fmt.Printf("realWallet.%v: %v\n", val1.Type().Field(i).Name, val1.Field(i).Interface())
+	// }
 
-	return nil
+	jettonStruct := myTongoJettons.GetJettonStruct(jettonCA)
+	bigIntAmount := myTongoJettons.ConvertJettonsAmountToBigInt(jetton, amount)
+	// адрес получателя (тот же, что и отправителя)
+	recipientAddr := tongo.MustParseAddress(settings.JsonWallet.Hash)
+
+	jettonTransfer := tongoJettons.TransferMessage{
+		Jetton: jettonStruct,
+		JettonAmount: bigIntAmount,
+		Destination: recipientAddr.ID,
+		AttachedTon: tongoTlb.Grams(300000000),  // 0.3 TON
+		ForwardTonAmount: 0,
+		// addition fields
+		Sender: recipientAddr.ID,
+		ResponseDestination: &recipientAddr.ID,
+	}
+
+	// Вывод значений структуры
+	fmt.Println("\n")
+	val := reflect.ValueOf(jettonTransfer)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+	for i := 0; i < val.NumField(); i++ {
+		fmt.Printf("jettonTransfer.%v: %v\n", val.Type().Field(i).Name, val.Field(i).Interface())
+	}
+
+	// отправка сообщения в блокчейн
+	err = realWallet.Send(ctx, jettonTransfer)
+	if err != nil {
+		settings.ErrorLog.Printf("Unable to send transfer message: %v", err)
+	}
+
+	return err
 }
 
 

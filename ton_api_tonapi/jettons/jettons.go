@@ -44,8 +44,13 @@ func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
 		return accountJettonsList, err
 	}
 
-	// перебор всех найденных монет аккаунта
+	// перебор всех найденных монет аккаунта (сохраняется вся история монет, которые были на кошельке)
 	for _, rawJetton := range rawJettons.Balances {
+		// если в данный момент баланс монеты "0"
+		if rawJetton.Balance == "0" {
+			continue
+		}
+
 		// краткое название монеты (полное название - rawJetton.Jetton.Name)
 		loopJettonSymbol = rawJetton.Jetton.Symbol
 
