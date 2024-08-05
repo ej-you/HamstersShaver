@@ -86,7 +86,7 @@ func GetBalanceTON(ctx context.Context) (TonJetton, error) {
 	if err != nil {
 		return tonJetton, err
 	}
-	
+
 	// преобразование баланса из нано-числа в число с точкой с округлением до 2 знаков (в виде строки)
 	tonBalance = fmt.Sprintf("%.2f", float64(account.Balance) / 1e9)
 

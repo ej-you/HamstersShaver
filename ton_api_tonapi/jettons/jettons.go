@@ -17,6 +17,8 @@ type AccountJetton struct {
 	Balance int64
 	Decimals int
 	BeautyBalance string
+	// мастер-адрес монеты
+	MasterAddress string
 }
 
 
@@ -71,6 +73,8 @@ func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
 			Balance: intJettonBalance,
 			Decimals: jettonDecimals,
 			BeautyBalance: beautyLoopJettonBalance,
+			// мастер-адрес монеты
+			MasterAddress: rawJetton.Jetton.Address,
 		}
 		accountJettonsList = append(accountJettonsList, loopAccountJetton)
 	}

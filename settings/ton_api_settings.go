@@ -5,7 +5,7 @@ import (
 	"errors"
 	"encoding/json"
 
-	"github.com/tonkeeper/tongo/liteapi"
+	tongo "github.com/tonkeeper/tongo/liteapi"
 	tonapi "github.com/tonkeeper/tonapi-go"
 )
 
@@ -58,18 +58,18 @@ func getTonClientTonapi(conType string) *tonapi.Client {
 }
 
 // создание клиента TON для tongo
-func getTonClientTongo(conType string) *liteapi.Client {
-	var client *liteapi.Client
+func getTonClientTongo(conType string) *tongo.Client {
+	var client *tongo.Client
 
 	// тестовый конфиг
 	if conType == "testnet" {
-		client, err := liteapi.NewClientWithDefaultTestnet()
+		client, err := tongo.NewClientWithDefaultTestnet()
 		DieIf(err)
 		InfoLog.Println("(tongo) Connected to testnet TON node")
 		return client
 	// основной конфиг
 	} else if conType == "mainnet" {
-		client, err := liteapi.NewClientWithDefaultMainnet()
+		client, err := tongo.NewClientWithDefaultMainnet()
 		DieIf(err)
 		InfoLog.Println("(tongo) Connected to mainnet TON node")
 		return client
@@ -83,12 +83,10 @@ func getTonClientTongo(conType string) *liteapi.Client {
 
 
 // создание API клиента TON для tonapi-go
-// var TonapiTonAPI *tonapi.Client = getTonClientTonapi("testnet")
 var TonapiTonAPI *tonapi.Client = getTonClientTonapi("mainnet")
 
 // создание API клиента TON для tongo
-// var TonAPI *liteapi.Client = getTonClient("testnet")
-var TongoTonAPI *liteapi.Client = getTonClientTongo("mainnet")
+var TongoTonAPI *tongo.Client = getTonClientTongo("mainnet")
 
 
 // данные кошелька из JSON-конфига
