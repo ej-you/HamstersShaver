@@ -1,12 +1,12 @@
 package account
 
 import (
-	"fmt"
 	"context"
 	"errors"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
+	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/services"
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
@@ -87,8 +87,8 @@ func GetBalanceTON(ctx context.Context) (TonJetton, error) {
 		return tonJetton, err
 	}
 
-	// преобразование баланса из нано-числа в число с точкой с округлением до 2 знаков (в виде строки)
-	tonBalance = fmt.Sprintf("%.2f", float64(account.Balance) / 1e9)
+	// преобразование баланса в строку с точкой
+	tonBalance = services.JettonBalanceFormat(account.Balance, 9)
 
 	// создание экзземпляра структуры TonJetton
 	tonJetton = TonJetton{Balance: account.Balance, Decimals: 9, BeautyBalance: tonBalance}
