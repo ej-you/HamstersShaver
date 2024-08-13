@@ -7,7 +7,7 @@ import (
 	"github.com/tonkeeper/tongo"
 	tongoJettons "github.com/tonkeeper/tongo/contract/jetton"
 
-	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/jettons"
+	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/jettons"
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 

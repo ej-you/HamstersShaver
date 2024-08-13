@@ -4,18 +4,16 @@ import (
 	"fmt"
 	"context"
 
-	tongoTon "github.com/tonkeeper/tongo/ton"
-
-	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/account"
-	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/jettons"
-	// myTongoTransactions "github.com/Danil-114195722/HamstersShaver/ton_api_tongo/transactions"
-	myTongoPool "github.com/Danil-114195722/HamstersShaver/ton_api_tongo/pool"
+	myDexscreenerJettons "github.com/Danil-114195722/HamstersShaver/ton_api/dexscreener/jettons"
+	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/account"
+	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/jettons"
+	// myTongoTransactions "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/transactions"
 )
 
 
 func main() {
 	tonBalance, _ := myTonapiAccount.GetBalanceTON(context.Background())
-	fmt.Printf("tonBalance: %v TON | Balance: %d\n", tonBalance.BeautyBalance, tonBalance.Balance)
+	fmt.Printf("tonBalance: %v TON | Balance: %d\n\n", tonBalance.BeautyBalance, tonBalance.Balance)
 
 	// var cellNot myTonapiJettons.AccountJetton
 
@@ -39,14 +37,17 @@ func main() {
 	// 	fmt.Println("GREAT!!!")
 	// }
 
-	// NOT
-	jettonMaster0 := tongoTon.MustParseAccountID("EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT")
-	// TON
-	// jettonMaster1 := tongoTon.MustParseAccountID("EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez")
-	jettonMaster1 := tongoTon.MustParseAccountID("EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c")
+	pTON := "EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez"
+	NOT := "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT"
+	MEM := "EQAWpz2_G0NKxlG2VvgFbgZGPt8Y1qe0cGj-4Yw5BfmYR5iF"
 
-	poolAddr, err := myTongoPool.GetJettonsPoolAddress(context.Background(), jettonMaster0, jettonMaster1)
+	notPool, err := myDexscreenerJettons.GetJettonsPoolInfo(pTON, NOT)
 	if err == nil {
-		fmt.Println("poolAddr:", poolAddr)
+		fmt.Println("notPool:", notPool)
+	}
+
+	notPrice, err := myDexscreenerJettons.GetJettonPriceUSD(pTON, MEM)
+	if err == nil {
+		fmt.Println("MEM in USD:", notPrice)
 	}
 }

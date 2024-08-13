@@ -8,10 +8,10 @@ import (
 	tongoTlb "github.com/tonkeeper/tongo/tlb"
 	tongoTon "github.com/tonkeeper/tongo/ton"
 
-	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/jettons"
+	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/jettons"
 	
-	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api_tongo/wallet"
-	myTongoJettons "github.com/Danil-114195722/HamstersShaver/ton_api_tongo/jettons"
+	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/wallet"
+	myTongoJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/jettons"
 	
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )

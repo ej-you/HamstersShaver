@@ -6,7 +6,7 @@ import (
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
-	"github.com/Danil-114195722/HamstersShaver/ton_api_tonapi/services"
+	"github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/services"
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
