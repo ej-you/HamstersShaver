@@ -1,6 +1,7 @@
 package transactions
 
 import (
+	"math/big"
 	"fmt"
 	"context"
 
@@ -13,6 +14,7 @@ import (
 	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/wallet"
 	myTongoJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/jettons"
 	
+	"github.com/Danil-114195722/HamstersShaver/settings/constants"
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
@@ -26,13 +28,12 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 		return err
 	}
 	
-	// адрес получателя
-	// jettonRouter := myTongoAccount.GetAccountIDByAddress(settings.JsonWallet.Hash)
-	jettonRouter := tongoTon.MustParseAccountID("EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt") // StonfiRouter
+	// адрес получателя (StonfiRouter)
+	jettonRouter := tongoTon.MustParseAccountID(constants.StonfiRouterAddr)
 	// адрес монеты (откуда) NOT
-	jettonMaster0 := tongoTon.MustParseAccountID("EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT")
-	// адрес монеты (куда) MEM
-	jettonMaster1 := tongoTon.MustParseAccountID("0:16a73dbf1b434ac651b656f8056e06463edf18d6a7b47068fee18c3905f99847")
+	jettonMaster0 := tongoTon.MustParseAccountID(jettonCA)
+	// адрес монеты (куда) TON
+	jettonMaster1 := tongoTon.MustParseAccountID(constants.ProxyTonMasterAddr)
 	
 	// структура с информацией для Swap транзакции на DEX Stonfi
 	stonfiStruct, err := tongoStonfi.NewStonfi(ctx, settings.TongoTonAPI, jettonRouter, jettonMaster0, jettonMaster1)
@@ -44,10 +45,17 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 
 	// TON для газовой комиссии (0.3 TON)
 	gasToncoins := tongoTlb.Grams(300_000_000)
+	// минимальное кол-во TON для возврата от газовой комиссии (0.2 TON)
+	forwardToncoins := tongoTlb.Grams(200_000_000)
 	// кол-во монет в виде *big.Int
 	bigIntAmount := myTongoJettons.ConvertJettonsAmountToBigInt(jetton, amount)
-	// адрес отправителя (тот же, что и получателя)
+	// адрес отправителя (кошелёк юзера)
 	senderAddrID := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
+
+
+
+
+
 
 	// перевод процента проскальзывания в часть от кол-ва монет в виде float64
 	slippageAmount := amount - amount * (float64(slippage) / 100)
@@ -56,8 +64,15 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 
 	fmt.Printf("bigIntAmount: %v | minOut: %v\n", bigIntAmount, minOut)
 
+	// 0.01 TON
+	minOut = big.NewInt(10_000_000)
+
+	fmt.Printf("NEW bigIntAmount: %v | minOut: %v\n", bigIntAmount, minOut)
+
+
+
 	// структура для совершения Swap транзакции
-	jettonTransfer, err := stonfiStruct.MakeSwapMessage(gasToncoins, tongoTlb.Grams(200_000_000), *bigIntAmount, *minOut, senderAddrID)
+	jettonTransfer, err := stonfiStruct.MakeSwapMessage(gasToncoins, forwardToncoins, *bigIntAmount, *minOut, senderAddrID)
 	if err != nil {
 		settings.ErrorLog.Printf("Failed to make swap message: %v", err)
 		return err
@@ -66,7 +81,7 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 	fmt.Println("\njettonTransfer", jettonTransfer)
 
 	// отправка сообщения в блокчейн
-	// fmt.Println("realWallet:", realWallet)
+	// fmt.Println("\nrealWallet:", realWallet)
 	err = realWallet.Send(ctx, jettonTransfer)
 	if err != nil {
 		settings.ErrorLog.Printf("Failed to send transfer message: %v", err)
