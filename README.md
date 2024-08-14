@@ -8,7 +8,7 @@
 #### 1. `wallet.json`
 ##### Content:
 
-```json
+```json5
 {
 	// wallet address
 	"hash": "sample4ch9wko3g3rkjowfw3lpgfkejg5h49eomi45g",
@@ -21,5 +21,6 @@
 ##### Content:
 
 ```dotenv
-
+# API key for cryptocompare.com service API
+CRYPTOCOMPARE_API_KEY=sampleg5k7ywg7l5jmg8ho5wdg4ih8yho34htw45e895gpt
 ```

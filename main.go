@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"context"
 
+	myCryptocompareJettons "github.com/Danil-114195722/HamstersShaver/ton_api/cryptocompare/jettons"
 	myDexscreenerJettons "github.com/Danil-114195722/HamstersShaver/ton_api/dexscreener/jettons"
 	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/account"
 	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/jettons"
@@ -49,5 +50,10 @@ func main() {
 	notPrice, err := myDexscreenerJettons.GetJettonPriceUSD(pTON, MEM)
 	if err == nil {
 		fmt.Println("MEM in USD:", notPrice)
+	}
+
+	tonPrice, err := myCryptocompareJettons.GetTonPriseUSD()
+	if err == nil {
+		fmt.Println("TON in USD:", tonPrice)
 	}
 }

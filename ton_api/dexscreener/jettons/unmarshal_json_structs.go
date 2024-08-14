@@ -19,7 +19,7 @@ type jsonPair struct {
 	PriceUsd    string `json:"priceUsd"`
 }
 
-// Структура, содержащая список пар и версию схемы
+// Структура, содержащая список пар
 type jsonPairs struct {
 	Pairs 	[]jsonPair `json:"pairs"`
 }
