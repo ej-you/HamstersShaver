@@ -24,3 +24,11 @@
 # API key for cryptocompare.com service API
 CRYPTOCOMPARE_API_KEY=sampleg5k7ywg7l5jmg8ho5wdg4ih8yho34htw45e895gpt
 ```
+
+
+### Used tools (for TON interaction):
+
+1. API `cryptocompare.com` ([Documentation link](https://min-api.cryptocompare.com/documentation))
+2. API `dexscreener.com` ([Documentation link](https://docs.dexscreener.com/api/reference))
+3. SDK `tonapi-go` ([Github link](https://github.com/tonkeeper/tonapi-go))
+4. SDK `tongo` ([Github link](https://github.com/tonkeeper/tongo))
