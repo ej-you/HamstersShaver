@@ -1,7 +1,9 @@
 package transactions
 
 import (
+	"math"
 	"math/big"
+
 	"fmt"
 	"context"
 
@@ -9,6 +11,7 @@ import (
 	tongoTlb "github.com/tonkeeper/tongo/tlb"
 	tongoTon "github.com/tonkeeper/tongo/ton"
 
+	myDexscreenerJettons "github.com/Danil-114195722/HamstersShaver/ton_api/dexscreener/jettons"
 	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/jettons"
 	
 	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/wallet"
@@ -19,8 +22,8 @@ import (
 )
 
 
-// продажа монет
 // TODO: 10 попыток до успеха (ошибка "error code: 651 message: cannot load block")
+// продажа монет (Jetton -> TON)
 func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.AccountJetton, amount float64, slippage int) error {
 	// получение данных о кошельке через tongo
 	realWallet, err := myTongoWallet.GetWallet()
@@ -30,7 +33,7 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 	
 	// адрес получателя (StonfiRouter)
 	jettonRouter := tongoTon.MustParseAccountID(constants.StonfiRouterAddr)
-	// адрес монеты (откуда) NOT
+	// адрес монеты (откуда) jettonCA
 	jettonMaster0 := tongoTon.MustParseAccountID(jettonCA)
 	// адрес монеты (куда) TON
 	jettonMaster1 := tongoTon.MustParseAccountID(constants.ProxyTonMasterAddr)
@@ -41,7 +44,6 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 		settings.ErrorLog.Printf("Failed to create new stonfiStruct: %v", err)
 		return err
 	}
-	fmt.Println("\nstonfiStruct", stonfiStruct)
 
 	// TON для газовой комиссии (0.3 TON)
 	gasToncoins := tongoTlb.Grams(300_000_000)
@@ -52,23 +54,20 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 	// адрес отправителя (кошелёк юзера)
 	senderAddrID := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
 
+	// информация о пуле продаваемой монеты и TON
+	poolInfo, err := myDexscreenerJettons.GetJettonsPoolInfo(constants.ProxyTonMasterAddr, jettonCA)
+	if err != nil {
+		return err
+	}
 
-
-
-
-
+	// предположительное кол-во TON на выходе без учёта изменения цены и газовой комиссии
+	predictedTonAmount := amount * poolInfo.PriceNative
 	// перевод процента проскальзывания в часть от кол-ва монет в виде float64
-	slippageAmount := amount - amount * (float64(slippage) / 100)
+	slippageAmount := predictedTonAmount * (1.0 - float64(slippage) / 100)
 	// процент проскальзывания (часть от кол-ва монет) в виде *big.Int
-	minOut := myTongoJettons.ConvertJettonsAmountToBigInt(jetton, slippageAmount)
+	minOut := big.NewInt(int64(slippageAmount * math.Pow10(9)))
 
-	fmt.Printf("bigIntAmount: %v | minOut: %v\n", bigIntAmount, minOut)
-
-	// 0.01 TON
-	minOut = big.NewInt(10_000_000)
-
-	fmt.Printf("NEW bigIntAmount: %v | minOut: %v\n", bigIntAmount, minOut)
-
+	fmt.Printf("\nbigIntAmount: %v | predictedTonAmount: %v | minOut: %v\n", bigIntAmount, predictedTonAmount, minOut)
 
 
 	// структура для совершения Swap транзакции

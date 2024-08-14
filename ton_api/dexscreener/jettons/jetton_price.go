@@ -25,9 +25,9 @@ type JettonsPoolInfo struct {
 	BaseTokenName	string
 	BaseTokenAddr	string
 	// цена в единицах котирующей монеты
-	PriceNative		string
+	PriceNative		float64
 	// цена в долларах
-	PriceUsd		string
+	PriceUsd		float64
 }
 
 
@@ -82,6 +82,21 @@ func GetJettonsPoolInfo(jettonAddr0, jettonAddr1 string) (JettonsPoolInfo, error
 	for _, pairInfo := range unmarshaledJsonPairs.Pairs {
 		// поиск первого пула на stonfi
 		if pairInfo.DexId == "stonfi" {
+			// перевод строкового значения цены (в USD) во float64
+			priceUSD, err := strconv.ParseFloat(pairInfo.PriceUsd, 64)
+			if err != nil {
+				settings.ErrorLog.Println("Failed to parse float from string PriceUSD:", err)
+				return poolInfo, err
+			}
+
+			// перевод строкового значения цены (в QuoteToken) во float64
+			priceNative, err := strconv.ParseFloat(pairInfo.PriceNative, 64)
+			if err != nil {
+				settings.ErrorLog.Println("Failed to parse float from string PriceNative:", err)
+				return poolInfo, err
+			}
+
+
 			// заполнение структуры данными пула
 			poolInfo = JettonsPoolInfo{
 				PoolAddress: pairInfo.PairAddress,
@@ -91,8 +106,8 @@ func GetJettonsPoolInfo(jettonAddr0, jettonAddr1 string) (JettonsPoolInfo, error
 
 				BaseTokenName: pairInfo.BaseToken.Symbol,
 				BaseTokenAddr: pairInfo.BaseToken.Address,
-				PriceNative: pairInfo.PriceNative,
-				PriceUsd: pairInfo.PriceUsd,
+				PriceNative: priceNative,
+				PriceUsd: priceUSD,
 			}
 			break
 		}
@@ -105,23 +120,4 @@ func GetJettonsPoolInfo(jettonAddr0, jettonAddr1 string) (JettonsPoolInfo, error
 	}
 
 	return poolInfo, nil
-}
-
-// получение цены монеты по двум данным адресам монет пула
-func GetJettonPriceUSD(jettonAddr0, jettonAddr1 string) (float64, error) {
-	var priceUSD float64
-
-	// получение информации о пуле двух данных монет
-	poolInfo, err := GetJettonsPoolInfo(jettonAddr0, jettonAddr1)
-	if err != nil {
-		return priceUSD, err
-	}
-
-	priceUSD, err = strconv.ParseFloat(poolInfo.PriceUsd, 64)
-	if err != nil {
-		settings.ErrorLog.Println("Failed to parse float from string PriceUSD:", err)
-		return priceUSD, err
-	}
-
-	return priceUSD, nil
 }
