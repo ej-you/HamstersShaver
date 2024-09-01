@@ -6,7 +6,7 @@ import (
 
 	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/account"
 	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/jettons"
-	// myTongoTransactions "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/transactions"
+	myTongoTransactions "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/transactions"
 )
 
 
@@ -22,24 +22,26 @@ func main() {
 		fmt.Printf(" | Balance: %d | Decimals: %d\n", accJetton.Balance, accJetton.Decimals)
 		fmt.Printf("Master: %s\n\n", accJetton.MasterAddress)
 
-		// if accJetton.Symbol == "USD₮" {
+		// if accJetton.Symbol == "GRAM" {
 		// 	cellJetton = accJetton
 		// }
 	}
 
 	// процент проскальзывания (20%)
-	// slippage := 20
+	slippage := 20
 
-	// jettonCA := "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT"
-	// jettonCA := "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
-	// err := myTongoTransactions.CellJetton(context.Background(), jettonCA, cellJetton, 0.1, slippage)
+	// продажа GRAM
+	// jettonCA := "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+	// err := myTongoTransactions.CellJetton(context.Background(), jettonCA, cellJetton, 100, slippage)
 	// if err == nil {
 	// 	fmt.Println("GREAT!!!")
 	// }
 
-	// GRAM
-	jettonInfo, err := myTonapiJettons.GetJettonInfoByAddres(context.Background(), "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O")
+	// покупка GRAM
+	jettonCA := "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+	err := myTongoTransactions.BuyJetton(context.Background(), jettonCA, 130, slippage)
+	// err := myTongoTransactions.BuyJetton(context.Background(), jettonCA, 0.1, slippage)
 	if err == nil {
-		fmt.Println("jettonInfo:", jettonInfo)
+		fmt.Println("GREAT!!!")
 	}
 }
