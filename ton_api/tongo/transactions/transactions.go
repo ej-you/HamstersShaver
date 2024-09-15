@@ -103,10 +103,19 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 // 	if err != nil {
 // 		return err
 // 	}
-	
+
+// 	// информация о пуле продаваемой монеты и TON
+// 	poolInfo, err := myDexscreenerJettons.GetJettonsPoolInfo(constants.ProxyTonMasterAddr, jettonCA)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	fmt.Printf("\npoolInfo: %v\n", poolInfo)
+
 // 	// адрес получателя (StonfiRouter)
-// 	jettonRouter := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
+// 	jettonRouter := tongoTon.MustParseAccountID(constants.StonfiRouterAddr)
+// 	// jettonRouter := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
 // 	// адрес монеты (откуда)
+// 	// jettonMaster0 := tongoTon.MustParseAccountID(poolInfo.PoolAddress)
 // 	jettonMaster0 := tongoTon.MustParseAccountID(constants.ProxyTonMasterAddr)
 // 	// адрес монеты (куда)
 // 	jettonMaster1 := tongoTon.MustParseAccountID(jettonCA)
@@ -120,18 +129,13 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 
 // 	// TON для газовой комиссии (0.3 TON)
 // 	gasToncoins := tongoTlb.Grams(300_000_000)
-// 	// минимальное кол-во TON для возврата от газовой комиссии (0.01 TON)
-// 	forwardToncoins := tongoTlb.Grams(10_000_000)
+// 	// минимальное кол-во TON для возврата от газовой комиссии (0.1 TON)
+// 	forwardToncoins := tongoTlb.Grams(100_000_000)
 // 	// кол-во монет в виде *big.Int
 // 	bigIntAmount := myTongoJettons.ConvertJettonsAmountToBigInt(9, amount)
 // 	// адрес отправителя (кошелёк юзера)
-// 	senderAddrID := tongoTon.MustParseAccountID(constants.StonfiRouterAddr)
-
-// 	// информация о пуле продаваемой монеты и TON
-// 	poolInfo, err := myDexscreenerJettons.GetJettonsPoolInfo(constants.ProxyTonMasterAddr, jettonCA)
-// 	if err != nil {
-// 		return err
-// 	}
+// 	senderAddrID := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
+// 	// senderAddrID := tongoTon.MustParseAccountID(constants.StonfiRouterAddr)
 
 // 	// предположительное кол-во монет на выходе без учёта изменения цены и газовой комиссии
 // 	predictedJettonsAmount := amount / poolInfo.PriceNative
@@ -149,7 +153,7 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 // 		settings.ErrorLog.Printf("Failed to make swap message: %v", err)
 // 		return err
 // 	}
-// 	jettonTransfer.ResponseDestination = &jettonRouter
+// 	// jettonTransfer.ResponseDestination = &jettonRouter
 
 // 	// jettonTransfer := tongoJetton.TransferMessage{
 // 	// 	Jetton:           tongoJetton.New(jettonMaster1, settings.TongoTonAPI),
@@ -162,12 +166,12 @@ func CellJetton(ctx context.Context, jettonCA string, jetton myTonapiJettons.Acc
 // 	fmt.Println("\njettonTransfer", jettonTransfer)
 
 // 	// отправка сообщения в блокчейн
-// 	// fmt.Println("\nrealWallet:", realWallet)
-// 	err = realWallet.Send(ctx, jettonTransfer)
-// 	if err != nil {
-// 		settings.ErrorLog.Printf("Failed to send transfer message: %v", err)
-// 		return err
-// 	}
+// 	fmt.Println("\nrealWallet:", realWallet)
+// 	// err = realWallet.Send(ctx, jettonTransfer)
+// 	// if err != nil {
+// 	// 	settings.ErrorLog.Printf("Failed to send transfer message: %v", err)
+// 	// 	return err
+// 	// }
 
 // 	return nil
 // }
@@ -185,13 +189,19 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	if err != nil {
 		return err
 	}
-	
+
+	// информация о пуле покупаемой монеты и TON
+	poolInfo, err := myDexscreenerJettons.GetJettonsPoolInfo(constants.ProxyTonMasterAddr, jettonCA)
+	if err != nil {
+		return err
+	}
+
 	// адрес получателя (StonfiRouter)
 	jettonRouter := tongoTon.MustParseAccountID(constants.StonfiRouterAddr)
-	// адрес монеты (куда)
-	jettonMaster0 := tongoTon.MustParseAccountID(jettonCA)
 	// адрес монеты (откуда)
-	jettonMaster1 := tongoTon.MustParseAccountID(constants.ProxyTonMasterAddr)
+	jettonMaster0 := tongoTon.MustParseAccountID(constants.ProxyTonMasterAddr)
+	// адрес монеты (куда)
+	jettonMaster1 := tongoTon.MustParseAccountID(jettonCA)
 	
 	// структура с информацией для Swap транзакции на DEX Stonfi
 	// stonfiStruct, err := tongoStonfi.NewStonfi(ctx, settings.TongoTonAPI, jettonRouter, jettonMaster0, jettonMaster1)
@@ -201,47 +211,33 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	// }
 
 
-	jet0 := tongoJetton.New(jettonMaster0, settings.TongoTonAPI)
-	token0, _ := jet0.GetJettonWallet(ctx, jettonRouter)
+	// jet0 := tongoJetton.New(jettonMaster0, settings.TongoTonAPI)
+	// token0, _ := jet0.GetJettonWallet(ctx, jettonRouter)
 
 	jet1 := tongoJetton.New(jettonMaster1, settings.TongoTonAPI)
-	// token1, _ := jet1.GetJettonWallet(ctx, jettonRouter)
-	token1_my, _ := jet1.GetJettonWallet(ctx, tongoTon.MustParseAccountID(settings.JsonWallet.Hash))
+	token1, _ := jet1.GetJettonWallet(ctx, jettonRouter)
+	// token1_my, _ := jet1.GetJettonWallet(ctx, tongoTon.MustParseAccountID(settings.JsonWallet.Hash))
 
-	// fmt.Println("\ntoken1", token1)
-	fmt.Println("token1_my", token1_my)
+	fmt.Println("\ntoken1", token1)
+	// fmt.Println("token1_my", token1_my)
 
-
-	// stonfiStruct := tongoStonfi.Stonfi{
-	// 	cli: settings.TongoTonAPI,
-	// 	router: jettonRouter,
-	// 	master0: jettonMaster0,
-	// 	token0: token0,
-	// 	master1: jettonMaster1,
-	// 	token1: token1,
-	// }
 
 	// TON для газовой комиссии (0.3 TON)
 	gasToncoins := tongoTlb.Grams(300_000_000)
 	// минимальное кол-во TON для возврата от газовой комиссии (0.1 TON)
 	forwardToncoins := tongoTlb.Grams(100_000_000)
-	// кол-во монет в виде *big.Int
-	bigIntAmount := myTongoJettons.ConvertJettonsAmountToBigInt(jetton.Decimals, amount)
+	// кол-во TON в виде *big.Int
+	bigIntAmount := myTongoJettons.ConvertJettonsAmountToBigInt(9, amount)
 	// адрес отправителя (кошелёк юзера)
 	senderAddrID := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
 
-	// информация о пуле продаваемой монеты и TON
-	poolInfo, err := myDexscreenerJettons.GetJettonsPoolInfo(constants.ProxyTonMasterAddr, jettonCA)
-	if err != nil {
-		return err
-	}
 
-	// предположительное кол-во монет на выходе без учёта изменения цены и газовой комиссии
-	predictedJettonsAmount := amount * poolInfo.PriceNative
+	// предположительное кол-во монет на выходе без учёта изменения цены
+	predictedJettonsAmount := amount / poolInfo.PriceNative
 	// перевод процента проскальзывания в часть от кол-ва монет в виде float64
 	slippageAmount := predictedJettonsAmount * (1.0 - float64(slippage) / 100)
 	// процент проскальзывания (часть от кол-ва монет) в виде *big.Int
-	minOut := myTongoJettons.ConvertJettonsAmountToBigInt(9, slippageAmount)
+	minOut := myTongoJettons.ConvertJettonsAmountToBigInt(jetton.Decimals, slippageAmount)
 
 	fmt.Printf("\nbigIntAmount: %v | predictedJettonsAmount: %v | minOut: %v\n", bigIntAmount, predictedJettonsAmount, minOut)
 
@@ -262,13 +258,23 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	// 	ForwardTonAmount: forwardToncoins,
 	// }
 
+	// referralAddr := tongoTon.MustParseAccountID("UQCV6ZyNxqQ4Um30lhk2_1EgnzB6KMN8bHgxDOFAq3irZfgx")
+	// referralMessageAddr := referralAddr.ToMsgAddress()
 
 	payload := tongoAbi.StonfiSwapJettonPayload{
-		TokenWallet: token0.ToMsgAddress(),  // !!! check !!!
+		TokenWallet: token1.ToMsgAddress(),
 		MinOut:      tongoTlb.VarUInteger16(*minOut),
 		ToAddress:   senderAddrID.ToMsgAddress(),
+		// ReferralAddress: &referralMessageAddr,
 	}
 	cell := tongoBoc.NewCell()
+	// StonfiSwap: 0x25938561
+	// StonfiSwapOk: 0xc64370e5
+	// StonfiSwapOkRef: 0x45078540
+	// StonfiPaymentRequest: 0xf93bb43f
+	// JettonNotify: 0x7362d09c
+	// JettonTransfer: 0x0f8a7ea5
+	// ? DedustSwap: 0x9c610de3
 	if err := cell.WriteUint(0x25938561, 32); err != nil {
 		return err
 	}
@@ -276,16 +282,14 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 		return err
 	}
 	jettonTransfer := tongoJetton.TransferMessage{
-		Sender:           	 token1_my,// senderAddrID,  // !!! check !!!
-		Jetton:           	 tongoJetton.New(jettonMaster1, settings.TongoTonAPI),  // !!! check !!!
+		Sender:           	 senderAddrID,
+		Jetton:           	 tongoJetton.New(jettonMaster0, settings.TongoTonAPI),
 		JettonAmount:     	 bigIntAmount,
-		Destination:      	 jettonRouter,  // !!! check !!!
+		Destination:      	 jettonRouter,
 		AttachedTon:      	 gasToncoins,
 		ForwardTonAmount: 	 forwardToncoins,
 		ForwardPayload:   	 cell,
-		ResponseDestination: &senderAddrID,
 	}
-
 
 
 	fmt.Println("\njettonTransfer", jettonTransfer)

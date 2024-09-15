@@ -37,10 +37,12 @@ func main() {
 	// 	fmt.Println("GREAT!!!")
 	// }
 
-	// покупка GRAM
-	jettonCA := "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
-	err := myTongoTransactions.BuyJetton(context.Background(), jettonCA, 130, slippage)
-	// err := myTongoTransactions.BuyJetton(context.Background(), jettonCA, 0.1, slippage)
+	// покупка DOGS
+	// LP GRAM-pTON:  EQASBZLwa2vfdsgoDF2w96pdccBJJRxDNXXPUL7NMm0WdnMx
+	// jettonCA := "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+	jettonCA := "EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS"
+	// err := myTongoTransactions.BuyJetton(context.Background(), jettonCA, 130, slippage)
+	err := myTongoTransactions.BuyJetton(context.Background(), jettonCA, 0.1, slippage)
 	if err == nil {
 		fmt.Println("GREAT!!!")
 	}
