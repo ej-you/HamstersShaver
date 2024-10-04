@@ -3,10 +3,7 @@ error_log = "/logs/error-log.log"
 
 
 dev:
-	go run ./main.go
-
-migrate:
-	go run ./main.go migrate
+	go run ./main.go dev
 
 compile:
 	go build -o ./HamstersShaver ./main.go

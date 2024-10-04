@@ -81,13 +81,11 @@ func getTonClientTongo(conType string) *tongo.Client {
 	}
 }
 
-
-// создание API клиента TON для tonapi-go
-var TonapiTonAPI *tonapi.Client = getTonClientTonapi("mainnet")
-
-// создание API клиента TON для tongo
-var TongoTonAPI *tongo.Client = getTonClientTongo("mainnet")
-
-
 // данные кошелька из JSON-конфига
 var JsonWallet JsonWalletData = getJsonWallet()
+
+// // создание API клиента TON для tonapi-go
+// var TonapiTonAPI *tonapi.Client = getTonClientTonapi("mainnet")
+
+// // создание API клиента TON для tongo
+// var TongoTonAPI *tongo.Client = getTonClientTongo("mainnet")

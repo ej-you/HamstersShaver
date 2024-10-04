@@ -2,40 +2,51 @@ package main
 
 import (
 	"fmt"
-	"context"
+	"os"
+	// "time"
 
-	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/account"
-	myTonapiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/jettons"
-	myTongoTransactions "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/transactions"
+	echo "github.com/labstack/echo/v4"
+	echoMiddleware "github.com/labstack/echo/v4/middleware"
+
+	coreErrorHandler "github.com/Danil-114195722/HamstersShaver/core/error_handler"
+	coreUrls "github.com/Danil-114195722/HamstersShaver/core/urls"
+	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
 
 func main() {
-	tonBalance, _ := myTonapiAccount.GetBalanceTON(context.Background())
-	fmt.Printf("tonBalance: %v TON | Balance: %d | Decimals: %d\n\n", tonBalance.BeautyBalance, tonBalance.Balance, tonBalance.Decimals)
+	echoApp := echo.New()
+	echoApp.HideBanner = true
 
-	accountJettons, _ := myTonapiJettons.GetBalanceJettons(context.Background())
-	for _, accJetton := range accountJettons {
-		fmt.Printf("Symbol: %s | BeautyBalance: %s", accJetton.Symbol, accJetton.BeautyBalance)
-		fmt.Printf(" | Balance: %d | Decimals: %d\n", accJetton.Balance, accJetton.Decimals)
+	// если при запуске указан аргумент "dev"
+	args := os.Args
+	if len(args) > 1 {
+		// запуск в dev режиме
+		if args[1] == "dev" {
+			echoApp.Debug = true
+		}
 	}
 
-	// процент проскальзывания (20%)
-	slippage := 20
+	// удаление последнего слеша
+	echoApp.Pre(echoMiddleware.RemoveTrailingSlash())
+	// кастомизация логирования
+	echoApp.Use(echoMiddleware.LoggerWithConfig(echoMiddleware.LoggerConfig{
+		Format: settings.LogFmt,
+	}))
+	// отлавливание паник для беспрерывной работы сервиса
+	echoApp.Use(echoMiddleware.Recover())
 
-	// продажа GRAM
-	// jettonCA := "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+	// // настройка таймаута для всех запросов на 20 секунд
+	// echoApp.Use(echoMiddleware.TimeoutWithConfig(echoMiddleware.TimeoutConfig{
+	// 	ErrorMessage: "timeout error",
+	// 	Timeout: 20*time.Second,
+	// }))
 
-	// err := myTongoTransactions.CellJetton(context.Background(), jettonCA, 100, slippage)
-	// if err == nil {
-	// 	fmt.Println("GREAT!!!")
-	// }
+	// настройка кастомного обработчика ошибок
+	coreErrorHandler.CustomErrorHandler(echoApp)
+	// настройка роутеров для эндпоинтов
+	coreUrls.InitUrlRouters(echoApp)
 
-	// покупка DOGS
-	jettonCA := "EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS"
-
-	err := myTongoTransactions.BuyJetton(context.Background(), jettonCA, 0.1, slippage)
-	if err == nil {
-		fmt.Println("\nGREAT!!!")
-	}
+	// запуск приложения
+	echoApp.Logger.Fatal(echoApp.Start(fmt.Sprintf(":%s", settings.Port)))
 }

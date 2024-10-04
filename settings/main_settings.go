@@ -9,8 +9,15 @@ import (
 
 
 // загрузка переменных окружения
-var _ error = godotenv.Load("./.env")
+var _ error = godotenv.Load("./settings/config/.env")
 
+// распаковка переменных окружения
+var Port string = os.Getenv("GO_PORT")
+
+// формат логов (для Echo)
+var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} | -> User-Agent: ${user_agent}\n"
+// формат времени (для Echo)
+var TimeFmt string = "06-01-02 15:04:05 -07"
 
 // логеры
 var InfoLog *log.Logger = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)
