@@ -27,7 +27,7 @@ type AssetJettonParams struct {
 	Asset struct{
 		Symbol string `json:"symbol"`
 		Decimals int `json:"decimals"`
-		// мастер-адрес монеты
+		// мастер-адрес монеты (jetton_master)
 		MasterAddress string `json:"contract_address"`
 		// цена в долларах
 		StringPriceUSD string `json:"dex_price_usd"`

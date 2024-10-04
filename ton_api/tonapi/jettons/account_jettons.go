@@ -17,7 +17,7 @@ type AccountJetton struct {
 	Balance int64
 	Decimals int
 	BeautyBalance string
-	// мастер-адрес монеты
+	// мастер-адрес монеты (jetton_master)
 	MasterAddress string
 }
 

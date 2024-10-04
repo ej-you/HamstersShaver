@@ -16,7 +16,7 @@ import (
 
 	myStonfiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/stonfi/jettons"
 	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/wallet"
-	myTongoJettons "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/jettons"
+	myTongoServices "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/services"
 
 	"github.com/Danil-114195722/HamstersShaver/settings/constants"
 	"github.com/Danil-114195722/HamstersShaver/settings"
@@ -66,7 +66,7 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	// TON для передачи в следующее сообщение цепочки транзакций (0.2 TON)
 	forwardToncoins := tongoTlb.Grams(200_000_000)
 	// кол-во монет в виде *big.Int
-	bigIntAmount := myTongoJettons.ConvertJettonsAmountToBigInt(jettonInfo.Decimals, amount)
+	bigIntAmount := myTongoServices.ConvertJettonsAmountToBigInt(jettonInfo.Decimals, amount)
 	// адрес отправителя (кошелёк юзера)
 	senderAddrID := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
 
@@ -75,7 +75,7 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	// перевод процента проскальзывания в часть от кол-ва TON в виде float64
 	slippageAmount := predictedTonAmount * (1.0 - float64(slippage) / 100)
 	// процент проскальзывания (часть от кол-ва TON) в виде *big.Int
-	minOut := myTongoJettons.ConvertJettonsAmountToBigInt(constants.TonDecimals, slippageAmount)
+	minOut := myTongoServices.ConvertJettonsAmountToBigInt(constants.TonDecimals, slippageAmount)
 
 	fmt.Printf("\nbigIntAmount: %v | predictedTonAmount: %v | minOut: %v\n", bigIntAmount, predictedTonAmount, minOut)
 
@@ -137,9 +137,9 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	}
 
 	// кол-во TON для покупки монет (в *big.Int)
-	bigIntAmount := myTongoJettons.ConvertJettonsAmountToBigInt(constants.TonDecimals, amount)
+	bigIntAmount := myTongoServices.ConvertJettonsAmountToBigInt(constants.TonDecimals, amount)
 	// кол-во TON для покупки монет (в uint64)
-	tonAmount := myTongoJettons.ConvertJettonsAmountToUint(constants.TonDecimals, amount)
+	tonAmount := myTongoServices.ConvertJettonsAmountToUint(constants.TonDecimals, amount)
 
 	// TON для газовой комиссии (0.3 TON)
 	gasToncoins := tongoTlb.Grams(300_000_000)
@@ -152,7 +152,7 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	// перевод процента проскальзывания в часть от кол-ва монет в виде float64
 	slippageAmount := predictedJettonsAmount * (1.0 - float64(slippage) / 100)
 	// процент проскальзывания (часть от кол-ва монет) в виде *big.Int
-	minOut := myTongoJettons.ConvertJettonsAmountToBigInt(jettonInfo.Decimals, slippageAmount)
+	minOut := myTongoServices.ConvertJettonsAmountToBigInt(jettonInfo.Decimals, slippageAmount)
 
 	fmt.Printf("\nbigIntAmount: %v | predictedJettonsAmount: %v | minOut: %v\n", bigIntAmount, predictedJettonsAmount, minOut)
 

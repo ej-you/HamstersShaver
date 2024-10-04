@@ -1,23 +1,10 @@
-package jettons
+package services
 
 import (
 	"math"
 	"math/big"
-
-	"github.com/tonkeeper/tongo"
-	tongoJettons "github.com/tonkeeper/tongo/contract/jetton"
-
-	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
-
-// получение структуры жетона 
-func GetJettonStruct(addr string) *tongoJettons.Jetton {
-	master := tongo.MustParseAccountID(addr)
-	jettonStruct := tongoJettons.New(master, settings.TongoTonAPI)
-
-	return jettonStruct
-}
 
 // перевод кол-ва токенов в нужный вид для транзакции tongo
 func ConvertJettonsAmountToBigInt(decimals int, amount float64) *big.Int {
