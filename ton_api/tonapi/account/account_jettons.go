@@ -1,4 +1,4 @@
-package jettons
+package account
 
 import (
 	"context"
@@ -23,7 +23,7 @@ type AccountJetton struct {
 
 
 // получение монет и их количества у аккаунта по данным из JSON-конфига
-func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
+func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]AccountJetton, error) {
 	var rawJettons *tonapi.JettonsBalances
 
 	// переменные для перебора монет в цикле
@@ -40,7 +40,7 @@ func GetBalanceJettons(ctx context.Context) ([]AccountJetton, error) {
 	accountJettonsParams := tonapi.GetAccountJettonsBalancesParams{AccountID: settings.JsonWallet.Hash}
 
 	// получение всех монет аккаунта
-	rawJettons, err := settings.TonapiTonAPI.GetAccountJettonsBalances(ctx, accountJettonsParams)
+	rawJettons, err := tonapiClient.GetAccountJettonsBalances(ctx, accountJettonsParams)
 	if err != nil {
 		settings.ErrorLog.Println("Failed to get account jettons:", err.Error())
 		return accountJettonsList, err

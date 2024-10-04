@@ -34,58 +34,58 @@ func getJsonWallet() JsonWalletData {
 }
 
 // создание клиента TON для tonapi-go
-func getTonClientTonapi(conType string) *tonapi.Client {
+func GetTonClientTonapi(conType string) (*tonapi.Client, error) {
 	var client *tonapi.Client
 
 	// тестовый конфиг
 	if conType == "testnet" {
 		client, err := tonapi.NewClient(tonapi.TestnetTonApiURL)
-		DieIf(err)
-		InfoLog.Println("(tonapi) Connected to testnet TON node")
-		return client
+		if err != nil {
+			return client, err
+		}
+		// InfoLog.Println("(tonapi) Connected to testnet TON node")
+		return client, nil
 	// основной конфиг
 	} else if conType == "mainnet" {
 		client, err := tonapi.New()
-		DieIf(err)
-		InfoLog.Println("(tonapi) Connected to mainnet TON node")
-		return client
+		if err != nil {
+			return client, err
+		}
+		// InfoLog.Println("(tonapi) Connected to mainnet TON node")
+		return client, nil
 	// неправильный параметр конфига
 	} else {
 		conTypeError := errors.New("(tonapi) Invalid conType parameter was given")
-		DieIf(conTypeError)
-		return client
+		return client, conTypeError
 	}
 }
 
 // создание клиента TON для tongo
-func getTonClientTongo(conType string) *tongo.Client {
+func GetTonClientTongo(conType string) (*tongo.Client, error) {
 	var client *tongo.Client
 
 	// тестовый конфиг
 	if conType == "testnet" {
 		client, err := tongo.NewClientWithDefaultTestnet()
-		DieIf(err)
-		InfoLog.Println("(tongo) Connected to testnet TON node")
-		return client
+		if err != nil {
+			return client, err
+		}
+		// InfoLog.Println("(tongo) Connected to testnet TON node")
+		return client, nil
 	// основной конфиг
 	} else if conType == "mainnet" {
 		client, err := tongo.NewClientWithDefaultMainnet()
-		DieIf(err)
-		InfoLog.Println("(tongo) Connected to mainnet TON node")
-		return client
+		if err != nil {
+			return client, err
+		}
+		// InfoLog.Println("(tongo) Connected to mainnet TON node")
+		return client, nil
 	// неправильный параметр конфига
 	} else {
 		conTypeError := errors.New("(tongo) Invalid conType parameter was given")
-		DieIf(conTypeError)
-		return client
+		return client, conTypeError
 	}
 }
 
 // данные кошелька из JSON-конфига
 var JsonWallet JsonWalletData = getJsonWallet()
-
-// // создание API клиента TON для tonapi-go
-// var TonapiTonAPI *tonapi.Client = getTonClientTonapi("mainnet")
-
-// // создание API клиента TON для tongo
-// var TongoTonAPI *tongo.Client = getTonClientTongo("mainnet")

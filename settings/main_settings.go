@@ -13,6 +13,7 @@ var _ error = godotenv.Load("./settings/config/.env")
 
 // распаковка переменных окружения
 var Port string = os.Getenv("GO_PORT")
+var RestApiKey string = os.Getenv("REST_API_KEY")
 
 // формат логов (для Echo)
 var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} | -> User-Agent: ${user_agent}\n"

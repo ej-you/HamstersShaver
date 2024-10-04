@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	// "time"
 
 	echo "github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
@@ -36,11 +35,14 @@ func main() {
 	// отлавливание паник для беспрерывной работы сервиса
 	echoApp.Use(echoMiddleware.Recover())
 
-	// // настройка таймаута для всех запросов на 20 секунд
-	// echoApp.Use(echoMiddleware.TimeoutWithConfig(echoMiddleware.TimeoutConfig{
-	// 	ErrorMessage: "timeout error",
-	// 	Timeout: 20*time.Second,
-	// }))
+	// добавление middleware для проверки API Key в строке запроса
+	echoApp.Use(echoMiddleware.KeyAuthWithConfig(echoMiddleware.KeyAuthConfig{
+		KeyLookup: "query:api-key",
+		Validator: func(key string, context echo.Context) (bool, error) {
+			return key == settings.RestApiKey, nil
+		},
+		ErrorHandler: coreErrorHandler.CustomApiKeyErrorHandler,
+	}))
 
 	// настройка кастомного обработчика ошибок
 	coreErrorHandler.CustomErrorHandler(echoApp)
