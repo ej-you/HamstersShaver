@@ -14,7 +14,7 @@ func main() {
 	tonBalance, _ := myTonapiAccount.GetBalanceTON(context.Background())
 	fmt.Printf("tonBalance: %v TON | Balance: %d | Decimals: %d\n\n", tonBalance.BeautyBalance, tonBalance.Balance, tonBalance.Decimals)
 
-	accountJettons, _ := myTonapiJettons.GetBalanceJettons(context.Background())
+	accountJettons, _ := myTonapiAccount.GetBalanceJettons(context.Background())
 	for _, accJetton := range accountJettons {
 		fmt.Printf("Symbol: %s | BeautyBalance: %s", accJetton.Symbol, accJetton.BeautyBalance)
 		fmt.Printf(" | Balance: %d | Decimals: %d\n", accJetton.Balance, accJetton.Decimals)

@@ -1,6 +1,6 @@
 # HamstersShaver
 
-## TG bot for fast transactions
+## RESTful API for TON API interaction
 
 
 ### Config dir (`./settings/config/`) must contain the next files:
@@ -23,6 +23,14 @@
 ```dotenv
 GO_PORT=8000
 ```
+
+
+### Endpoints:
+#### - account
+##### 1. `/api/acount/get-jettons` - returns list with info about each account jetton (exclude TON)
+##### 2. `/api/acount/get-ton` - returns info about account's TON
+#### - jetton
+##### 1. `/api/jetton/get-info` - returns info about jetton
 
 
 ### Used tools (for TON interaction):
