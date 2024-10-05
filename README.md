@@ -30,7 +30,7 @@ GO_PORT=8000
 ##### 1. `/api/acount/get-jettons` - returns list with info about each account jetton (exclude TON)
 ##### 2. `/api/acount/get-ton` - returns info about account's TON
 #### - jetton
-##### 1. `/api/jetton/get-info` - returns info about jetton
+##### 1. `/api/jettons/get-info` - returns info about jetton
 
 
 ### Used tools (for TON interaction):

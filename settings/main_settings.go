@@ -16,7 +16,7 @@ var Port string = os.Getenv("GO_PORT")
 var RestApiKey string = os.Getenv("REST_API_KEY")
 
 // формат логов (для Echo)
-var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} | -> User-Agent: ${user_agent}\n"
+var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} |\n"
 // формат времени (для Echo)
 var TimeFmt string = "06-01-02 15:04:05 -07"
 

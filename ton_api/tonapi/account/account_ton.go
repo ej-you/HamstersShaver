@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"context"
 	"errors"
 
@@ -29,14 +30,15 @@ func GetAccount(ctx context.Context, tonapiClient *tonapi.Client) (*tonapi.Accou
 	// получение аккаунта по его адресу
 	account, err := tonapiClient.GetAccount(ctx, accountParams)
 	if err != nil {
-		settings.ErrorLog.Println("Failed to get account:", err.Error())
-		return account, err
+		getAccountError := errors.New(fmt.Sprintf("Failed to get account: %s", err.Error()))
+		settings.ErrorLog.Println(getAccountError.Error())
+		return account, getAccountError
 	}
 
 	// проверка того, что аккаунт активен
 	if account.Status != "active" {
-		accountIsNotActiveError := errors.New("account is not active")
-		settings.ErrorLog.Println("Failed to interact with account:", accountIsNotActiveError.Error())
+		accountIsNotActiveError := errors.New("Failed to interact with account: account is not active")
+		settings.ErrorLog.Println(accountIsNotActiveError.Error())
 		return account, accountIsNotActiveError
 	}
 

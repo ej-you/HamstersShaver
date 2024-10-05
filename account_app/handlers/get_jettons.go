@@ -13,10 +13,10 @@ import (
 )
 
 
-// эндпоинт получения информации о TON на аккаунте
-func GetTon(ctx echo.Context) error {
+// эндпоинт получения информации о всех монетах на аккаунте
+func GetJettons(ctx echo.Context) error {
 	var err error
-	var dataOut myTonapiAccount.TonJetton
+	var dataOut []myTonapiAccount.AccountJetton
 
 	// создание API клиента TON для tonapi-go
 	tonapiClient, err := settings.GetTonClientTonapi("mainnet")
@@ -29,7 +29,7 @@ func GetTon(ctx echo.Context) error {
 	defer cancel()
 
 	// формирование структуры для ответа
-	dataOut, err = myTonapiAccount.GetBalanceTON(tonApiContext, tonapiClient)
+	dataOut, err = myTonapiAccount.GetBalanceJettons(tonApiContext, tonapiClient)
 	if err != nil {
 		return echo.NewHTTPError(500, map[string]string{"account": err.Error()})
 	}

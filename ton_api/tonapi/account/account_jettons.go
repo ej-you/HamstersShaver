@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"context"
 	"errors"
 	"strconv"
@@ -11,14 +12,15 @@ import (
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
 
+
 // описывает монету (кроме TON), имеющуюся у аккаунта
 type AccountJetton struct {
-	Symbol string
-	Balance int64
-	Decimals int
-	BeautyBalance string
+	Symbol 			string `json:"symbol"`
+	Balance 		int64 `json:"balance"`
+	Decimals 		int `json:"decimals"`
+	BeautyBalance 	string `json:"beautyBalance"`
 	// мастер-адрес монеты (jetton_master)
-	MasterAddress string
+	MasterAddress 	string `json:"masterAddress"`
 }
 
 
@@ -42,8 +44,9 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 	// получение всех монет аккаунта
 	rawJettons, err := tonapiClient.GetAccountJettonsBalances(ctx, accountJettonsParams)
 	if err != nil {
-		settings.ErrorLog.Println("Failed to get account jettons:", err.Error())
-		return accountJettonsList, err
+		getAccountJettonsError := errors.New(fmt.Sprintf("Failed to get account jettons: %s", err.Error()))
+		settings.ErrorLog.Println(getAccountJettonsError.Error())
+		return accountJettonsList, getAccountJettonsError
 	}
 
 	// перебор всех найденных монет аккаунта (сохраняется вся история монет, которые были на кошельке)
@@ -81,8 +84,8 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 
 	// если ни одна монета не была найдена на счету аккаунта
 	if len(accountJettonsList) == 0 {
-		emptyJetonsListError := errors.New("no one account jetton was gotten")
-		settings.ErrorLog.Println("Empty account jettons list:", emptyJetonsListError.Error())
+		emptyJetonsListError := errors.New("Empty account jettons list: no one account jetton was gotten")
+		settings.ErrorLog.Println(emptyJetonsListError.Error())
 		return accountJettonsList, emptyJetonsListError
 	}
 

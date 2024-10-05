@@ -56,6 +56,7 @@ func GetTonClientTonapi(conType string) (*tonapi.Client, error) {
 	// неправильный параметр конфига
 	} else {
 		conTypeError := errors.New("(tonapi) Invalid conType parameter was given")
+		ErrorLog.Println("Failed to get tonapi client:", conTypeError.Error())
 		return client, conTypeError
 	}
 }
@@ -83,6 +84,7 @@ func GetTonClientTongo(conType string) (*tongo.Client, error) {
 	// неправильный параметр конфига
 	} else {
 		conTypeError := errors.New("(tongo) Invalid conType parameter was given")
+		ErrorLog.Println("Failed to get tongo client:", conTypeError.Error())
 		return client, conTypeError
 	}
 }
