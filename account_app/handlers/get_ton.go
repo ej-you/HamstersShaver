@@ -18,8 +18,8 @@ func GetTon(ctx echo.Context) error {
 	var err error
 	var dataOut myTonapiAccount.TonJetton
 
-	// создание API клиента TON для tonapi-go
-	tonapiClient, err := settings.GetTonClientTonapi("mainnet")
+	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
+	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
 	if err != nil {
 		return coreErrors.GetTonapiClientError
 	}

@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	// "time"
-	// "context"
+	"time"
 	"net/http"
 
 	echo "github.com/labstack/echo/v4"
@@ -28,12 +27,8 @@ func GetInfo(ctx echo.Context) error {
 		return err
 	}
 
-	// // создание контекста с таймаутом в 5 секунд
-	// tonApiContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
-
-	// формирование структуры для ответа
-	dataOut, err = myStonfiJettons.GetJettonInfoByAddres(dataIn.MasterAddress)
+	// формирование структуры для ответа с таймаутом в 5 секунд
+	dataOut, err = myStonfiJettons.GetJettonInfoByAddressWithTimeout(dataIn.MasterAddress, 5*time.Second)
 	if err != nil {
 		if err.Error() == "Jetton was not found" {
 			return JettonsErrors.InvalidJettonAddressError
