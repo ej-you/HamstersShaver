@@ -16,19 +16,18 @@ import (
 const apiUrl = "https://api.ston.fi/v1/assets/"
 
 
-// структура для получения результата от горутины в функции с таймаутом
-type jettonInfoByAddress struct {
-	JettonInfo 	JettonParams
-	Error 		error
-}
-
-
 // описывает любую монету (функция получения информации о монете по её адресу)
 type JettonParams struct {
 	Symbol 			string `json:"symbol"`
 	Decimals 		int `json:"decimals"`
 	MasterAddress 	string `json:"masterAddress"`
 	PriceUSD 		float64 `json:"priceUsd"`
+}
+
+// структура для получения результата от горутины в функции с таймаутом
+type jettonInfoByAddress struct {
+	JettonInfo 	JettonParams
+	Error 		error
 }
 
 // для десериализации json'а с инфой о монете в структуру

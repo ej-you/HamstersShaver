@@ -7,8 +7,8 @@ import (
 	echo "github.com/labstack/echo/v4"
 
 	myStonfiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/stonfi/jettons"
-	JettonsErrors "github.com/Danil-114195722/HamstersShaver/jettons_app/errors"
-	"github.com/Danil-114195722/HamstersShaver/jettons_app/serializers"
+	JettonsErrors "github.com/Danil-114195722/HamstersShaver/app_jettons/errors"
+	"github.com/Danil-114195722/HamstersShaver/app_jettons/serializers"
 )
 
 

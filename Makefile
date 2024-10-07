@@ -2,6 +2,9 @@ info_log = "/logs/info-log.log"
 error_log = "/logs/error-log.log"
 
 
+test:
+	go run ./test_main.go
+
 dev:
 	go run ./main.go dev
 

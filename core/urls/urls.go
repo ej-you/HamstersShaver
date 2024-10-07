@@ -3,8 +3,8 @@ package urls
 import (
 	echo "github.com/labstack/echo/v4"
 
-	accountUrls "github.com/Danil-114195722/HamstersShaver/account_app/urls"
-	jettonsUrls "github.com/Danil-114195722/HamstersShaver/jettons_app/urls"
+	accountUrls "github.com/Danil-114195722/HamstersShaver/app_account/urls"
+	jettonsUrls "github.com/Danil-114195722/HamstersShaver/app_jettons/urls"
 )
 
 

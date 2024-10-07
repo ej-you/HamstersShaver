@@ -24,6 +24,7 @@
 GO_PORT=8000
 ```
 
+<hr>
 
 ### Endpoints:
 #### - account
@@ -32,9 +33,12 @@ GO_PORT=8000
 #### - jetton
 ##### 1. `/api/jettons/get-info` - returns info about jetton
 
+<hr>
 
 ### Used tools (for TON interaction):
 
 1. `Stonfi` API ([Swagger link](https://api.ston.fi/swagger-ui/))
 2. SDK `tonapi-go` ([Github link](https://github.com/tonkeeper/tonapi-go))
 3. SDK `tongo` ([Github link](https://github.com/tonkeeper/tongo))
+
+<hr>

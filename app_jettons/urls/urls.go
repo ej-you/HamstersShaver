@@ -3,7 +3,7 @@ package urls
 import (
 	echo "github.com/labstack/echo/v4"
 
-	"github.com/Danil-114195722/HamstersShaver/jettons_app/handlers"
+	"github.com/Danil-114195722/HamstersShaver/app_jettons/handlers"
 )
 
 
