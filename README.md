@@ -29,9 +29,12 @@ GO_PORT=8000
 ### Endpoints:
 #### - account
 ##### 1. `/api/acount/get-jettons` - returns list with info about each account jetton (exclude TON)
-##### 2. `/api/acount/get-ton` - returns info about account's TON
+##### 2. `/api/acount/get-jetton` - returns info about account jetton by its address
+##### 3. `/api/acount/get-ton` - returns info about account's TON
+
 #### - jetton
-##### 1. `/api/jettons/get-info` - returns info about jetton
+##### 1. `/api/jettons/get-info` - returns info about jetton by its address
+
 #### - transactions
 ##### 1. `/api/transactions/buy/pre-request` - returns info about pre-request transaction
 

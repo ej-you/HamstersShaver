@@ -13,23 +13,12 @@ import (
 )
 
 
-// описывает монету (кроме TON), имеющуюся у аккаунта
-type AccountJetton struct {
-	Symbol 			string `json:"symbol"`
-	Balance 		int64 `json:"balance"`
-	Decimals 		int `json:"decimals"`
-	BeautyBalance 	string `json:"beautyBalance"`
-	// мастер-адрес монеты (jetton_master)
-	MasterAddress 	string `json:"masterAddress"`
-}
-
-
 // получение монет и их количества у аккаунта по данным из JSON-конфига
 func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]AccountJetton, error) {
 	var rawJettons *tonapi.JettonsBalances
 
 	// переменные для перебора монет в цикле
-	var loopAccountJetton AccountJetton
+	var loopAccountJetton AccountJetton  // структура описана в файле account_jetton.go
 	var loopJettonSymbol string
 	var intJettonBalance int64
 	var jettonDecimals int
