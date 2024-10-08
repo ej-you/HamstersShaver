@@ -24,7 +24,7 @@ import (
 )
 
 
-// данные о последующей транзакции
+// данные о последующей транзакции покупки монет (TON -> Jetton)
 type PreRequestBuyJetton struct {
 	UsedTON 		float64 `json:"usedTon"`
 	JettonCA 		string `json:"jettonCA"`
@@ -36,16 +36,16 @@ type PreRequestBuyJetton struct {
 
 
 // получение данных на подтверждение последующей транзакции покупки монет (TON -> Jetton)
-func GetPreRequestBuyJetton(ctx context.Context, jettonCA string, tonAmount float64, slippage int) (PreRequestBuyJetton, error) {
+func GetPreRequestBuyJetton(jettonCA string, tonAmount float64, slippage int, timeout time.Duration) (PreRequestBuyJetton, error) {
 	var preRequestInfo PreRequestBuyJetton
 
 	// получение данных о покупаемой монете
-	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, 3*time.Second)
+	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, timeout)
 	if err != nil {
 		return preRequestInfo, err
 	}
 	// получение данных о TON
-	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, 3*time.Second)
+	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, timeout)
 	if err != nil {
 		return preRequestInfo, err
 	}
@@ -69,6 +69,7 @@ func GetPreRequestBuyJetton(ctx context.Context, jettonCA string, tonAmount floa
 }
 
 
+// TODO: 10 попыток до успеха (ошибка "error code: 651 message: cannot load block")
 // покупка монет (TON -> Jetton)
 func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage int) error {
 	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
@@ -193,3 +194,8 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 
 // ЗАТЕМ ВЫДАВАТЬ БАЛАНС TON НА АККАУНТЕ И ПОКУПАЕМОЙ/ПРОДАВАЕМОЙ МОНЕТЫ (КОГДА ОНИ ОБА ПОМЕНЯЮТСЯ, НО С ТАЙМАУТОМ 2min)
 // (ПРОТЕСТИТЬ СИТУАЦИЮ НЕПРОХОЖДЕНИЯ ПОРОГА minOut, T.K. ТАМ НЕ ПОМЕНЯЕТСЯ БАЛАНС ПОКУПАЕМОЙ/ПРОДАВАЕМОЙ МОНЕТЫ)
+
+// Вначале попробовать сравнивать первое полученное значение баланса TON (т.е. когда нужное кол-во TON уйдёт на транзу)
+// с последующими до случая с их расхождением. Затем брать баланс покупаемой/продаваемой монеты
+// (вначале так же получив первое значение баланса вместе с первым значением баланса TON) и выдавать юзеру успех и
+// новый баланс монеты (если он изменился) или неуспех (если он не изменился)

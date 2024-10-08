@@ -32,6 +32,8 @@ GO_PORT=8000
 ##### 2. `/api/acount/get-ton` - returns info about account's TON
 #### - jetton
 ##### 1. `/api/jettons/get-info` - returns info about jetton
+#### - transactions
+##### 1. `/api/transactions/buy/pre-request` - returns info about pre-request transaction
 
 <hr>
 

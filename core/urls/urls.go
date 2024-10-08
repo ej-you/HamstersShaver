@@ -5,6 +5,7 @@ import (
 
 	accountUrls "github.com/Danil-114195722/HamstersShaver/app_account/urls"
 	jettonsUrls "github.com/Danil-114195722/HamstersShaver/app_jettons/urls"
+	transactionsUrls "github.com/Danil-114195722/HamstersShaver/app_transactions/urls"
 )
 
 
@@ -15,4 +16,7 @@ func InitUrlRouters(echoApp *echo.Echo) {
 
 	apiGroupJettons := echoApp.Group("/api/jettons")
 	jettonsUrls.RouterGroup(apiGroupJettons)
+
+	apiGroupTransactions := echoApp.Group("/api/transactions")
+	transactionsUrls.RouterGroup(apiGroupTransactions)
 }
