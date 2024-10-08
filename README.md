@@ -31,12 +31,14 @@ GO_PORT=8000
 ##### 1. `/api/acount/get-jettons` - returns list with info about each account jetton (exclude TON)
 ##### 2. `/api/acount/get-jetton` - returns info about account jetton by its address
 ##### 3. `/api/acount/get-ton` - returns info about account's TON
+##### 4. `/api/acount/get-seqno` - returns account seqno
 
 #### - jetton
 ##### 1. `/api/jettons/get-info` - returns info about jetton by its address
 
 #### - transactions
 ##### 1. `/api/transactions/buy/pre-request` - returns info about pre-request transaction
+##### 2. `/api/transactions/buy/send` - send buy transaction to blockchain
 
 <hr>
 

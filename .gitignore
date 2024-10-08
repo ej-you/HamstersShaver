@@ -12,3 +12,6 @@ ENV/
 
 # Config data
 /settings/config
+
+# dev notes
+/notes.txt

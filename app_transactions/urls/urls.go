@@ -9,4 +9,5 @@ import (
 
 func RouterGroup(group *echo.Group) {
 	group.GET("/buy/pre-request", handlers.BuyPreRequest)
+	group.POST("/buy/send", handlers.BuySend)
 }

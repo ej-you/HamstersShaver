@@ -14,8 +14,6 @@ import (
 
 	myStonfiJettons "github.com/Danil-114195722/HamstersShaver/ton_api/stonfi/jettons"
 	
-	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/account"
-	
 	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/wallet"
 	myTongoServices "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/services"
 
@@ -69,16 +67,10 @@ func GetPreRequestBuyJetton(jettonCA string, tonAmount float64, slippage int, ti
 }
 
 
-// TODO: 10 попыток до успеха (ошибка "error code: 651 message: cannot load block")
 // покупка монет (TON -> Jetton)
-func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage int) error {
-	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
-	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
-	if err != nil {
-		return err
-	}
-	// создание API клиента TON для tongo с таймаутом в 3 секунд
-	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", 3*time.Second)
+func BuyJetton(ctx context.Context, timeout time.Duration, jettonCA string, amount float64, slippage int) error {
+	// создание API клиента TON для tongo с таймаутом timeout
+	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", timeout)
 	if err != nil {
 		return err
 	}
@@ -88,13 +80,13 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	if err != nil {
 		return err
 	}
-	// получение данных о покупаемой монете
-	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, 3*time.Second)
+	// получение данных о покупаемой монете с таймаутом timeout
+	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, timeout)
 	if err != nil {
 		return err
 	}
-	// получение данных о TON
-	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, 3*time.Second)
+	// получение данных о TON с таймаутом timeout
+	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, timeout)
 	if err != nil {
 		return err
 	}
@@ -163,33 +155,12 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 		ForwardPayload:   	 cell,
 	}
 
-	seqnoBefore, err := myTonapiAccount.GetAccountSeqno(ctx, tonapiClient, realWallet)
-	if err != nil {
-		return err
-	}
-
 	// отправка сообщения в блокчейн
 	if err := realWallet.Send(ctx, jettonTransfer); err != nil {
 		sendMEssageError := errors.New(fmt.Sprintf("Failed to send transfer message: %s", err.Error()))
 		return sendMEssageError
 	}
-
-	// если Seqno после отправки транзы больше, чем был, то всё ОК
-	var seqnoAfter uint32
-	var seqnoAfterError error
-	for i := 0; i < 30; i++ {
-		seqnoAfter, seqnoAfterError = myTonapiAccount.GetAccountSeqno(ctx, tonapiClient, realWallet)
-		if seqnoAfterError == nil && seqnoAfter > seqnoBefore {
-			return nil
-		}
-		time.Sleep(1 * time.Second)
-	}
-	// если была ошибка при получении Seqno
-	if seqnoAfterError != nil {
-		return seqnoAfterError
-	}
-	// если Seqno после отправки не изменился, то транза не была отправлена в блокчейн
-	return errors.New("Failed to send transaction: timeout error")
+	return nil
 }
 
 // ЗАТЕМ ВЫДАВАТЬ БАЛАНС TON НА АККАУНТЕ И ПОКУПАЕМОЙ/ПРОДАВАЕМОЙ МОНЕТЫ (КОГДА ОНИ ОБА ПОМЕНЯЮТСЯ, НО С ТАЙМАУТОМ 2min)

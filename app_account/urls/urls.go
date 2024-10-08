@@ -11,4 +11,5 @@ func RouterGroup(group *echo.Group) {
 	group.GET("/get-ton", handlers.GetTon)
 	group.GET("/get-jettons", handlers.GetJettons)
 	group.GET("/get-jetton", handlers.GetJetton)
+	group.GET("/get-seqno", handlers.GetSeqno)
 }
