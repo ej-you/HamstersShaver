@@ -17,6 +17,7 @@ import (
 	myTongoWallet "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/wallet"
 	myTongoServices "github.com/Danil-114195722/HamstersShaver/ton_api/tongo/services"
 
+	myTonapiServices "github.com/Danil-114195722/HamstersShaver/ton_api/tonapi/services"
 	"github.com/Danil-114195722/HamstersShaver/settings/constants"
 	"github.com/Danil-114195722/HamstersShaver/settings"
 )
@@ -24,11 +25,11 @@ import (
 
 // данные о последующей транзакции покупки монет (TON -> Jetton)
 type PreRequestBuyJetton struct {
-	UsedTON 		float64 `json:"usedTon"`
+	UsedTON 		string `json:"usedTon"`
 	JettonCA 		string `json:"jettonCA"`
 	DEX 			string `json:"dex"`
-	JettonsOut 		float64 `json:"jettonsOut"`
-	MinOut	 		float64 `json:"minOut"`
+	JettonsOut 		string `json:"jettonsOut"`
+	MinOut	 		string `json:"minOut"`
 	JettonSymbol 	string `json:"jettonSymbol"`
 }
 
@@ -56,11 +57,11 @@ func GetPreRequestBuyJetton(jettonCA string, tonAmount float64, slippage int, ti
 	slippageAmount := predictedJettonsAmount * (1.0 - float64(slippage) / 100)
 
 	preRequestInfo = PreRequestBuyJetton{
-		UsedTON: tonAmount,
+		UsedTON: myTonapiServices.JettonFloatAmountFormat(tonAmount, tonInfo.Decimals),
 		JettonCA: jettonCA,
 		DEX: "Stonfi",
-		JettonsOut: predictedJettonsAmount,
-		MinOut: slippageAmount,
+		JettonsOut: myTonapiServices.JettonFloatAmountFormat(predictedJettonsAmount, jettonInfo.Decimals),
+		MinOut: myTonapiServices.JettonFloatAmountFormat(slippageAmount, jettonInfo.Decimals),
 		JettonSymbol: jettonInfo.Symbol,
 	}
 	return preRequestInfo, nil
@@ -162,12 +163,3 @@ func BuyJetton(ctx context.Context, timeout time.Duration, jettonCA string, amou
 	}
 	return nil
 }
-
-// ЗАТЕМ ВЫДАВАТЬ БАЛАНС TON НА АККАУНТЕ И ПОКУПАЕМОЙ/ПРОДАВАЕМОЙ МОНЕТЫ (КОГДА ОНИ ОБА ПОМЕНЯЮТСЯ, НО С ТАЙМАУТОМ 2min)
-// (ПРОТЕСТИТЬ СИТУАЦИЮ НЕПРОХОЖДЕНИЯ ПОРОГА minOut, T.K. ТАМ НЕ ПОМЕНЯЕТСЯ БАЛАНС ПОКУПАЕМОЙ/ПРОДАВАЕМОЙ МОНЕТЫ)
-
-// СХЕМУ (НИЖЕ) ПРОВОДИТЬ В САМОМ КЛИЕНТЕ ПОСЛЕ ОТПРАВКИ ЗАПРОСА В API НА ОТПРАВКУ ТРАНЗЫ
-// Вначале попробовать сравнивать первое полученное значение баланса TON (т.е. когда нужное кол-во TON уйдёт на транзу)
-// с последующими до случая с их расхождением. Затем брать баланс покупаемой/продаваемой монеты
-// (вначале так же получив первое значение баланса вместе с первым значением баланса TON) и выдавать юзеру успех и
-// новый баланс монеты (если он изменился) или неуспех (если он не изменился)
