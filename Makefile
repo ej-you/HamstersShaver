@@ -2,11 +2,11 @@ info_log = "/logs/info-log.log"
 error_log = "/logs/error-log.log"
 
 
-test:
-	go run ./test_main.go
-
 dev:
 	go run ./main.go dev
+
+test:
+	go run ./test_main.go
 
 compile:
 	go build -o ./HamstersShaver ./main.go

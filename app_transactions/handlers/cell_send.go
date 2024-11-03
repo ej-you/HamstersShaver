@@ -14,10 +14,10 @@ import (
 )
 
 
-// эндпоинт отправки транзакции на покупку
-func BuySend(ctx echo.Context) error {
+// эндпоинт отправки транзакции на продажу
+func CellSend(ctx echo.Context) error {
 	var err error
-	var dataIn serializers.BuySendIn
+	var dataIn serializers.CellSendIn
 
 	// парсинг JSON-body
 	if err = ctx.Bind(&dataIn); err != nil {
@@ -33,7 +33,7 @@ func BuySend(ctx echo.Context) error {
 	defer cancel()
 
 	// отправка транзакции на покупку с таймаутом в 5 секунд
-	err = myTongoTransactions.BuyJetton(tonApiContext, 10*time.Second, dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
+	err = myTongoTransactions.CellJetton(tonApiContext, 10*time.Second, dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
 	if err != nil {
 		if err.Error() == "Jetton was not found" {
 			return JettonsErrors.InvalidJettonAddressError

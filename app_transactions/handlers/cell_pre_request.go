@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"net/http"
 	"time"
 
@@ -14,10 +13,11 @@ import (
 )
 
 
-// эндпоинт отправки транзакции на покупку
-func BuySend(ctx echo.Context) error {
+// эндпоинт получения информации о последующей транзакции продажи монет
+func CellPreRequest(ctx echo.Context) error {
 	var err error
-	var dataIn serializers.BuySendIn
+	var dataIn serializers.CellPreRequestIn
+	var dataOut myTongoTransactions.PreRequestCellJetton
 
 	// парсинг JSON-body
 	if err = ctx.Bind(&dataIn); err != nil {
@@ -28,12 +28,8 @@ func BuySend(ctx echo.Context) error {
 		return err
 	}
 
-	// создание контекста с таймаутом в 5 секунд
-	tonApiContext, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	// отправка транзакции на покупку с таймаутом в 5 секунд
-	err = myTongoTransactions.BuyJetton(tonApiContext, 10*time.Second, dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
+	// формирование структуры для ответа с таймаутом в 3 секунд
+	dataOut, err = myTongoTransactions.GetPreRequestCellJetton(dataIn.JettonCA, dataIn.Amount, dataIn.Slippage, 3*time.Second)
 	if err != nil {
 		if err.Error() == "Jetton was not found" {
 			return JettonsErrors.InvalidJettonAddressError
@@ -41,5 +37,5 @@ func BuySend(ctx echo.Context) error {
 		return echo.NewHTTPError(500, map[string]string{"transactions": err.Error()})
 	}
 
-	return ctx.JSON(http.StatusCreated, map[string]bool{"success": true})
+	return ctx.JSON(http.StatusOK, dataOut)
 }

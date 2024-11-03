@@ -22,6 +22,7 @@
 
 ```dotenv
 GO_PORT=8000
+REST_API_KEY="api-key-for-app"
 ```
 
 <hr>

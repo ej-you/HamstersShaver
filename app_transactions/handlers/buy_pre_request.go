@@ -13,7 +13,7 @@ import (
 )
 
 
-// эндпоинт получения информации о последующей транзакции
+// эндпоинт получения информации о последующей транзакции покупки монет
 func BuyPreRequest(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.BuyPreRequestIn
