@@ -14,8 +14,16 @@ import (
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
-
 // эндпоинт получения Seqno аккаунта
+//	@Summary		Get account seqno
+//	@Description	Get account seqno
+//	@Router			/account/get-seqno [get]
+//	@ID				get-seqno
+//	@Tags			account
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Success		200	{object}	serializers.GetSeqnoOut
 func GetSeqno(ctx echo.Context) error {
 	// создание API клиента TON для tongo с таймаутом в 3 секунд
 	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", 3*time.Second)

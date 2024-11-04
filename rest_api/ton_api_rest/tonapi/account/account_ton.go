@@ -12,11 +12,14 @@ import (
 )
 
 
-// описывает TON монету, имеющуюся у аккаунта
+// @Description Описывает TON монету, имеющуюся у аккаунта
 type TonJetton struct {
-	Balance 		int64 `json:"balance"`
-	Decimals 		int `json:"decimals"`
-	BeautyBalance 	string `json:"beautyBalance"`
+	// баланс монеты на аккаунте
+	Balance 		int64 `json:"balance" example:"1955532900"`
+	// decimals монеты
+	Decimals 		int `json:"decimals" example:"9"`
+	// округлённый баланс
+	BeautyBalance 	string `json:"beautyBalance" example:"1.956"`
 }
 
 

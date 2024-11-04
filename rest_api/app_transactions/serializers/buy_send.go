@@ -8,11 +8,14 @@ import (
 )
 
 
-// структура входных данных для отправки транзакции на покупку
+// @Description Cтруктура входных данных для отправки транзакции на покупку
 type BuySendIn struct {
-	JettonCA string `json:"jettonCA" myvalid:"required"`
-	Amount float64 `json:"amount" myvalid:"required"`
-	Slippage int `json:"slippage" myvalid:"required|min:0|max:100"`
+	// мастер-адрес покупаемой монеты (jetton_master)
+	JettonCA string `json:"jettonCA" myvalid:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"`
+	// кол-во используемых TON для покупки в формате, удобном для человека
+	Amount float64 `json:"amount" myvalid:"required" example:"0.1"`
+	// процент проскальзывания 
+	Slippage int `json:"slippage" myvalid:"required|min:0|max:100" example:"20"`
 }
 
 
@@ -38,4 +41,11 @@ func (self *BuySendIn) Validate() error {
 		return httpError
 	}
 	return nil
+}
+
+
+// @Description Успешная отправка транзакции на покупку
+type BuySendOut struct {
+	// успех
+	Success bool `json:"success" example:"true"`
 }

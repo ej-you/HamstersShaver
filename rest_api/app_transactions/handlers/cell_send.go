@@ -15,6 +15,16 @@ import (
 
 
 // эндпоинт отправки транзакции на продажу
+//	@Summary		Cell send
+//	@Description	Send transaction to cell jettons to TON
+//	@Router			/transactions/cell/send [post]
+//	@ID				cell-send
+//	@Tags			transactions
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Param			JSON		body	serializers.CellSendIn	true	"CellSendIn struct params"
+//	@Success		201		{object}	serializers.CellSendOut
 func CellSend(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.CellSendIn

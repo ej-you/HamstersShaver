@@ -14,6 +14,15 @@ import (
 
 
 // эндпоинт получения информации о TON на аккаунте
+//	@Summary		Get TON balance on account
+//	@Description	Get TON balance on account and other info about TON
+//	@Router			/account/get-ton [get]
+//	@ID				get-ton
+//	@Tags			account
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Success		200	{array}	myTonapiAccount.TonJetton
 func GetTon(ctx echo.Context) error {
 	var err error
 	var dataOut myTonapiAccount.TonJetton

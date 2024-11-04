@@ -14,6 +14,16 @@ import (
 
 
 // эндпоинт получения информации о последующей транзакции продажи монет
+//	@Summary		Cell pre-request [NOT WORK IN SWAGGER]
+//	@Description	Get pre-request info about cell transaction
+//	@Router			/transactions/cell/pre-request [get]
+//	@ID				cell-pre-request
+//	@Tags			transactions
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Param			JSON		body	serializers.CellPreRequestIn	true	"CellPreRequestIn struct params"
+//	@Success		200		{object}	myTongoTransactions.PreRequestCellJetton
 func CellPreRequest(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.CellPreRequestIn

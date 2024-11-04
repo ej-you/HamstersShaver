@@ -19,6 +19,16 @@ import (
 
 
 // эндпоинт получения информации о монете аккаунта по её адресу
+//	@Summary		Get jetton balance on account [NOT WORK IN SWAGGER]
+//	@Description	Get jetton balance on account and other info about jetton by it master address
+//	@Router			/account/get-jetton [get]
+//	@ID				get-jetton
+//	@Tags			account
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Param			JSON		body	serializers.GetJettonIn	true	"GetJettonIn struct params"
+//	@Success		200		{object}	myTonapiAccount.AccountJetton
 func GetJetton(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.GetJettonIn

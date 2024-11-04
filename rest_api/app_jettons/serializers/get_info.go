@@ -8,9 +8,10 @@ import (
 )
 
 
-// структура входных данных для получения информации о монете по её адресу
+// @Description Структура входных данных для получения информации о монете по её адресу
 type GetInfoIn struct {
-	MasterAddress string `json:"masterAddress" myvalid:"required"`
+	// мастер-адрес монеты (jetton_master)
+	MasterAddress string `json:"masterAddress" myvalid:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"`
 }
 
 

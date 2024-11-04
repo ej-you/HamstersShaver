@@ -15,6 +15,16 @@ import (
 
 
 // эндпоинт отправки транзакции на покупку
+//	@Summary		Buy send
+//	@Description	Send transaction to buy jettons using TON
+//	@Router			/transactions/buy/send [post]
+//	@ID				buy-send
+//	@Tags			transactions
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Param			JSON		body	serializers.BuySendIn	true	"BuySendIn struct params"
+//	@Success		201		{object}	serializers.BuySendOut
 func BuySend(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.BuySendIn

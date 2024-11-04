@@ -10,13 +10,13 @@ import (
 
 
 // подгрузка urls каждого микроприложения и их общая настройка
-func InitUrlRouters(echoApp *echo.Echo) {
-	apiGroupAccount := echoApp.Group("/api/account")
+func InitUrlRouters(echoApp *echo.Group) {
+	apiGroupAccount := echoApp.Group("/account")
 	accountUrls.RouterGroup(apiGroupAccount)
 
-	apiGroupJettons := echoApp.Group("/api/jettons")
+	apiGroupJettons := echoApp.Group("/jettons")
 	jettonsUrls.RouterGroup(apiGroupJettons)
 
-	apiGroupTransactions := echoApp.Group("/api/transactions")
+	apiGroupTransactions := echoApp.Group("/transactions")
 	transactionsUrls.RouterGroup(apiGroupTransactions)
 }

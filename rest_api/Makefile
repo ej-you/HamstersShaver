@@ -2,7 +2,7 @@ info_log = "/logs/info-log.log"
 error_log = "/logs/error-log.log"
 
 
-dev:
+dev: swag-update swag-fmt
 	go run ./main.go dev
 
 test:
@@ -16,4 +16,11 @@ prod:
 	/root/HamstersShaver
 	@echo "Running main app..."
 	/root/HamstersShaver >> $(info_log) 2>> $(error_log)
+
+
+swag-update:
+	@swag init
+
+swag-fmt:
+	@swag fmt
 

@@ -1,0 +1,458 @@
+basePath: /api
+consumes:
+- application/json
+definitions:
+  account.AccountJetton:
+    description: Описывает монету (кроме TON), имеющуюся у аккаунта
+    properties:
+      balance:
+        description: баланс монеты на аккаунте
+        example: 326166742480
+        type: integer
+      beautyBalance:
+        description: округлённый баланс
+        example: "326.167"
+        type: string
+      decimals:
+        description: decimals монеты
+        example: 9
+        type: integer
+      masterAddress:
+        description: мастер-адрес монеты (jetton_master)
+        example: 0:b8ef4f77a17e5785bd31ba4da50abd91852f2b8febee97ad6ee16d941f939198
+        type: string
+      symbol:
+        description: символ монеты
+        example: GRAM
+        type: string
+    type: object
+  account.TonJetton:
+    description: Описывает TON монету, имеющуюся у аккаунта
+    properties:
+      balance:
+        description: баланс монеты на аккаунте
+        example: 1955532900
+        type: integer
+      beautyBalance:
+        description: округлённый баланс
+        example: "1.956"
+        type: string
+      decimals:
+        description: decimals монеты
+        example: 9
+        type: integer
+    type: object
+  jettons.JettonParams:
+    description: описывает любую монету (функция получения информации о монете по
+      её адресу)
+    properties:
+      decimals:
+        description: decimals монеты
+        example: 9
+        type: integer
+      masterAddress:
+        description: мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+      priceUsd:
+        description: цена монеты в долларах (USD)
+        example: 0.002695039717551585
+        type: number
+      symbol:
+        description: символ монеты
+        example: GRAM
+        type: string
+    type: object
+  serializers.BuyPreRequestIn:
+    description: Cтруктура входных данных для получения информации о последующей транзакции
+      покупки
+    properties:
+      amount:
+        description: кол-во используемых TON для покупки в формате, удобном для человека
+        example: 0.1
+        type: number
+      jettonCA:
+        description: мастер-адрес покупаемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+      slippage:
+        description: процент проскальзывания
+        example: 20
+        type: integer
+    type: object
+  serializers.BuySendIn:
+    description: Cтруктура входных данных для отправки транзакции на покупку
+    properties:
+      amount:
+        description: кол-во используемых TON для покупки в формате, удобном для человека
+        example: 0.1
+        type: number
+      jettonCA:
+        description: мастер-адрес покупаемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+      slippage:
+        description: процент проскальзывания
+        example: 20
+        type: integer
+    type: object
+  serializers.BuySendOut:
+    description: Успешная отправка транзакции на покупку
+    properties:
+      success:
+        description: успех
+        example: true
+        type: boolean
+    type: object
+  serializers.CellPreRequestIn:
+    description: Cтруктура входных данных для получения информации о последующей транзакции
+      продажи
+    properties:
+      amount:
+        description: кол-во используемых монет на продажу в формате, удобном для человека
+        example: 200
+        type: number
+      jettonCA:
+        description: мастер-адрес продаваемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+      slippage:
+        description: процент проскальзывания
+        example: 20
+        type: integer
+    type: object
+  serializers.CellSendIn:
+    description: Cтруктура входных данных для отправки транзакции на продажу
+    properties:
+      amount:
+        description: кол-во используемых монет на продажу в формате, удобном для человека
+        example: 200
+        type: number
+      jettonCA:
+        description: мастер-адрес продаваемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+      slippage:
+        description: процент проскальзывания
+        example: 20
+        type: integer
+    type: object
+  serializers.CellSendOut:
+    description: Успешная отправка транзакции на продажу
+    properties:
+      success:
+        description: успех
+        example: true
+        type: boolean
+    type: object
+  serializers.GetInfoIn:
+    description: Структура входных данных для получения информации о монете по её
+      адресу
+    properties:
+      masterAddress:
+        description: мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+    type: object
+  serializers.GetJettonIn:
+    description: Структура входных данных для получения информации о монете аккаунта
+      по её адресу
+    properties:
+      masterAddress:
+        description: мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+    type: object
+  serializers.GetSeqnoOut:
+    description: Seqno аккаунта
+    properties:
+      seqno:
+        description: порядковый номер версии кошелька аккаунта
+        example: "105"
+        type: string
+    type: object
+  transactions.PreRequestBuyJetton:
+    properties:
+      dex:
+        description: название DEX биржи
+        example: Stonfi
+        type: string
+      jettonCA:
+        description: мастер-адрес покупаемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+      jettonSymbol:
+        description: символ покупаемой монеты
+        example: GRAM
+        type: string
+      jettonsOut:
+        description: примерное кол-во монет, которые будут получены после транзакции
+        example: "175.137"
+        type: string
+      minOut:
+        description: минимальное кол-во покупаемых монет (с учётом процента проскальзывания)
+        example: "140.11"
+        type: string
+      usedTon:
+        description: кол-во используемых TON для покупки в формате, удобном для человека
+        example: "0.1"
+        type: string
+    type: object
+  transactions.PreRequestCellJetton:
+    properties:
+      dex:
+        description: название DEX биржи
+        example: Stonfi
+        type: string
+      jettonCA:
+        description: мастер-адрес продаваемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        type: string
+      jettonSymbol:
+        description: символ продаваемой монеты
+        example: GRAM
+        type: string
+      minOut:
+        description: минимальное кол-во получаемых монет TON (с учётом процента проскальзывания)
+        example: "0.091"
+        type: string
+      tonsOut:
+        description: примерное кол-во монет TON, которые будут получены после транзакции
+        example: "0.114"
+        type: string
+      usedJettons:
+        description: кол-во используемых монет на продажу в формате, удобном для человека
+        example: "200.0"
+        type: string
+    type: object
+host: 127.0.0.1:8000
+info:
+  contact: {}
+  description: |-
+    RESTful API for TON API interaction written on Golang using "Stonfi" API, SDK "tonapi-go" and SDK "tongo".
+    All resources is protected with api-key in query.
+  title: RESTful API for TON API interaction
+  version: "1.0"
+paths:
+  /account/get-jetton:
+    get:
+      consumes:
+      - application/json
+      description: Get jetton balance on account and other info about jetton by it
+        master address
+      operationId: get-jetton
+      parameters:
+      - description: GetJettonIn struct params
+        in: body
+        name: JSON
+        required: true
+        schema:
+          $ref: '#/definitions/serializers.GetJettonIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.AccountJetton'
+      security:
+      - ApiKeyAuth: []
+      summary: Get jetton balance on account [NOT WORK IN SWAGGER]
+      tags:
+      - account
+  /account/get-jettons:
+    get:
+      consumes:
+      - application/json
+      description: Get all non-null jettons balances on account and other info about
+        jettons
+      operationId: get-jettons
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/account.AccountJetton'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get jettons balances on account
+      tags:
+      - account
+  /account/get-seqno:
+    get:
+      consumes:
+      - application/json
+      description: Get account seqno
+      operationId: get-seqno
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializers.GetSeqnoOut'
+      security:
+      - ApiKeyAuth: []
+      summary: Get account seqno
+      tags:
+      - account
+  /account/get-ton:
+    get:
+      consumes:
+      - application/json
+      description: Get TON balance on account and other info about TON
+      operationId: get-ton
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/account.TonJetton'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get TON balance on account
+      tags:
+      - account
+  /jettons/get-info:
+    get:
+      consumes:
+      - application/json
+      description: Get jetton info from Stonfi API by it master address
+      operationId: get-info
+      parameters:
+      - description: GetInfoIn struct params
+        in: body
+        name: JSON
+        required: true
+        schema:
+          $ref: '#/definitions/serializers.GetInfoIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jettons.JettonParams'
+      security:
+      - ApiKeyAuth: []
+      summary: Get jetton info [NOT WORK IN SWAGGER]
+      tags:
+      - jettons
+  /transactions/buy/pre-request:
+    get:
+      consumes:
+      - application/json
+      description: Get pre-request info about buy transaction
+      operationId: buy-pre-request
+      parameters:
+      - description: BuyPreRequestIn struct params
+        in: body
+        name: JSON
+        required: true
+        schema:
+          $ref: '#/definitions/serializers.BuyPreRequestIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/transactions.PreRequestBuyJetton'
+      security:
+      - ApiKeyAuth: []
+      summary: Buy pre-request [NOT WORK IN SWAGGER]
+      tags:
+      - transactions
+  /transactions/buy/send:
+    post:
+      consumes:
+      - application/json
+      description: Send transaction to buy jettons using TON
+      operationId: buy-send
+      parameters:
+      - description: BuySendIn struct params
+        in: body
+        name: JSON
+        required: true
+        schema:
+          $ref: '#/definitions/serializers.BuySendIn'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/serializers.BuySendOut'
+      security:
+      - ApiKeyAuth: []
+      summary: Buy send
+      tags:
+      - transactions
+  /transactions/cell/pre-request:
+    get:
+      consumes:
+      - application/json
+      description: Get pre-request info about cell transaction
+      operationId: cell-pre-request
+      parameters:
+      - description: CellPreRequestIn struct params
+        in: body
+        name: JSON
+        required: true
+        schema:
+          $ref: '#/definitions/serializers.CellPreRequestIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/transactions.PreRequestCellJetton'
+      security:
+      - ApiKeyAuth: []
+      summary: Cell pre-request [NOT WORK IN SWAGGER]
+      tags:
+      - transactions
+  /transactions/cell/send:
+    post:
+      consumes:
+      - application/json
+      description: Send transaction to cell jettons to TON
+      operationId: cell-send
+      parameters:
+      - description: CellSendIn struct params
+        in: body
+        name: JSON
+        required: true
+        schema:
+          $ref: '#/definitions/serializers.CellSendIn'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/serializers.CellSendOut'
+      security:
+      - ApiKeyAuth: []
+      summary: Cell send
+      tags:
+      - transactions
+produces:
+- application/json
+schemes:
+- http
+securityDefinitions:
+  ApiKeyAuth:
+    description: Security api key. Please add it to URL like "?api-key=5how45gi54yi"
+      to authorize your requests.
+    in: query
+    name: api-key
+    type: apiKey
+swagger: "2.0"
