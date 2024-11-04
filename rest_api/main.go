@@ -7,9 +7,9 @@ import (
 	echo "github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 
-	coreErrorHandler "github.com/Danil-114195722/HamstersShaver/rest_api/core/error_handler"
-	coreUrls "github.com/Danil-114195722/HamstersShaver/rest_api/core/urls"
-	"github.com/Danil-114195722/HamstersShaver/rest_api/settings"
+	coreErrorHandler "github.com/ej-you/HamstersShaver/rest_api/core/error_handler"
+	coreUrls "github.com/ej-you/HamstersShaver/rest_api/core/urls"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 

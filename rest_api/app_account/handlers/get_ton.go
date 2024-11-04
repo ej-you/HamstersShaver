@@ -7,9 +7,9 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
-	coreErrors "github.com/Danil-114195722/HamstersShaver/rest_api/core/errors"
-	"github.com/Danil-114195722/HamstersShaver/rest_api/settings"
+	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 

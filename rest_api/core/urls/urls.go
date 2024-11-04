@@ -3,9 +3,9 @@ package urls
 import (
 	echo "github.com/labstack/echo/v4"
 
-	accountUrls "github.com/Danil-114195722/HamstersShaver/rest_api/app_account/urls"
-	jettonsUrls "github.com/Danil-114195722/HamstersShaver/rest_api/app_jettons/urls"
-	transactionsUrls "github.com/Danil-114195722/HamstersShaver/rest_api/app_transactions/urls"
+	accountUrls "github.com/ej-you/HamstersShaver/rest_api/app_account/urls"
+	jettonsUrls "github.com/ej-you/HamstersShaver/rest_api/app_jettons/urls"
+	transactionsUrls "github.com/ej-you/HamstersShaver/rest_api/app_transactions/urls"
 )
 
 

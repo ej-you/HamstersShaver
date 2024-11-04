@@ -4,7 +4,7 @@ import (
 	echo "github.com/labstack/echo/v4"
 	validate "github.com/gobuffalo/validate/v3"
 
-	coreValidator "github.com/Danil-114195722/HamstersShaver/rest_api/core/validator"
+	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 )
 
 

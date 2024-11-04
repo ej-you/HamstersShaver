@@ -8,13 +8,13 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
+	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
 	
-	AccountErrors "github.com/Danil-114195722/HamstersShaver/rest_api/app_account/errors"
-	"github.com/Danil-114195722/HamstersShaver/rest_api/app_account/serializers"
+	AccountErrors "github.com/ej-you/HamstersShaver/rest_api/app_account/errors"
+	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
 
-	coreErrors "github.com/Danil-114195722/HamstersShaver/rest_api/core/errors"
-	"github.com/Danil-114195722/HamstersShaver/rest_api/settings"
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 

@@ -1,4 +1,4 @@
-module github.com/Danil-114195722/HamstersShaver/rest_api
+module github.com/ej-you/HamstersShaver/rest_api
 
 go 1.22.2
 

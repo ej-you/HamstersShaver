@@ -7,10 +7,10 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	JettonsErrors "github.com/Danil-114195722/HamstersShaver/rest_api/app_jettons/errors"
+	JettonsErrors "github.com/ej-you/HamstersShaver/rest_api/app_jettons/errors"
 	
-	myTongoTransactions "github.com/Danil-114195722/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
-	"github.com/Danil-114195722/HamstersShaver/rest_api/app_transactions/serializers"
+	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
+	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 )
 
 

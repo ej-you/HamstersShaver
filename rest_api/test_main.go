@@ -5,12 +5,12 @@ import (
 	"context"
 	"time"
 
-	myTonapiAccount "github.com/Danil-114195722/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
+	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
 	
-	myTongoWallet "github.com/Danil-114195722/HamstersShaver/rest_api/ton_api_rest/tongo/wallet"
-	myTongoTransactions "github.com/Danil-114195722/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
+	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/wallet"
+	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
 	
-	"github.com/Danil-114195722/HamstersShaver/rest_api/settings"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 

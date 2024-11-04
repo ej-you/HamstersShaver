@@ -6,7 +6,7 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	"github.com/Danil-114195722/HamstersShaver/rest_api/settings"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 

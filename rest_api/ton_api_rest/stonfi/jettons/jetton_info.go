@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Danil-114195722/HamstersShaver/rest_api/settings"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 

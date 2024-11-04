@@ -6,9 +6,9 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myStonfiJettons "github.com/Danil-114195722/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
-	JettonsErrors "github.com/Danil-114195722/HamstersShaver/rest_api/app_jettons/errors"
-	"github.com/Danil-114195722/HamstersShaver/rest_api/app_jettons/serializers"
+	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
+	JettonsErrors "github.com/ej-you/HamstersShaver/rest_api/app_jettons/errors"
+	"github.com/ej-you/HamstersShaver/rest_api/app_jettons/serializers"
 )
 
 
