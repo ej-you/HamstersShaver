@@ -12,7 +12,7 @@ type BuyPreRequestIn struct {
 	// кол-во используемых TON для покупки в формате, удобном для человека
 	Amount float64 `query:"amount" json:"amount" myvalid:"required" example:"0.1"`
 	// процент проскальзывания 
-	Slippage int `query:"slippage" json:"slippage" myvalid:"required|min:0|max:100" example:"20"`
+	Slippage int `query:"slippage" json:"slippage" myvalid:"required|min:1|max:100" example:"20"`
 }
 
 // дополнительная валидация входных данных (обязательный метод для всей валидации)
