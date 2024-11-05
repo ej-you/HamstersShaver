@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	// "errors"
 
 	echo "github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"

@@ -14,7 +14,7 @@ import (
 
 
 // эндпоинт получения информации о последующей транзакции покупки монет
-//	@Summary		Buy pre-request [NOT WORK IN SWAGGER]
+//	@Summary		Buy pre-request
 //	@Description	Get pre-request info about buy transaction
 //	@Router			/transactions/buy/pre-request [get]
 //	@ID				buy-pre-request
@@ -22,7 +22,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Security		ApiKeyAuth
-//	@Param			JSON		body	serializers.BuyPreRequestIn	true	"BuyPreRequestIn struct params"
+//	@Param			Query		query	serializers.BuyPreRequestIn	true	"BuyPreRequestIn struct params"
 //	@Success		200		{object}	myTongoTransactions.PreRequestBuyJetton
 func BuyPreRequest(ctx echo.Context) error {
 	var err error

@@ -63,23 +63,6 @@ definitions:
         example: GRAM
         type: string
     type: object
-  serializers.BuyPreRequestIn:
-    description: Cтруктура входных данных для получения информации о последующей транзакции
-      покупки
-    properties:
-      amount:
-        description: кол-во используемых TON для покупки в формате, удобном для человека
-        example: 0.1
-        type: number
-      jettonCA:
-        description: мастер-адрес покупаемой монеты (jetton_master)
-        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
-        type: string
-      slippage:
-        description: процент проскальзывания
-        example: 20
-        type: integer
-    type: object
   serializers.BuySendIn:
     description: Cтруктура входных данных для отправки транзакции на покупку
     properties:
@@ -104,23 +87,6 @@ definitions:
         example: true
         type: boolean
     type: object
-  serializers.CellPreRequestIn:
-    description: Cтруктура входных данных для получения информации о последующей транзакции
-      продажи
-    properties:
-      amount:
-        description: кол-во используемых монет на продажу в формате, удобном для человека
-        example: 200
-        type: number
-      jettonCA:
-        description: мастер-адрес продаваемой монеты (jetton_master)
-        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
-        type: string
-      slippage:
-        description: процент проскальзывания
-        example: 20
-        type: integer
-    type: object
   serializers.CellSendIn:
     description: Cтруктура входных данных для отправки транзакции на продажу
     properties:
@@ -144,24 +110,6 @@ definitions:
         description: успех
         example: true
         type: boolean
-    type: object
-  serializers.GetInfoIn:
-    description: Структура входных данных для получения информации о монете по её
-      адресу
-    properties:
-      masterAddress:
-        description: мастер-адрес монеты (jetton_master)
-        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
-        type: string
-    type: object
-  serializers.GetJettonIn:
-    description: Структура входных данных для получения информации о монете аккаунта
-      по её адресу
-    properties:
-      masterAddress:
-        description: мастер-адрес монеты (jetton_master)
-        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
-        type: string
     type: object
   serializers.GetSeqnoOut:
     description: Seqno аккаунта
@@ -242,12 +190,11 @@ paths:
         master address
       operationId: get-jetton
       parameters:
-      - description: GetJettonIn struct params
-        in: body
-        name: JSON
-        required: true
-        schema:
-          $ref: '#/definitions/serializers.GetJettonIn'
+      - description: мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        in: query
+        name: masterAddress
+        type: string
       produces:
       - application/json
       responses:
@@ -257,7 +204,7 @@ paths:
             $ref: '#/definitions/account.AccountJetton'
       security:
       - ApiKeyAuth: []
-      summary: Get jetton balance on account [NOT WORK IN SWAGGER]
+      summary: Get jetton balance on account
       tags:
       - account
   /account/get-jettons:
@@ -326,12 +273,11 @@ paths:
       description: Get jetton info from Stonfi API by it master address
       operationId: get-info
       parameters:
-      - description: GetInfoIn struct params
-        in: body
-        name: JSON
-        required: true
-        schema:
-          $ref: '#/definitions/serializers.GetInfoIn'
+      - description: мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        in: query
+        name: masterAddress
+        type: string
       produces:
       - application/json
       responses:
@@ -341,7 +287,7 @@ paths:
             $ref: '#/definitions/jettons.JettonParams'
       security:
       - ApiKeyAuth: []
-      summary: Get jetton info [NOT WORK IN SWAGGER]
+      summary: Get jetton info
       tags:
       - jettons
   /transactions/buy/pre-request:
@@ -351,12 +297,21 @@ paths:
       description: Get pre-request info about buy transaction
       operationId: buy-pre-request
       parameters:
-      - description: BuyPreRequestIn struct params
-        in: body
-        name: JSON
-        required: true
-        schema:
-          $ref: '#/definitions/serializers.BuyPreRequestIn'
+      - description: кол-во используемых TON для покупки в формате, удобном для человека
+        example: 0.1
+        in: query
+        name: amount
+        type: number
+      - description: мастер-адрес покупаемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        in: query
+        name: jettonCA
+        type: string
+      - description: процент проскальзывания
+        example: 20
+        in: query
+        name: slippage
+        type: integer
       produces:
       - application/json
       responses:
@@ -366,7 +321,7 @@ paths:
             $ref: '#/definitions/transactions.PreRequestBuyJetton'
       security:
       - ApiKeyAuth: []
-      summary: Buy pre-request [NOT WORK IN SWAGGER]
+      summary: Buy pre-request
       tags:
       - transactions
   /transactions/buy/send:
@@ -401,12 +356,21 @@ paths:
       description: Get pre-request info about cell transaction
       operationId: cell-pre-request
       parameters:
-      - description: CellPreRequestIn struct params
-        in: body
-        name: JSON
-        required: true
-        schema:
-          $ref: '#/definitions/serializers.CellPreRequestIn'
+      - description: кол-во используемых монет на продажу в формате, удобном для человека
+        example: 200
+        in: query
+        name: amount
+        type: number
+      - description: мастер-адрес продаваемой монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        in: query
+        name: jettonCA
+        type: string
+      - description: процент проскальзывания
+        example: 20
+        in: query
+        name: slippage
+        type: integer
       produces:
       - application/json
       responses:
@@ -416,7 +380,7 @@ paths:
             $ref: '#/definitions/transactions.PreRequestCellJetton'
       security:
       - ApiKeyAuth: []
-      summary: Cell pre-request [NOT WORK IN SWAGGER]
+      summary: Cell pre-request
       tags:
       - transactions
   /transactions/cell/send:

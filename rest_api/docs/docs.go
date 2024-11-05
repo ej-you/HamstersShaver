@@ -38,17 +38,15 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Get jetton balance on account [NOT WORK IN SWAGGER]",
+                "summary": "Get jetton balance on account",
                 "operationId": "get-jetton",
                 "parameters": [
                     {
-                        "description": "GetJettonIn struct params",
-                        "name": "JSON",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/serializers.GetJettonIn"
-                        }
+                        "type": "string",
+                        "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O",
+                        "description": "мастер-адрес монеты (jetton_master)",
+                        "name": "masterAddress",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -171,17 +169,15 @@ const docTemplate = `{
                 "tags": [
                     "jettons"
                 ],
-                "summary": "Get jetton info [NOT WORK IN SWAGGER]",
+                "summary": "Get jetton info",
                 "operationId": "get-info",
                 "parameters": [
                     {
-                        "description": "GetInfoIn struct params",
-                        "name": "JSON",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/serializers.GetInfoIn"
-                        }
+                        "type": "string",
+                        "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O",
+                        "description": "мастер-адрес монеты (jetton_master)",
+                        "name": "masterAddress",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -211,17 +207,29 @@ const docTemplate = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "Buy pre-request [NOT WORK IN SWAGGER]",
+                "summary": "Buy pre-request",
                 "operationId": "buy-pre-request",
                 "parameters": [
                     {
-                        "description": "BuyPreRequestIn struct params",
-                        "name": "JSON",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/serializers.BuyPreRequestIn"
-                        }
+                        "type": "number",
+                        "example": 0.1,
+                        "description": "кол-во используемых TON для покупки в формате, удобном для человека",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O",
+                        "description": "мастер-адрес покупаемой монеты (jetton_master)",
+                        "name": "jettonCA",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 20,
+                        "description": "процент проскальзывания",
+                        "name": "slippage",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -291,17 +299,29 @@ const docTemplate = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "Cell pre-request [NOT WORK IN SWAGGER]",
+                "summary": "Cell pre-request",
                 "operationId": "cell-pre-request",
                 "parameters": [
                     {
-                        "description": "CellPreRequestIn struct params",
-                        "name": "JSON",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/serializers.CellPreRequestIn"
-                        }
+                        "type": "number",
+                        "example": 200,
+                        "description": "кол-во используемых монет на продажу в формате, удобном для человека",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O",
+                        "description": "мастер-адрес продаваемой монеты (jetton_master)",
+                        "name": "jettonCA",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 20,
+                        "description": "процент проскальзывания",
+                        "name": "slippage",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -434,27 +454,6 @@ const docTemplate = `{
                 }
             }
         },
-        "serializers.BuyPreRequestIn": {
-            "description": "Cтруктура входных данных для получения информации о последующей транзакции покупки",
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "кол-во используемых TON для покупки в формате, удобном для человека",
-                    "type": "number",
-                    "example": 0.1
-                },
-                "jettonCA": {
-                    "description": "мастер-адрес покупаемой монеты (jetton_master)",
-                    "type": "string",
-                    "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
-                },
-                "slippage": {
-                    "description": "процент проскальзывания",
-                    "type": "integer",
-                    "example": 20
-                }
-            }
-        },
         "serializers.BuySendIn": {
             "description": "Cтруктура входных данных для отправки транзакции на покупку",
             "type": "object",
@@ -487,27 +486,6 @@ const docTemplate = `{
                 }
             }
         },
-        "serializers.CellPreRequestIn": {
-            "description": "Cтруктура входных данных для получения информации о последующей транзакции продажи",
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "кол-во используемых монет на продажу в формате, удобном для человека",
-                    "type": "number",
-                    "example": 200
-                },
-                "jettonCA": {
-                    "description": "мастер-адрес продаваемой монеты (jetton_master)",
-                    "type": "string",
-                    "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
-                },
-                "slippage": {
-                    "description": "процент проскальзывания",
-                    "type": "integer",
-                    "example": 20
-                }
-            }
-        },
         "serializers.CellSendIn": {
             "description": "Cтруктура входных данных для отправки транзакции на продажу",
             "type": "object",
@@ -537,28 +515,6 @@ const docTemplate = `{
                     "description": "успех",
                     "type": "boolean",
                     "example": true
-                }
-            }
-        },
-        "serializers.GetInfoIn": {
-            "description": "Структура входных данных для получения информации о монете по её адресу",
-            "type": "object",
-            "properties": {
-                "masterAddress": {
-                    "description": "мастер-адрес монеты (jetton_master)",
-                    "type": "string",
-                    "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
-                }
-            }
-        },
-        "serializers.GetJettonIn": {
-            "description": "Структура входных данных для получения информации о монете аккаунта по её адресу",
-            "type": "object",
-            "properties": {
-                "masterAddress": {
-                    "description": "мастер-адрес монеты (jetton_master)",
-                    "type": "string",
-                    "example": "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
                 }
             }
         },

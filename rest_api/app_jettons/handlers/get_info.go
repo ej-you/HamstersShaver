@@ -13,7 +13,7 @@ import (
 
 
 // эндпоинт получения информации о монете
-//	@Summary		Get jetton info [NOT WORK IN SWAGGER]
+//	@Summary		Get jetton info
 //	@Description	Get jetton info from Stonfi API by it master address
 //	@Router			/jettons/get-info [get]
 //	@ID				get-info
@@ -21,7 +21,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Security		ApiKeyAuth
-//	@Param			JSON		body	serializers.GetInfoIn	true	"GetInfoIn struct params"
+//	@Param			Query		query	serializers.GetInfoIn	true	"GetInfoIn struct params"
 //	@Success		200		{object}	myStonfiJettons.JettonParams
 func GetInfo(ctx echo.Context) error {
 	var err error
