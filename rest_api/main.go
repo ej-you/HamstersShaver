@@ -48,9 +48,11 @@ func main() {
 	echoApp.Use(echoMiddleware.LoggerWithConfig(echoMiddleware.LoggerConfig{
 		Format: settings.LogFmt,
 	}))
-	// отлавливание паник для беспрерывной работы сервиса
-	echoApp.Use(echoMiddleware.Recover())
-
+	// отлавливание паник для беспрерывной работы сервиса (если приложение запущено не в debug режиме)
+	if !echoApp.Debug {
+		echoApp.Use(echoMiddleware.Recover())
+	}
+	
 	// настройка кастомного обработчика ошибок
 	coreErrorHandler.CustomErrorHandler(echoApp)
 	// настройка Swagger документации

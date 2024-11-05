@@ -7,9 +7,10 @@ import (
 	echo "github.com/labstack/echo/v4"
 
 	JettonsErrors "github.com/ej-you/HamstersShaver/rest_api/app_jettons/errors"
-	
 	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
 	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
+	
+	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 )
 
 
@@ -34,7 +35,7 @@ func CellPreRequest(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = dataIn.Validate(); err != nil {
+	if err = coreValidator.Validate(&dataIn); err != nil {
 		return err
 	}
 

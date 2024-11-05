@@ -6,12 +6,57 @@ import (
 	"strings"
 	"strconv"
 
+	echo "github.com/labstack/echo/v4"
 	validate "github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
 )
 
 
-func BaseValidator(givenStruct validate.Validator, errors *validate.Errors) {
+// интерфейс валидируемыемых структур с входными данными
+type inputDataToValidate interface {
+	IsValid(errors *validate.Errors)
+}
+
+
+// объединение *validate.Errors в одну ошибку *echo.HTTPError
+func collectHttpError(validateErrors *validate.Errors) error {
+	if len(validateErrors.Errors) > 0 {
+		// словарь для ошибок
+		errMap := make(map[string]string, len(validateErrors.Errors))
+
+		for key, value := range validateErrors.Errors {
+			errMap[key] = value[0]
+		}
+		// возвращаем *echo.HTTPError
+		httpError := echo.NewHTTPError(400, errMap)
+		return httpError
+	}
+	return nil
+}
+
+
+// возврат ошибок валидации
+func Validate(dataToValidate inputDataToValidate) error {
+	validateErrors := validate.NewErrors()
+
+	// базовая валидация входных данных по тегам структуры
+	baseValidator(dataToValidate, validateErrors)
+	// если базовая валидация не прошла, то возвращаем ошибку
+	if err := collectHttpError(validateErrors); err != nil {
+		return err
+	}
+
+	// дополнительная валидация входных данных (в методе IsValid у структуры)
+	validateErrors = validate.Validate(dataToValidate)
+	// если дополнительная валидация не прошла, то возвращаем ошибку
+	if err := collectHttpError(validateErrors); err != nil {
+		return err
+	}
+	return nil
+}
+
+
+func baseValidator(givenStruct validate.Validator, errors *validate.Errors) {
 	// Получаем значение структуры (с разыменовыванием поинтера через Elem())
 	structValue := reflect.ValueOf(givenStruct).Elem()
 	// получаем кол-во полей в структуре

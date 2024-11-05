@@ -9,6 +9,7 @@ import (
 	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
 	JettonsErrors "github.com/ej-you/HamstersShaver/rest_api/app_jettons/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/app_jettons/serializers"
+	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 )
 
 
@@ -33,7 +34,7 @@ func GetInfo(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = dataIn.Validate(); err != nil {
+	if err = coreValidator.Validate(&dataIn); err != nil {
 		return err
 	}
 

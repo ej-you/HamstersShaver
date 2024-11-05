@@ -14,6 +14,7 @@ import (
 	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
+	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
@@ -39,7 +40,7 @@ func GetJetton(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = dataIn.Validate(); err != nil {
+	if err = coreValidator.Validate(&dataIn); err != nil {
 		return err
 	}
 
