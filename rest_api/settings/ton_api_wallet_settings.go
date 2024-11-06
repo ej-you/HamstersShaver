@@ -12,7 +12,7 @@ type JsonWalletData struct {
 }
 
 // путь до JSON-файла с данными кошелька
-var pathToWalletData string = "./settings/config/wallet.json"
+var pathToWalletData string = configPath + "wallet.json"
 
 // получение данных о кошельке из JSON-файла
 func getJsonWallet() JsonWalletData {

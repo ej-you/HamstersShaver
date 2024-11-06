@@ -73,14 +73,12 @@ func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
 	err = json.Unmarshal(rawJsonBytes, &jettonInfoParse)
 	if err != nil {
 		parseJsonError := errors.New("Jetton was not found")
-		settings.ErrorLog.Println(parseJsonError.Error())
 		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: parseJsonError}
 	}
 
 	// если не было найдено информации о жетоне
 	if (jettonInfoParse == AssetJettonParams{}) {
 		infoNofFoundError := errors.New("Jetton was not found")
-		settings.ErrorLog.Println(infoNofFoundError.Error())
 		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: infoNofFoundError}
 	}
 

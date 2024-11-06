@@ -8,8 +8,19 @@ import (
 )
 
 
+// путь до директории с конфигом
+var configPath = func() string {
+	fullPath := os.Getenv("CONFIG_PATH")
+	// если переменная окружения не задана, то ставим дефолтное значение
+	if fullPath == "" {
+		return "./settings/config/"
+	}
+	return fullPath
+}()
+
+
 // загрузка переменных окружения
-var _ error = godotenv.Load("./settings/config/.env")
+var _ error = godotenv.Load(configPath + ".env")
 
 // распаковка переменных окружения
 var Port string = os.Getenv("GO_PORT")

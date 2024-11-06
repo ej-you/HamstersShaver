@@ -44,7 +44,7 @@ func GetJetton(ctx echo.Context) error {
 		return err
 	}
 
-	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
+	// создание API клиента TON для tonapi-go с таймаутом в 3 секунды
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
 	if err != nil {
 		return coreErrors.GetTonapiClientError
