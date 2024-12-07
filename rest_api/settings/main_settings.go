@@ -26,6 +26,8 @@ var _ error = godotenv.Load(configPath + ".env")
 var Port string = os.Getenv("GO_PORT")
 var RestApiKey string = os.Getenv("REST_API_KEY")
 
+var TonApiToken string = os.Getenv("TON_API_TOKEN")
+
 // формат логов (для Echo)
 var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} |\n"
 // формат времени (для Echo)
