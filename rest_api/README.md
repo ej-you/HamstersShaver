@@ -23,6 +23,10 @@
 ```dotenv
 GO_PORT=8000
 REST_API_KEY="your-own-key-for-this-app"
+
+# received from TON Console
+TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
+
 ```
 
 <hr>
