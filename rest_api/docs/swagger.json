@@ -370,6 +370,51 @@
                     }
                 }
             }
+        },
+        "/transactions/info": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get transaction info by given its hash and action (buy OR cell)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Transaction info",
+                "operationId": "transactions/-info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "cell",
+                        "description": "действие с монетами в транзакции (покупка/продажа)",
+                        "name": "action",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "29a301e4d2a05713f4eab6c8f0daa3c58eed15d1d41678068cd50fe46ca7f6a5",
+                        "description": "хэш транзакции",
+                        "name": "transactionHash",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/transactions.TransactionInfoWithStatusOK"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -593,6 +638,41 @@
                     "description": "кол-во используемых монет на продажу в формате, удобном для человека",
                     "type": "string",
                     "example": "200.0"
+                }
+            }
+        },
+        "transactions.TransactionInfoWithStatusOK": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "действие с монетами в транзакции (покупка/продажа)",
+                    "type": "string",
+                    "example": "buy"
+                },
+                "bounce": {
+                    "description": "была ли отклонена транзакция (не означает успех или неудачу транзакции)",
+                    "type": "boolean",
+                    "example": true
+                },
+                "endBalance": {
+                    "description": "оставшееся кол-во TON после проведения транзакции",
+                    "type": "string",
+                    "example": "2.689"
+                },
+                "hash": {
+                    "description": "хэш транзакции",
+                    "type": "string",
+                    "example": "ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4"
+                },
+                "opName": {
+                    "description": "название операции транзакции",
+                    "type": "string",
+                    "example": "jetton_notify"
+                },
+                "statusOK": {
+                    "description": "успех или неудача выполнения транзакции",
+                    "type": "boolean",
+                    "example": true
                 }
             }
         }

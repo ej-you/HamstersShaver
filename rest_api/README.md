@@ -41,6 +41,7 @@ REST_API_KEY="your-own-key-for-this-app"
 #### - transactions
 1. `/api/transactions/buy/pre-request` - returns info about pre-request transaction
 2. `/api/transactions/buy/send` - send buy transaction to blockchain
+2. `/api/transactions/info` - get transaction info by its hash
 
 ### Swagger Docs can be found at `/api/swagger/index.html`
 

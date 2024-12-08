@@ -13,4 +13,6 @@ func RouterGroup(group *echo.Group) {
 
 	group.GET("/cell/pre-request", handlers.CellPreRequest)
 	group.POST("/cell/send", handlers.CellSend)
+
+	group.GET("/info", handlers.Info)
 }
