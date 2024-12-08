@@ -3,7 +3,6 @@ package ton_api_sse
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
@@ -12,21 +11,10 @@ import (
 )
 
 
-// ожидание покупки монеты (полное завершение транзакции)
-// Excess -	0xd53276db
-func SubscribeToBuyJettonsTransaction(timeout time.Duration) error {
-	return subscribeToTransaction([]string{"0xd53276db"}, timeout)
-}
-
-// ожидание продажи монеты (полное завершение транзакции)
-// JettonNotify - 0x7362d09c
-func SubscribeToCellJettonsTransaction(timeout time.Duration) error {
-	return subscribeToTransaction([]string{"0x7362d09c"}, timeout)
-}
-
-
-// ожидание транзакции на аккаунте с переданными операциями
-func subscribeToTransaction(operations []string, timeout time.Duration) error {
+// ожидание покупки/продажи монеты (полное завершение транзакции)
+// JettonNotify - 0x7362d09c (успех продажи, неудача покупки)
+// Excess -	0xd53276db (успех покупки, неудача продажи)
+func SubscribeToTransaction(timeout time.Duration) (string, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -34,16 +22,17 @@ func subscribeToTransaction(operations []string, timeout time.Duration) error {
 
 	errChan := make(chan error)
 	defer close(errChan)
+	resultChan := make(chan string)
+	defer close(resultChan)
 
 	go func() {
 		err := streamingAPI.SubscribeToTransactions(ctx,
 			[]string{settings.JsonWallet.Hash},
 			// получение транзакций только с этими операциями
-			operations,
+			[]string{"0x7362d09c", "0xd53276db"},
 			func(data tonapi.TransactionEventData) {
-				fmt.Printf("New tx with hash: %v\n", data.TxHash)
-				fmt.Printf("New lt: %v\n", data.Lt)
 				cancel()
+				resultChan <- data.TxHash
 			},
 		)
 
@@ -54,15 +43,15 @@ func subscribeToTransaction(operations []string, timeout time.Duration) error {
 
 	select {
 		// успешное завершение
-		case <-ctx.Done():
-			return nil
+		case transHash := <-resultChan:
+			return transHash, nil
 		// ошибка в горутине
 		case err := <-errChan:
 			cancel()
-			return errors.New("Failed to get transaction info via SSE: " + err.Error())
+			return "", errors.New("Failed to wait transaction via SSE: " + err.Error())
 		// если прошло время timeout, а данные не получены
 		case <-time.After(timeout):
 			cancel()
-			return errors.New("Failed to get transaction info via SSE: timeout error")
+			return "", errors.New("Failed to wait transaction via SSE: timeout error")
 	}
 }

@@ -26,28 +26,14 @@ func logExecTime(t *testing.T, startTime *time.Time) {
 }
 
 // subscribe_to_transaction.go
-func TestSubscribeToCellJettonsTransaction(t *testing.T) {
+func TestSubscribeToTransaction(t *testing.T) {
 	startTime := time.Now()
 
-	t.Logf("Test subscribe to cell jettons transactions via Server Sent Events")
+	t.Logf("Test subscribe to transaction via Server Sent Events")
 	{
-		err := SubscribeToCellJettonsTransaction(5*time.Minute) // 5*time.Second
+		transHash, err := SubscribeToTransaction(5*time.Minute)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
-			t.Logf("\t%s\tNotified about finished cell transaction", successMarker)
-		}
-	}
-	logExecTime(t, &startTime)
-}
-
-// subscribe_to_transaction.go
-func TestSubscribeToBuyJettonsTransaction(t *testing.T) {
-	startTime := time.Now()
-
-	t.Logf("Test subscribe to buy jettons transactions via Server Sent Events")
-	{
-		err := SubscribeToBuyJettonsTransaction(5*time.Minute) // 5*time.Second
-		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
-			t.Logf("\t%s\tNotified about finished buy transaction", successMarker)
+			t.Logf("\t%s\tGot finished transaction hash: %s", successMarker, transHash)
 		}
 	}
 	logExecTime(t, &startTime)

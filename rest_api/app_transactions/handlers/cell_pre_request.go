@@ -30,7 +30,7 @@ func CellPreRequest(ctx echo.Context) error {
 	var dataIn serializers.CellPreRequestIn
 	var dataOut myTongoTransactions.PreRequestCellJetton
 
-	// парсинг JSON-body
+	// парсинг query-параметров
 	if err = ctx.Bind(&dataIn); err != nil {
 		return err
 	}

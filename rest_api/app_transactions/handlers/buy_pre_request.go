@@ -30,7 +30,7 @@ func BuyPreRequest(ctx echo.Context) error {
 	var dataIn serializers.BuyPreRequestIn
 	var dataOut myTongoTransactions.PreRequestBuyJetton
 
-	// парсинг JSON-body
+	// парсинг query-параметров
 	if err = ctx.Bind(&dataIn); err != nil {
 		return err
 	}
