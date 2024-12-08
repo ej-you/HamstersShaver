@@ -53,4 +53,6 @@ REST_API_KEY="your-own-key-for-this-app"
 2. SDK `tonapi-go` ([Github link](https://github.com/tonkeeper/tonapi-go))
 3. SDK `tongo` ([Github link](https://github.com/tonkeeper/tongo))
 
+Also use TON API Key from [TON Console](https://tonconsole.com/tonapi/api-keys) for SSE funcs
+
 <hr>
