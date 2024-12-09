@@ -11,4 +11,7 @@ env/
 ENV/
 
 # Config data
-/settings/config
+/rest_api/settings/config
+
+# dev notes
+/notes.txt

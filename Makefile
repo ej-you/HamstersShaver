@@ -3,17 +3,16 @@ error_log = "/logs/error-log.log"
 
 
 dev:
-	go run ./main.go
+	go run ./main.go dev
 
 migrate:
 	go run ./main.go migrate
 
 compile:
-	go build -o ./HamstersShaver ./main.go
+	go build -o ./HamstersShaverBot ./main.go
 
 prod:
 	@echo "Running migrations..."
-	/root/HamstersShaver
+	/root/HamstersShaverBot
 	@echo "Running main app..."
-	/root/HamstersShaver >> $(info_log) 2>> $(error_log)
-
+	/root/HamstersShaverBot >> $(info_log) 2>> $(error_log)
