@@ -74,6 +74,12 @@ func main() {
 		ErrorHandler: coreErrorHandler.CustomApiKeyErrorHandler,
 	}))
 
+	// настройка CORS
+	echoApp.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
+		AllowOrigins: settings.CorsAllowedOrigins,
+		AllowMethods: settings.CorsAllowedMethods,
+	}))
+
 	// настройка роутеров для эндпоинтов
 	coreUrls.InitUrlRouters(apiKeyProtected)
 

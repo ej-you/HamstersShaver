@@ -3,6 +3,7 @@ package settings
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -26,6 +27,11 @@ var _ error = godotenv.Load(configPath + ".env")
 var Port string = os.Getenv("GO_PORT")
 var RestApiKey string = os.Getenv("REST_API_KEY")
 
+// разрешённые источники и методы
+var CorsAllowedOrigins []string = strings.Split(os.Getenv("CORS_ALLOWED_ORIGINS"), ",")
+var CorsAllowedMethods []string = strings.Split(os.Getenv("CORS_ALLOWED_METHODS"), ",")
+
+// TON API ключ для SSE запросов
 var TonApiToken string = os.Getenv("TON_API_TOKEN")
 
 // формат логов (для Echo)
