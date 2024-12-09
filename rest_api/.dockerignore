@@ -1,0 +1,7 @@
+.env
+
+Makefile
+DockerfileRestAPI
+
+*_test.go
+/ton_api_sse
