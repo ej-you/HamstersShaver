@@ -6,13 +6,13 @@ services:
     container_name: hamsters_shaver_rest_api
     restart: always
     env_file:
-      - ./rest_api/.env
+      - ./rest_api/settings/config/.env
     volumes:
       - rest_api_logs:/logs:rw
     # expose:
-    #   - "8080"
+    #   - "8000"
     ports:
-      - "8080:8080"
+      - "8000:8000"
     # networks:
     #   proj_network:
     #     ipv4_address: 172.20.1.5
