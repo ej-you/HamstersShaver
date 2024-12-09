@@ -9,14 +9,11 @@ test:
 	go run ./test_main.go
 
 compile:
-	go build -o ./HamstersShaver ./main.go
+	go build -o ./HamstersShaverRestAPI ./main.go
 
 prod:
-	@echo "Running migrations..."
-	/root/HamstersShaver
 	@echo "Running main app..."
-	/root/HamstersShaver >> $(info_log) 2>> $(error_log)
-
+	/root/HamstersShaverRestAPI >> $(info_log) 2>> $(error_log)
 
 swagger:
 	@swag init
