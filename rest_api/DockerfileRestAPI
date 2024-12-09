@@ -27,11 +27,10 @@ FROM alpine:3.20 AS run
 # make dir for logs
 RUN mkdir /logs
 
-WORKDIR /root
+WORKDIR /app
 # copy compiled file and Makefile to run app
-COPY --from=build /go/src/Makefile .
 COPY --from=build /go/src/rest_api .
-
-RUN echo "Running REST API app..."
+COPY --from=build /go/src/settings/config/wallet.json ./settings/config/wallet.json
+ 
 # run app
-CMD ["/root/rest_api", ">>", "/logs/info-log.log", "2>>", "/logs/error-log.log"]
+CMD ["/app/rest_api", ">>", "/logs/info-log.log", "2>>", "/logs/error-log.log"]
