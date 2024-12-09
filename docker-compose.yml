@@ -1,0 +1,30 @@
+services:
+  rest_api:
+    build:
+      context: ./rest_api
+      dockerfile: DockerfileRestAPI
+    container_name: hamsters_shaver_rest_api
+    restart: always
+    env_file:
+      - ./rest_api/.env
+    volumes:
+      - rest_api_logs:/logs:rw
+    # expose:
+    #   - "8080"
+    ports:
+      - "8080:8080"
+    # networks:
+    #   proj_network:
+    #     ipv4_address: 172.20.1.5
+
+
+# networks:
+#   proj_network:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 172.20.1.0/24
+
+
+volumes:
+  rest_api_logs:
