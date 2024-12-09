@@ -1,6 +1,6 @@
 # HamstersShaver
 
-## TG bot for fast transactions
+## RESTful API for TON API interaction
 
 #### About REST API for TON API interaction read [here](./rest_api/README.md)
 
