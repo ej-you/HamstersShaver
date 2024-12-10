@@ -31,7 +31,7 @@ WORKDIR /app
 # copy compiled file and Makefile to run app
 COPY --from=build /go/src/rest_api .
 COPY --from=build /go/src/settings/config/wallet.json ./settings/config/wallet.json
-COPY --from=build /go/src/docs/swagger_v3.yml ./docs/swagger_v3.yml
+COPY --from=build /go/src/docs ./docs
 
 # run app
 CMD ["/app/rest_api", ">>", "/logs/info-log.log", "2>>", "/logs/error-log.log"]
