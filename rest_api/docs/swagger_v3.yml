@@ -23,6 +23,14 @@ components:
           example: GRAM
           type: string
       type: object
+    BeautyBalanceOut:
+      properties:
+        beautyBalance:
+          description: преобразованный баланс монеты из int64 формата в округлённый
+            float в виде строки
+          example: "326.167"
+          type: string
+      type: object
     BuySendIn:
       properties:
         amount:
@@ -318,6 +326,39 @@ paths:
       summary: Get jetton info
       tags:
       - jettons
+  /services/beauty-balance:
+    get:
+      description: ' Convert raw balance (in int64 forman) into beauty balance (rounded
+        float in string format)'
+      parameters:
+      - description: баланс монеты в int64 формате
+        example: "326166742480"
+        in: query
+        name: RawBalance
+        required: true
+        schema:
+          description: баланс монеты в int64 формате
+          format: int64
+          type: integer
+      - description: decimals монеты
+        example: "9"
+        in: query
+        name: Decimals
+        required: true
+        schema:
+          description: decimals монеты
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BeautyBalanceOut'
+          description: BeautyBalance value
+      summary: Convert raw balance into beauty balance
+      tags:
+      - services
   /transactions/buy/pre-request:
     get:
       description: ' Get pre-request info about buy transaction'

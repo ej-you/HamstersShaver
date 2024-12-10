@@ -45,7 +45,11 @@ TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 #### - transactions
 1. `/api/transactions/buy/pre-request` - returns info about pre-request transaction
 2. `/api/transactions/buy/send` - send buy transaction to blockchain
-2. `/api/transactions/info` - get transaction info by its hash
+3. `/api/transactions/info` - get transaction info by its hash
+
+#### - services
+1. `/api/services/beauty-balance` - returns rounded string balance converted from given int64 balance
+
 
 ### Swagger Docs can be found at `/api/swagger/index.html`
 
