@@ -16,16 +16,12 @@ import (
 
 
 // эндпоинт отправки транзакции на продажу
-//	@Summary		Cell send
-//	@Description	Send transaction to cell jettons to TON
-//	@Router			/transactions/cell/send [post]
-//	@ID				cell-send
-//	@Tags			transactions
-//	@Accept			json
-//	@Produce		json
-//	@Security		ApiKeyAuth
-//	@Param			JSON		body	serializers.CellSendIn	true	"CellSendIn struct params"
-//	@Success		201		{object}	serializers.CellSendOut
+// @Title Cell send
+// @Description Send transaction to cell jettons to TON
+// @Param CellSendIn body serializers.CellSendIn true "Cтруктура входных данных для отправки транзакции на продажу"
+// @Success 201 object serializers.CellSendOut "Transaction was sent successfully"
+// @Tag transactions
+// @Route /transactions/cell/send [post]
 func CellSend(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.CellSendIn
@@ -52,5 +48,5 @@ func CellSend(ctx echo.Context) error {
 		return echo.NewHTTPError(500, map[string]string{"transactions": err.Error()})
 	}
 
-	return ctx.JSON(http.StatusCreated, map[string]bool{"success": true})
+	return ctx.JSON(http.StatusCreated, serializers.CellSendOut{Success: true})
 }

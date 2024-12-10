@@ -16,16 +16,12 @@ import (
 const apiUrl = "https://api.ston.fi/v1/assets/"
 
 
-// @Description описывает любую монету (функция получения информации о монете по её адресу)
+// описывает любую монету (функция получения информации о монете по её адресу)
 type JettonParams struct {
-	// символ монеты
-	Symbol 			string `json:"symbol" example:"GRAM"`
-	// decimals монеты
-	Decimals 		int `json:"decimals" example:"9"`
-	// мастер-адрес монеты (jetton_master)
-	MasterAddress 	string `json:"masterAddress" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"`
-	// цена монеты в долларах (USD)
-	PriceUSD 		float64 `json:"priceUsd" example:"0.002695039717551585"`
+	Symbol 			string `json:"symbol" example:"GRAM" description:"символ монеты"`
+	Decimals 		int `json:"decimals" example:"9" description:"decimals монеты"`
+	MasterAddress 	string `json:"masterAddress" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"мастер-адрес монеты (jetton_master)"`
+	PriceUSD 		float64 `json:"priceUsd" example:"0.002695039717551585" description:"цена монеты в долларах (USD)"`
 }
 
 

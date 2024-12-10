@@ -14,16 +14,12 @@ import (
 
 
 // эндпоинт получения информации о монете
-//	@Summary		Get jetton info
-//	@Description	Get jetton info from Stonfi API by it master address
-//	@Router			/jettons/get-info [get]
-//	@ID				get-info
-//	@Tags			jettons
-//	@Accept			json
-//	@Produce		json
-//	@Security		ApiKeyAuth
-//	@Param			Query		query	serializers.GetInfoIn	true	"GetInfoIn struct params"
-//	@Success		200		{object}	myStonfiJettons.JettonParams
+// @Title Get jetton info
+// @Description Get jetton info from Stonfi API by it master address
+// @Param MasterAddress query string true "мастер-адрес монеты (jetton_master)" "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+// @Success 200 object myStonfiJettons.JettonParams "JettonParams JSON"
+// @Tag jettons
+// @Route /jettons/get-info [get]
 func GetInfo(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.GetInfoIn

@@ -15,16 +15,13 @@ import (
 
 
 // эндпоинт получения информации о прошедшей транзакции по её хэшу
-//	@Summary		Transaction info
-//	@Description	Get transaction info by given its hash and action (buy OR cell)
-//	@Router			/transactions/info [get]
-//	@ID				transactions-info
-//	@Tags			transactions
-//	@Accept			json
-//	@Produce		json
-//	@Security		ApiKeyAuth
-//	@Param			Query		query	serializers.InfoIn	true	"InfoIn struct params"
-//	@Success		200		{object}	myTonapiTransactions.TransactionInfoWithStatusOK
+// @Title Transaction info
+// @Description Get transaction info by given its hash and action (buy OR cell)
+// @Param TransactionHash query string true "хэш транзакции" "29a301e4d2a05713f4eab6c8f0daa3c58eed15d1d41678068cd50fe46ca7f6a5"
+// @Param Action query string true "действие с монетами в транзакции (покупка/продажа)" "cell"
+// @Success 200 object myTonapiTransactions.TransactionInfoWithStatusOK "TransactionInfoWithStatusOK JSON"
+// @Tag transactions
+// @Route /transactions/info [get]
 func Info(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.InfoIn

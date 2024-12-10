@@ -14,15 +14,11 @@ import (
 
 
 // эндпоинт получения информации о всех монетах на аккаунте
-//	@Summary		Get jettons balances on account
-//	@Description	Get all non-null jettons balances on account and other info about jettons
-//	@Router			/account/get-jettons [get]
-//	@ID				get-jettons
-//	@Tags			account
-//	@Accept			json
-//	@Produce		json
-//	@Security		ApiKeyAuth
-//	@Success		200	{array}	myTonapiAccount.AccountJetton
+// @Title Get jettons balances on account
+// @Description Get all non-null jettons balances on account and other info about jettons
+// @Success 200 array []myTonapiAccount.AccountJetton "AccountJettons list JSON"
+// @Tag account
+// @Route /account/get-jettons [get]
 func GetJettons(ctx echo.Context) error {
 	var err error
 	var dataOut []myTonapiAccount.AccountJetton

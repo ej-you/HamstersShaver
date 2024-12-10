@@ -15,30 +15,20 @@ import (
 
 // данные о транзакции по её хэшу
 type TransactionInfo struct {
-	// хэш транзакции
 	Hash 		string `json:"hash" example:"ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4"`
-	// оставшееся кол-во TON после проведения транзакции
 	EndBalance 	string `json:"endBalance" example:"2.689"`
-	// была ли отклонена транзакция (не означает успех или неудачу транзакции)
 	Bounce		bool `json:"bounce" example:"true"`
-	// название операции транзакции
 	OpName		string `json:"opName" example:"jetton_notify"`
 }
 
-// @Desctiption Данные о транзакции по её хэшу со статусом выполнения транзакции
+// данные о транзакции по её хэшу со статусом выполнения транзакции
 type TransactionInfoWithStatusOK struct {
-	// хэш транзакции
-	Hash 		string `json:"hash" example:"ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4"`
-	// оставшееся кол-во TON после проведения транзакции
-	EndBalance 	string `json:"endBalance" example:"2.689"`
-	// была ли отклонена транзакция (не означает успех или неудачу транзакции)
-	Bounce		bool `json:"bounce" example:"true"`
-	// название операции транзакции
-	OpName		string `json:"opName" example:"jetton_notify"`
-	// действие с монетами в транзакции (покупка/продажа)
-	Action 		string `json:"action" example:"buy"`
-	// успех или неудача выполнения транзакции	
-	StatusOK 	bool `json:"statusOK" example:"true"`
+	Hash 		string `json:"hash" example:"ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4" description:"хэш транзакции"`
+	EndBalance 	string `json:"endBalance" example:"2.689" description:"оставшееся кол-во TON после проведения транзакции"`
+	Bounce		bool `json:"bounce" example:"true" description:"была ли отклонена операция (не означает успех или неудачу транзакции)"`
+	OpName		string `json:"opName" example:"jetton_notify" description:"название операции транзакции"`
+	Action 		string `json:"action" example:"buy" description:"действие с монетами в транзакции (покупка/продажа)"`
+	StatusOK 	bool `json:"statusOK" example:"true" description:"успех или неудача выполнения транзакции"`
 }
 
 

@@ -15,16 +15,14 @@ import (
 
 
 // эндпоинт получения информации о последующей транзакции продажи монет
-//	@Summary		Cell pre-request
-//	@Description	Get pre-request info about cell transaction
-//	@Router			/transactions/cell/pre-request [get]
-//	@ID				cell-pre-request
-//	@Tags			transactions
-//	@Accept			json
-//	@Produce		json
-//	@Security		ApiKeyAuth
-//	@Param			Query		query	serializers.CellPreRequestIn	true	"CellPreRequestIn struct params"
-//	@Success		200		{object}	myTongoTransactions.PreRequestCellJetton
+// @Title Cell pre-request
+// @Description Get pre-request info about cell transaction
+// @Param JettonCA query string true "мастер-адрес продаваемой монеты (jetton_master)" "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+// @Param Amount query float64 true "кол-во используемых монет на продажу в формате, удобном для человека" "200"
+// @Param Slippage query int true "процент проскальзывания" "20"
+// @Success 200 object myTongoTransactions.PreRequestCellJetton "PreRequestCellJetton JSON"
+// @Tag transactions
+// @Route /transactions/cell/pre-request [get]
 func CellPreRequest(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.CellPreRequestIn
