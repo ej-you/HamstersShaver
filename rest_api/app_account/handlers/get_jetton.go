@@ -20,16 +20,12 @@ import (
 
 
 // эндпоинт получения информации о монете аккаунта по её адресу
-//	@Summary		Get jetton balance on account
-//	@Description	Get jetton balance on account and other info about jetton by it master address
-//	@Router			/account/get-jetton [get]
-//	@ID				get-jetton
-//	@Tags			account
-//	@Accept			json
-//	@Produce		json
-//	@Security		ApiKeyAuth
-//	@Param			Query		query	serializers.GetJettonIn	true	"GetJettonIn struct params"
-//	@Success		200		{object}	myTonapiAccount.AccountJetton
+// @Title Get jetton balance on account
+// @Description Get jetton balance on account and other info about jetton by it master address
+// @Param MasterAddress query string true "мастер-адрес монеты (jetton_master)" "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+// @Success 200 object myTonapiAccount.AccountJetton "AccountJetton JSON"
+// @Tag account
+// @Route /account/get-jetton [get]
 func GetJetton(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.GetJettonIn

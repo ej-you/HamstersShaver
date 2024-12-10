@@ -13,18 +13,13 @@ import (
 )
 
 
-// @Description Описывает монету (кроме TON), имеющуюся у аккаунта
+// описывает монету (кроме TON), имеющуюся у аккаунта
 type AccountJetton struct {
-	// символ монеты
-	Symbol 			string `json:"symbol" example:"GRAM"`
-	// баланс монеты на аккаунте
-	Balance 		int64 `json:"balance" example:"326166742480"`
-	// decimals монеты
-	Decimals 		int `json:"decimals" example:"9"`
-	// округлённый баланс
-	BeautyBalance 	string `json:"beautyBalance" example:"326.167"`
-	// мастер-адрес монеты (jetton_master)
-	MasterAddress 	string `json:"masterAddress" example:"0:b8ef4f77a17e5785bd31ba4da50abd91852f2b8febee97ad6ee16d941f939198"`
+	Symbol 			string `json:"symbol" example:"GRAM" description:"символ монеты"`
+	Balance 		int64 `json:"balance" example:"326166742480" description:"баланс монеты на аккаунте"`
+	Decimals 		int `json:"decimals" example:"9" description:"decimals монеты"`
+	BeautyBalance 	string `json:"beautyBalance" example:"326.167" description:"округлённый баланс"`
+	MasterAddress 	string `json:"masterAddress" example:"0:b8ef4f77a17e5785bd31ba4da50abd91852f2b8febee97ad6ee16d941f939198" description:"мастер-адрес монеты (jetton_master)"`
 }
 
 

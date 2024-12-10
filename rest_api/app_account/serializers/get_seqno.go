@@ -1,7 +1,6 @@
 package serializers
 
-// @Description Seqno аккаунта
+// seqno аккаунта
 type GetSeqnoOut struct {
-	// порядковый номер версии кошелька аккаунта
-	Seqno string `json:"seqno" example:"105"`
+	Seqno uint32 `json:"seqno" example:"105" description:"порядковый номер версии кошелька аккаунта"`
 }

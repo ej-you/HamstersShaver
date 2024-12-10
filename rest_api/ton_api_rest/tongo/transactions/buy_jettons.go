@@ -24,20 +24,14 @@ import (
 )
 
 
-// @Desctiption Данные о последующей транзакции покупки монет (TON -> Jetton)
+// данные о последующей транзакции покупки монет (TON -> Jetton)
 type PreRequestBuyJetton struct {
-	// кол-во используемых TON для покупки в формате, удобном для человека
-	UsedTON 		string `json:"usedTon" example:"0.1"`
-	// мастер-адрес покупаемой монеты (jetton_master)
-	JettonCA 		string `json:"jettonCA" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"`
-	// название DEX биржи
-	DEX 			string `json:"dex" example:"Stonfi"`
-	// примерное кол-во монет, которые будут получены после транзакции 
-	JettonsOut 		string `json:"jettonsOut" example:"175.137"`
-	// минимальное кол-во покупаемых монет (с учётом процента проскальзывания) 
-	MinOut	 		string `json:"minOut" example:"140.11"`
-	// символ покупаемой монеты
-	JettonSymbol 	string `json:"jettonSymbol" example:"GRAM"`
+	UsedTON 		string `json:"usedTon" example:"0.1" description:"кол-во используемых TON для покупки в формате, удобном для человека"`
+	JettonCA 		string `json:"jettonCA" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"мастер-адрес покупаемой монеты (jetton_master)"`
+	DEX 			string `json:"dex" example:"Stonfi" description:"название DEX биржи"`
+	JettonsOut 		string `json:"jettonsOut" example:"175.137" description:"примерное кол-во монет, которые будут получены после транзакции"`
+	MinOut	 		string `json:"minOut" example:"140.11" description:"минимальное кол-во покупаемых монет (с учётом процента проскальзывания) "`
+	JettonSymbol 	string `json:"jettonSymbol" example:"GRAM" description:"символ покупаемой монеты"`
 }
 
 

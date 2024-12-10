@@ -15,16 +15,14 @@ import (
 
 
 // эндпоинт получения информации о последующей транзакции покупки монет
-//	@Summary		Buy pre-request
-//	@Description	Get pre-request info about buy transaction
-//	@Router			/transactions/buy/pre-request [get]
-//	@ID				buy-pre-request
-//	@Tags			transactions
-//	@Accept			json
-//	@Produce		json
-//	@Security		ApiKeyAuth
-//	@Param			Query		query	serializers.BuyPreRequestIn	true	"BuyPreRequestIn struct params"
-//	@Success		200		{object}	myTongoTransactions.PreRequestBuyJetton
+// @Title Buy pre-request
+// @Description Get pre-request info about buy transaction
+// @Param JettonCA query string true "мастер-адрес покупаемой монеты (jetton_master)" "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
+// @Param Amount query float64 true "кол-во используемых TON для покупки в формате, удобном для человека" "0.1"
+// @Param Slippage query int true "процент проскальзывания" "20"
+// @Success 200 object myTongoTransactions.PreRequestBuyJetton "PreRequestBuyJetton JSON"
+// @Tag transactions
+// @Route /transactions/buy/pre-request [get]
 func BuyPreRequest(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.BuyPreRequestIn
