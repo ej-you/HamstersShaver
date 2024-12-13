@@ -9,10 +9,10 @@ migrate:
 	go run ./main.go migrate
 
 compile:
-	go build -o ./HamstersShaverBot ./main.go
+	go build -o ./tg_bot ./main.go
 
 prod:
 	@echo "Running migrations..."
-	/root/HamstersShaverBot
+	/root/tg_bot migrate
 	@echo "Running main app..."
-	/root/HamstersShaverBot >> $(info_log) 2>> $(error_log)
+	/root/tg_bot >> $(info_log) 2>> $(error_log)
