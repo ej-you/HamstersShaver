@@ -29,9 +29,7 @@ var RestApiHost string = os.Getenv("REST_API_HOST")
 var RestApiKey string = os.Getenv("REST_API_KEY")
 
 // настройки redis
-var redisHost string = os.Getenv("REDIS_HOST")
-var redisPort string = os.Getenv("REDIS_PORT")
-var RedisAddr string = redisHost + ":" + redisPort
+var RedisAddr string = os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT")
 var RedisPassword string = os.Getenv("REDIS_PASSWORD")
 
 // логеры

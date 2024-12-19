@@ -142,6 +142,8 @@ func TestUserStateMachinePrepareTrans(t *testing.T) {
 	}
 	logExecTime(t, &startTime)
 
+	// если закомментировать этот тест, то следующий тест будет неуспешным, потому
+	// что информация по новой транзакции будет собрана не полностью
 	t.Logf("Test set JettonCA for stateMachine")
 	{
 		jettonCA := "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"

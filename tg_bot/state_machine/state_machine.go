@@ -8,12 +8,13 @@ import (
 )
 
 
+// машина состояний юзера
 type UserStateMachine struct {
 	userTelegramID string
 }
 
 // установка тг ID юзера для экземпляра машины состояний
-func (this *UserStateMachine) SetUserTelegramID(userTelegramID string) {
+func (this *UserStateMachine) setUserTelegramID(userTelegramID string) {
 	if this.userTelegramID == "" {
 		this.userTelegramID = userTelegramID
 	}
@@ -73,7 +74,7 @@ func (this UserStateMachine) SetAction(action string) error {
 	return this.setCacheValue("action", action)
 }
 
-// установка DEX-биржи (Stonfi/Dedust)
+// установка DEX-биржи (stonfi/dedust)
 func (this UserStateMachine) SetDEX(dex string) error {
 	return this.setCacheValue("dex", dex)
 }
