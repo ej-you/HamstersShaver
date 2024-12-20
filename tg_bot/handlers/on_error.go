@@ -8,7 +8,7 @@ import (
 )
 
 
-// обработчик непредвиденной ошибки
+// обработчик непредвиденных ошибок бота
 func UnknownErrorHandler(err error, context telebot.Context) {
 	settings.ErrorLog.Printf("BOT CRITICAL ERROR: %v", err)
 	context.Send(

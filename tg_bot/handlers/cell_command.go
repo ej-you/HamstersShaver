@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	// "fmt"
+
 	telebot "gopkg.in/telebot.v3"
 
+	// "github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
 )
@@ -15,18 +18,8 @@ func CellHandlerCommand(context telebot.Context) error {
 
 	// получение машины состоянию текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
-
-	// игнорирование сообщения при несоответствии статуса
-	accepted, err := cellStatusIsAccepted(userStateMachine)
-	if err != nil {
-		return err
-	}
-	if !accepted {
-		return nil
-	}
-
-	// установка нового состояния
-	if err = userStateMachine.SetStatus("cell"); err != nil {
+	// обновление кэша
+	if err = cellUpdateCache(userStateMachine); err != nil {
 		return err
 	}
 
@@ -34,37 +27,15 @@ func CellHandlerCommand(context telebot.Context) error {
 
 Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
 
-	return context.Send(msgText)
-}
+	// // создание клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
+	// var inlineKeyboardWalletJettons = telebot.ReplyMarkup{}
+	// err = keyboards.SetWalletJettonsBtnRows(&inlineKeyboardWalletJettons)
+	// if err != nil {
+	// 	return err
+	// }
+	// fmt.Println("inlineKeyboardWalletJettons:", inlineKeyboardWalletJettons)
 
-
-// возвращает true, если при текущем статусе можно использовать данную функцию
-func cellStatusIsAccepted(userStateMachine stateMachine.UserStateMachine) (bool, error) {
-	equals, err := userStateMachine.StatusEquals("trade")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	equals, err = userStateMachine.StatusEquals("home")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	equals, err = userStateMachine.StatusEquals("start")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	return false, nil
+	return context.Send(msgText) //, &inlineKeyboardWalletJettons)
 }
 
 
@@ -75,15 +46,29 @@ func CellHandlerCallback(context telebot.Context) error {
 
 	// получение машины состоянию текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
-
-	// игнорирование сообщения при несоответствии статуса
-	equals, err := userStateMachine.StatusEquals("trade")
-	if err != nil {
+	// обновление кэша
+	if err = cellUpdateCache(userStateMachine); err != nil {
 		return err
 	}
-	if !equals {
-		return nil
-	}
+
+
+	msgText := `Отлично! Выбрано действие продажи монет 📉
+
+Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
+
+	// // создание клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
+	// var inlineKeyboardWalletJettons = telebot.ReplyMarkup{}
+	// err = keyboards.SetWalletJettonsBtnRows(&inlineKeyboardWalletJettons)
+	// if err != nil {
+	// 	return err
+	// }
+	// fmt.Println("inlineKeyboardWalletJettons:", inlineKeyboardWalletJettons)
+	
+	return context.Send(msgText)
+}
+
+func cellUpdateCache(userStateMachine stateMachine.UserStateMachine) error {
+	var err error
 
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("cell"); err != nil {
@@ -93,10 +78,5 @@ func CellHandlerCallback(context telebot.Context) error {
 	if err = userStateMachine.SetAction("cell"); err != nil {
 		return err
 	}
-
-	msgText := `Отлично! Выбрано действие продажи монет 📉
-
-Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
-
-	return context.Send(msgText)
+	return nil
 }

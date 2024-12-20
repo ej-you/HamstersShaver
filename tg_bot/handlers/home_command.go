@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	telebot "gopkg.in/telebot.v3"
 
@@ -52,7 +51,7 @@ type tonInfo struct {
 // получение баланса TON у аккаунта и актуальный курс TON в долларах
 func getTONInfo() (tonInfo, error) {
 	var fullTonInfo tonInfo
-	client := &http.Client{Timeout: 5*time.Second}
+	client := &http.Client{}
 
 	// обращение к API для получения баланса TON
 	req, err := http.NewRequest("GET", settings.RestApiHost+"/api/account/get-ton", nil)
@@ -65,10 +64,10 @@ func getTONInfo() (tonInfo, error) {
 	req.URL.RawQuery = queryParams.Encode()
 	// отправка запроса
 	resp, err := client.Do(req)
-	defer resp.Body.Close()
 	if err != nil {
 		return fullTonInfo, fmt.Errorf("failed to get TON balance: %v", err)
 	}
+	defer resp.Body.Close()
 	// декодирование ответа в структуру (берём только округлённый баланс в виде строки)
 	if err := json.NewDecoder(resp.Body).Decode(&fullTonInfo); err != nil {
 		return fullTonInfo, fmt.Errorf("failed to decode answer from get TON balance response: %v", err)
