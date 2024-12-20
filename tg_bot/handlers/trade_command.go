@@ -3,6 +3,7 @@ package handlers
 import (
 	telebot "gopkg.in/telebot.v3"
 
+	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
 )
@@ -25,5 +26,5 @@ func TradeHandler(context telebot.Context) error {
 
 Выберите действие 👇`
 
-	return context.Send(msgText)
+	return context.Send(msgText, keyboards.InlineKeyboardTrade)
 }

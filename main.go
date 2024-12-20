@@ -46,6 +46,13 @@ func main() {
 
 	commandsHandlers.Handle("/trade", handlers.TradeHandler)
 	commandsHandlers.Handle(&keyboards.BtnToTrade, handlers.TradeHandler)
+	
+	// ВРЕМЕННО
+	commandsHandlers.Handle("/buy", handlers.InDevelopmentHandler)
+	commandsHandlers.Handle(&keyboards.BtnToBuy, handlers.InDevelopmentHandler)
+
+	commandsHandlers.Handle("/cell", handlers.CellHandlerCommand)
+	commandsHandlers.Handle(&keyboards.BtnToCell, handlers.CellHandlerCallback)
 
 	// в разработке
 	commandsHandlers.Handle("/auto", handlers.InDevelopmentHandler)

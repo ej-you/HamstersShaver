@@ -23,4 +23,12 @@ func InitKeyboards() {
 		// кнопка для перехода в управление сохранёнными токенами (аналог - команда /tokens)
 		InlineKeyboardMainMenu.Row(BtnToTokens),
 	)
+
+	// клавиатура для команды /trade
+	InlineKeyboardTrade.Inline(
+		// кнопка для выбора варианта покупки монет (аналог - команда /buy)
+		InlineKeyboardTrade.Row(BtnToBuy),
+		// кнопка для выбора варианта продажи монет (аналог - команда /cell)
+		InlineKeyboardTrade.Row(BtnToCell),
+	)
 }

@@ -39,7 +39,7 @@ func HomeHandler(context telebot.Context) error {
 		return context.Send(msgText, keyboards.InlineKeyboardToHome)
 	}
 
-	return context.Send(getMessageText(fullTonInfo), keyboards.InlineKeyboardMainMenu)
+	return context.Send(homeGetMessageText(fullTonInfo), keyboards.InlineKeyboardMainMenu)
 }
 
 
@@ -98,8 +98,8 @@ func getTONInfo() (tonInfo, error) {
 	return fullTonInfo, nil
 }
 
-// вормирование текста ответа
-func getMessageText(fullTonInfo tonInfo) string {
+// формирование текста ответа
+func homeGetMessageText(fullTonInfo tonInfo) string {
 	return fmt.Sprintf(`Главное меню
 
 💰 Текущий баланс TON: %s 
