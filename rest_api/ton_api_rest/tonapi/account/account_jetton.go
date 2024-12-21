@@ -8,6 +8,8 @@ import (
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
+	myToutilsgoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonutils_go/services"
+
 	"github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -19,7 +21,7 @@ type AccountJetton struct {
 	Balance 		int64 `json:"balance" example:"326166742480" description:"баланс монеты на аккаунте"`
 	Decimals 		int `json:"decimals" example:"9" description:"decimals монеты"`
 	BeautyBalance 	string `json:"beautyBalance" example:"326.167" description:"округлённый баланс"`
-	MasterAddress 	string `json:"masterAddress" example:"0:b8ef4f77a17e5785bd31ba4da50abd91852f2b8febee97ad6ee16d941f939198" description:"мастер-адрес монеты (jetton_master)"`
+	MasterAddress 	string `json:"masterAddress" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"мастер-адрес монеты (jetton_master)"`
 }
 
 
@@ -52,6 +54,12 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 	// преобразование баланса в строку с точкой
 	beautyJettonBalance := services.JettonBalanceFormat(intJettonBalance, jettonDecimals)
 
+	// конвертация адреса монеты из HEX в base64
+	jettonAddrBase64, err := myToutilsgoServices.ConvertAddrToBase64(rawJetton.Jetton.Address)
+	if err != nil {
+		return accountJettonInfo, err
+	}
+
 	// создание структуры для новой монеты и добавление её в список к остальным
 	accountJettonInfo = AccountJetton{
 		Symbol: rawJetton.Jetton.Symbol,
@@ -59,7 +67,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 		Decimals: jettonDecimals,
 		BeautyBalance: beautyJettonBalance,
 		// мастер-адрес монеты
-		MasterAddress: rawJetton.Jetton.Address,
+		MasterAddress: jettonAddrBase64,
 	}
 
 	return accountJettonInfo, nil
