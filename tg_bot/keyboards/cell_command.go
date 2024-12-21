@@ -11,8 +11,10 @@ import (
 )
 
 
+var InlineKeyboardWalletJettons = &telebot.ReplyMarkup{}
+
 // получение рядов кнопок для клавиатуры с монетами и их количеством на кошельке аккаунта
-func SetWalletJettonsBtnRows(replyMarkup *telebot.ReplyMarkup) error {
+func SetWalletJettonsBtnRows() error {
 	var inlineRows []telebot.Row
 
 	// получение нужной информации о всех монетах на кошельке аккаунта
@@ -25,13 +27,12 @@ func SetWalletJettonsBtnRows(replyMarkup *telebot.ReplyMarkup) error {
 	var button telebot.Btn
 	for _, jetton := range allJettons {
 		// создание ряда с кнопкой и добавление его в срез рядов
-		button = replyMarkup.Data(fmt.Sprintf("%s — %s", jetton.Symbol, jetton.BeautyBalance), jetton.MasterAddress)
-		inlineRows = append(inlineRows, replyMarkup.Row(button))
+		button = InlineKeyboardWalletJettons.Data(fmt.Sprintf("%s — %s", jetton.Symbol, jetton.BeautyBalance), jetton.MasterAddress)
+		inlineRows = append(inlineRows, InlineKeyboardWalletJettons.Row(button))
 	}
 
 	// добавление рядов кнопок в клавиатуру
-	replyMarkup.Inline(inlineRows...)
-
+	InlineKeyboardWalletJettons.Inline(inlineRows...)
 	return nil
 }
 

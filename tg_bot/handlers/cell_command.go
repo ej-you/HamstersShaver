@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	// "fmt"
-
 	telebot "gopkg.in/telebot.v3"
 
-	// "github.com/ej-you/HamstersShaver/tg_bot/keyboards"
+	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
 )
@@ -27,15 +25,12 @@ func CellHandlerCommand(context telebot.Context) error {
 
 Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
 
-	// // создание клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
-	// var inlineKeyboardWalletJettons = telebot.ReplyMarkup{}
-	// err = keyboards.SetWalletJettonsBtnRows(&inlineKeyboardWalletJettons)
-	// if err != nil {
-	// 	return err
-	// }
-	// fmt.Println("inlineKeyboardWalletJettons:", inlineKeyboardWalletJettons)
-
-	return context.Send(msgText) //, &inlineKeyboardWalletJettons)
+	// обновление кнопок клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
+	err = keyboards.SetWalletJettonsBtnRows()
+	if err != nil {
+		return err
+	}
+	return context.Send(msgText, keyboards.InlineKeyboardWalletJettons)
 }
 
 
@@ -51,20 +46,16 @@ func CellHandlerCallback(context telebot.Context) error {
 		return err
 	}
 
-
 	msgText := `Отлично! Выбрано действие продажи монет 📉
 
 Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
 
-	// // создание клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
-	// var inlineKeyboardWalletJettons = telebot.ReplyMarkup{}
-	// err = keyboards.SetWalletJettonsBtnRows(&inlineKeyboardWalletJettons)
-	// if err != nil {
-	// 	return err
-	// }
-	// fmt.Println("inlineKeyboardWalletJettons:", inlineKeyboardWalletJettons)
-	
-	return context.Send(msgText)
+	// обновление кнопок клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
+	err = keyboards.SetWalletJettonsBtnRows()
+	if err != nil {
+		return err
+	}
+	return context.Send(msgText, keyboards.InlineKeyboardWalletJettons)
 }
 
 func cellUpdateCache(userStateMachine stateMachine.UserStateMachine) error {
