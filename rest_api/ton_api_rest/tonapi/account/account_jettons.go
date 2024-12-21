@@ -8,6 +8,8 @@ import (
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
+	myToutilsgoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonutils_go/services"
+
 	"github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -23,6 +25,7 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 	var intJettonBalance int64
 	var jettonDecimals int
 	var beautyLoopJettonBalance string
+	var jettonAddrBase64 string
 	var loopErr error
 	// переменная для сохранения информации о монетах в виде списка структур AccountJetton
 	accountJettonsList := []AccountJetton{}
@@ -59,6 +62,13 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 		// преобразование баланса в строку с точкой
 		beautyLoopJettonBalance = services.JettonBalanceFormat(intJettonBalance, jettonDecimals)
 
+		// конвертация адреса монеты из HEX в base64
+		jettonAddrBase64, loopErr = myToutilsgoServices.ConvertAddrToBase64(rawJetton.Jetton.Address)
+		if err != nil {
+			settings.ErrorLog.Printf("Failed to convert raw jetton addr %q to base64: %v", rawJetton.Jetton.Address, loopErr.Error())
+			continue
+		}
+
 		// создание структуры для новой монеты и добавление её в список к остальным
 		loopAccountJetton = AccountJetton{
 			Symbol: loopJettonSymbol,
@@ -66,7 +76,7 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 			Decimals: jettonDecimals,
 			BeautyBalance: beautyLoopJettonBalance,
 			// мастер-адрес монеты
-			MasterAddress: rawJetton.Jetton.Address,
+			MasterAddress: jettonAddrBase64,
 		}
 		accountJettonsList = append(accountJettonsList, loopAccountJetton)
 	}
