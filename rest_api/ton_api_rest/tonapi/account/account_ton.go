@@ -3,10 +3,10 @@ package account
 import (
 	"fmt"
 	"context"
-	"errors"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -30,16 +30,24 @@ func GetAccount(ctx context.Context, tonapiClient *tonapi.Client) (*tonapi.Accou
 	// получение аккаунта по его адресу
 	account, err := tonapiClient.GetAccount(ctx, accountParams)
 	if err != nil {
-		getAccountError := errors.New(fmt.Sprintf("Failed to get account: %s", err.Error()))
-		settings.ErrorLog.Println(getAccountError.Error())
-		return account, getAccountError
+		apiErr := coreErrors.New(
+			fmt.Errorf("get account using tonapi: %w", err),
+			"failed to get account",
+			"ton_api",
+			500,
+		)
+		return account, apiErr
 	}
 
 	// проверка того, что аккаунт активен
 	if account.Status != "active" {
-		accountIsNotActiveError := errors.New("Failed to interact with account: account is not active")
-		settings.ErrorLog.Println(accountIsNotActiveError.Error())
-		return account, accountIsNotActiveError
+		apiErr := coreErrors.New(
+			fmt.Errorf("get account using tonapi: interact with account: account is not active"),
+			"account is not active",
+			"ton_api",
+			500,
+		)
+		return account, apiErr
 	}
 
 	return account, nil
@@ -54,7 +62,7 @@ func GetBalanceTON(ctx context.Context, tonapiClient *tonapi.Client) (TonJetton,
 	// получение аккаунта
 	account, err := GetAccount(ctx, tonapiClient)
 	if err != nil {
-		return tonJetton, err
+		return tonJetton, fmt.Errorf("get account ton balance: %w", err)
 	}
 
 	// преобразование баланса в строку с точкой

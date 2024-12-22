@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -10,7 +11,9 @@ import (
 	myTonapiTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/transactions"
 	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 	
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -43,7 +46,8 @@ func Info(ctx echo.Context) error {
 	// формирование структуры для ответа с таймаутом в 3 секунды
 	dataOut, err = myTonapiTransactions.GetTransactionInfoWithStatusOKByHash(tonApiContext, dataIn.TransactionHash, dataIn.Action, 3*time.Second)
 	if err != nil {
-		return echo.NewHTTPError(500, map[string]string{"transactions": err.Error()})
+		settings.ErrorLog.Println(fmt.Errorf("get transaction info: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

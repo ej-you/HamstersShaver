@@ -3,13 +3,12 @@ package jettons
 import (
 	"fmt"
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/ej-you/HamstersShaver/rest_api/settings"
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 )
 
 
@@ -47,43 +46,66 @@ type AssetJettonParams struct {
 // получение инфы о монете по её адресу
 func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
 	var jettonInfoParse AssetJettonParams
+	var apiErr coreErrors.APIError
 
 	// запрос к API
 	resp, err := http.Get(apiUrl + jettonAddr)
 	if err != nil {
-		getJettonDataError := errors.New(fmt.Sprintf("Failed to get jetton data from Stonfi API: %s", err.Error()))
-		settings.ErrorLog.Println(getJettonDataError.Error())
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: getJettonDataError}
+		apiErr = coreErrors.New(
+			fmt.Errorf("get jetton data from Stonfi API: %w", err),
+			"failed to get jetton data",
+			"stonfi_api",
+			500,
+		)
+		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
 	}
 
 	defer resp.Body.Close()
 	// чтение байт тела ответа от API
 	rawJsonBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		readRawDataError := errors.New(fmt.Sprintf("Failed to read data from response body: %s", err.Error()))
-		settings.ErrorLog.Println(readRawDataError.Error())
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: readRawDataError}
+		apiErr = coreErrors.New(
+			fmt.Errorf("get jetton data from Stonfi API: read data from response body: %w", err),
+			"failed to get jetton data",
+			"stonfi_api",
+			500,
+		)
+		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
 	}
 
 	// десериализация JSON-ответа в структуру jsonPairs
 	err = json.Unmarshal(rawJsonBytes, &jettonInfoParse)
 	if err != nil {
-		parseJsonError := errors.New("Jetton was not found")
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: parseJsonError}
+		apiErr = coreErrors.New(
+			fmt.Errorf("get jetton data from Stonfi API: jetton was not found: unmarshal json: %w", err),
+			"jetton was not found",
+			"stonfi_api",
+			400,
+		)
+		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
 	}
 
 	// если не было найдено информации о жетоне
 	if (jettonInfoParse == AssetJettonParams{}) {
-		infoNofFoundError := errors.New("Jetton was not found")
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: infoNofFoundError}
+		apiErr = coreErrors.New(
+			fmt.Errorf("get jetton data from Stonfi API: jetton was not found"),
+			"jetton was not found",
+			"stonfi_api",
+			400,
+		)
+		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
 	}
 
 	// перевод цены монеты из строки во float64
 	parsePriceToFloat, err := strconv.ParseFloat(jettonInfoParse.Asset.StringPriceUSD, 64)
 	if err != nil {
-		parseFloatError := errors.New(fmt.Sprintf("Failed to parse float from StringPriceUSD: %s", err.Error()))
-		settings.ErrorLog.Println(parseFloatError.Error())
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: parseFloatError}
+		apiErr = coreErrors.New(
+			fmt.Errorf("get jetton data from Stonfi API: parse float from StringPriceUSD: %w", err),
+			"failed to get jetton data",
+			"rest_api",
+			500,
+		)
+		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
 	}
 
 	// формирование выходной структуры с данными
@@ -118,8 +140,12 @@ func GetJettonInfoByAddressWithTimeout(jettonAddr string, timeout time.Duration)
 			return result.JettonInfo, result.Error
 		// если прошло время timeout, а данные не получены, то возвращаем ошибку таймаута
 		case <- time.After(timeout):
-			timeoutError := errors.New("Failed to get jetton data from Stonfi API: timeout error")
-			settings.ErrorLog.Println(timeoutError.Error())
-			return JettonParams{}, timeoutError
+			timeoutAPIError := coreErrors.New(
+				fmt.Errorf("get jetton data from Stonfi API: timeout error"),
+				"timeout error",
+				"stonfi_api",
+				500,
+			)
+			return JettonParams{}, timeoutAPIError
 	}
 }

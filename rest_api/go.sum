@@ -51,6 +51,8 @@ github.com/oasisprotocol/curve25519-voi v0.0.0-20220328075252-7dd334e3daae h1:7s
 github.com/oasisprotocol/curve25519-voi v0.0.0-20220328075252-7dd334e3daae/go.mod h1:hVoHR2EVESiICEMbg137etN/Lx+lSrHPTD39Z/uE+2s=
 github.com/ogen-go/ogen v0.77.0 h1:yREPDg3cDuXkDyp7FPXdPEUz+azPZFUGKmYer8fJpmM=
 github.com/ogen-go/ogen v0.77.0/go.mod h1:/bl+MubIppovr7F1fKAaDxzFF+oF2EiMtyVylyqDtQ8=
+github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/r3labs/sse/v2 v2.10.0 h1:hFEkLLFY4LDifoHdiCN/LlGBAdVJYsANaLqNYa1l/v0=

@@ -2,7 +2,6 @@ package transactions
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -19,6 +18,7 @@ import (
 
 	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
 	
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -42,12 +42,12 @@ func GetPreRequestBuyJetton(jettonCA string, tonAmount float64, slippage int, ti
 	// получение данных о покупаемой монете
 	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, timeout)
 	if err != nil {
-		return preRequestInfo, err
+		return preRequestInfo, fmt.Errorf("get buy pre request: %w", err)
 	}
 	// получение данных о TON
 	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, timeout)
 	if err != nil {
-		return preRequestInfo, err
+		return preRequestInfo, fmt.Errorf("get buy pre request: %w", err)
 	}
 	// цена монеты в TON
 	jettonPriceInTON := jettonInfo.PriceUSD / tonInfo.PriceUSD
@@ -74,23 +74,23 @@ func BuyJetton(ctx context.Context, timeout time.Duration, jettonCA string, amou
 	// создание API клиента TON для tongo с таймаутом timeout
 	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", timeout)
 	if err != nil {
-		return err
+		return fmt.Errorf("send buy transaction: %w", err)
 	}
 
 	// получение данных о кошельке через tongo
 	realWallet, err := myTongoWallet.GetWallet(tongoClient)
 	if err != nil {
-		return err
+		return fmt.Errorf("send buy transaction: %w", err)
 	}
 	// получение данных о покупаемой монете с таймаутом timeout
 	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, timeout)
 	if err != nil {
-		return err
+		return fmt.Errorf("send buy transaction: %w", err)
 	}
 	// получение данных о TON с таймаутом timeout
 	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, timeout)
 	if err != nil {
-		return err
+		return fmt.Errorf("send buy transaction: %w", err)
 	}
 	// цена монеты в TON
 	jettonPriceInTON := jettonInfo.PriceUSD / tonInfo.PriceUSD
@@ -106,8 +106,12 @@ func BuyJetton(ctx context.Context, timeout time.Duration, jettonCA string, amou
 	jettonToBuy := tongoJetton.New(jettonMaster1, tongoClient)
 	routersJettonWallet, err := jettonToBuy.GetJettonWallet(ctx, jettonRouter)
 	if err != nil {
-		getJettonWalletError := errors.New(fmt.Sprintf("Failed to get jetton wallet: %s", err.Error()))
-		return getJettonWalletError
+		return coreErrors.New(
+			fmt.Errorf("send buy transaction: get jetton wallet using jetton master: %w", err),
+			"failed to get jetton wallet",
+			"ton_api",
+			500,
+		)
 	}
 
 	// кол-во TON для покупки монет (в *big.Int)
@@ -159,8 +163,12 @@ func BuyJetton(ctx context.Context, timeout time.Duration, jettonCA string, amou
 
 	// отправка сообщения в блокчейн
 	if err := realWallet.Send(ctx, jettonTransfer); err != nil {
-		sendMEssageError := errors.New(fmt.Sprintf("Failed to send transfer message: %s", err.Error()))
-		return sendMEssageError
+		return coreErrors.New(
+			fmt.Errorf("send buy transaction: send transfer message: %w", err),
+			"failed to send transfer message",
+			"ton_api",
+			500,
+		)
 	}
 	return nil
 }

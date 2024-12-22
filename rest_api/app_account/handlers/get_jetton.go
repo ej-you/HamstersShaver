@@ -1,16 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"time"
 	"context"
 	"net/http"
-	"strings"
 
 	echo "github.com/labstack/echo/v4"
 
 	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
 	
-	AccountErrors "github.com/ej-you/HamstersShaver/rest_api/app_account/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
@@ -43,23 +42,19 @@ func GetJetton(ctx echo.Context) error {
 	// создание API клиента TON для tonapi-go с таймаутом в 3 секунды
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
 	if err != nil {
-		return coreErrors.GetTonapiClientError
+		settings.ErrorLog.Println(fmt.Errorf("get account jetton using tonapi: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
+
 	// создание контекста с таймаутом в 5 секунд
 	tonApiContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// формирование структуры для ответа
+	// получение информации о монете аккаунта
 	dataOut, err = myTonapiAccount.GetAccountJetton(tonApiContext, tonapiClient, dataIn.MasterAddress)
 	if err != nil {
-		// если такой монеты нет у данного аккаунта
-		if strings.HasPrefix(err.Error(), "Failed to get account jetton info: decode response: error: code 404: {Error:account") {
-			return AccountErrors.AccountHasNotJettonError
-		// если был дан неверный адрес
-		} else if strings.HasPrefix(err.Error(), "Failed to get account jetton info: decode response: error: code 4") {
-			return AccountErrors.InvalidJettonAddressError
-		}
-		return echo.NewHTTPError(500, map[string]string{"account": err.Error()})
+		settings.ErrorLog.Println(err)
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

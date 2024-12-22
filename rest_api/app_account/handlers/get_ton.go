@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"time"
 	"context"
+	"fmt"
 	"net/http"
+	"time"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -26,17 +27,19 @@ func GetTon(ctx echo.Context) error {
 	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
 	if err != nil {
-		return coreErrors.GetTonapiClientError
+		settings.ErrorLog.Println(fmt.Errorf("get account ton balance using tonapi: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	// создание контекста с таймаутом в 5 секунд
 	tonApiContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// формирование структуры для ответа
+	// получение баланса TON аккаунта
 	dataOut, err = myTonapiAccount.GetBalanceTON(tonApiContext, tonapiClient)
 	if err != nil {
-		return echo.NewHTTPError(500, map[string]string{"account": err.Error()})
+		settings.ErrorLog.Println(fmt.Errorf("get account ton balance using tonapi: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

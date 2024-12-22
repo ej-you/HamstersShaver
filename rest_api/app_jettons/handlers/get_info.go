@@ -7,9 +7,11 @@ import (
 	echo "github.com/labstack/echo/v4"
 
 	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
-	JettonsErrors "github.com/ej-you/HamstersShaver/rest_api/app_jettons/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/app_jettons/serializers"
+
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -34,13 +36,11 @@ func GetInfo(ctx echo.Context) error {
 		return err
 	}
 
-	// формирование структуры для ответа с таймаутом в 5 секунд
+	// получение информации о монете
 	dataOut, err = myStonfiJettons.GetJettonInfoByAddressWithTimeout(dataIn.MasterAddress, 5*time.Second)
 	if err != nil {
-		if err.Error() == "Jetton was not found" {
-			return JettonsErrors.InvalidJettonAddressError
-		}
-		return echo.NewHTTPError(500, map[string]string{"jettons": err.Error()})
+		settings.ErrorLog.Println(err)
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

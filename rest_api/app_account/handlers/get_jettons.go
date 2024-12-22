@@ -1,13 +1,15 @@
 package handlers
 
 import (
-	"time"
 	"context"
+	"fmt"
 	"net/http"
+	"time"
 
 	echo "github.com/labstack/echo/v4"
 
 	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
+
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -26,17 +28,19 @@ func GetJettons(ctx echo.Context) error {
 	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
 	if err != nil {
-		return coreErrors.GetTonapiClientError
+		settings.ErrorLog.Println(fmt.Errorf("get account jettons using tonapi: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	// создание контекста с таймаутом в 5 секунд
 	tonApiContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// формирование структуры для ответа
+	// получение монет аккаунта
 	dataOut, err = myTonapiAccount.GetBalanceJettons(tonApiContext, tonapiClient)
 	if err != nil {
-		return echo.NewHTTPError(500, map[string]string{"account": err.Error()})
+		settings.ErrorLog.Println(err)
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

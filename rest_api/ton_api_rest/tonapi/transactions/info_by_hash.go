@@ -2,12 +2,14 @@ package transactions
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"time"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
 	"github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
+
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -39,14 +41,20 @@ func GetTransactionInfoByHash(ctx context.Context, hash string, timeout time.Dur
 	// получение клиента для tonapi-go
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", timeout)
 	if err != nil {
-		return transInfo, err
+		return transInfo, fmt.Errorf("get transaction info using tonapi: %w", err)
 	}
 
 	params := tonapi.GetBlockchainTransactionParams{TransactionID: hash}
 	// получение всей информации о транзакции
 	rawTransInfo, err := tonapiClient.GetBlockchainTransaction(ctx, params)
 	if err != nil {
-		return transInfo, err
+		apiErr := coreErrors.New(
+			fmt.Errorf("get transaction info using tonapi: %w", err),
+			"failed to get transaction info",
+			"ton_api",
+			500,
+		)
+		return transInfo, apiErr
 	}
 
 	// выбор нужной информации
@@ -67,13 +75,19 @@ func GetTransactionInfoWithStatusOKByHash(ctx context.Context, hash string, acti
 	var transInfoWithStatusOK TransactionInfoWithStatusOK
 	
 	if action != "buy" && action != "cell" {
-		return transInfoWithStatusOK, errors.New("Invalid action parameter was given. Only \"buy\" and \"cell\" are accepted")
+		apiErr := coreErrors.New(
+			fmt.Errorf("get transaction info using tonapi: invalid action parameter was given: %s", action),
+			"invalid action parameter",
+			"rest_api",
+			400,
+		)
+		return transInfoWithStatusOK, apiErr
 	}
 
 	// получение структуры TransactionInfo
 	transInfo, err := GetTransactionInfoByHash(ctx, hash, timeout)
 	if err != nil {
-		return transInfoWithStatusOK, err
+		return transInfoWithStatusOK, fmt.Errorf("get transaction info with status using tonapi: %w", err)
 	}
 
 	// была подмечена закономерность, что при успешной транзакции продажи монет её OpName == "jetton_notify" и отскок Bounce == true

@@ -2,11 +2,11 @@ package wallet
 
 import (
 	"fmt"
-	"errors"
 
 	tongo "github.com/tonkeeper/tongo/liteapi"
 	tongoWallet "github.com/tonkeeper/tongo/wallet"
 
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
@@ -20,9 +20,13 @@ func GetWallet(tongoClient *tongo.Client) (tongoWallet.Wallet, error) {
 	realWallet, err = tongoWallet.DefaultWalletFromSeed(settings.JsonWallet.SeedPhrase, tongoClient)
 	
 	if err != nil {
-		getWalletError := errors.New(fmt.Sprintf("(tongo) Failed to get wallet: %s", err.Error()))
-		settings.ErrorLog.Println(getWalletError.Error())
-		return realWallet, getWalletError
+		apiErr := coreErrors.New(
+			fmt.Errorf("get wallet using tongo: %w", err),
+			"get wallet",
+			"ton_api",
+			500,
+		)
+		return realWallet, apiErr
 	}
 
 	return realWallet, nil
