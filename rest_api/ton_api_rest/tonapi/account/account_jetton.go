@@ -2,14 +2,15 @@ package account
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
 	myToutilsgoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonutils_go/services"
 
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -29,6 +30,7 @@ type AccountJetton struct {
 func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA string) (AccountJetton, error) {
 	var accountJettonInfo AccountJetton
 	var rawJetton *tonapi.JettonBalance
+	var apiErr coreErrors.APIError
 
 	// конфиг API для получения инфы о монете аккаунта
 	accountJettonParams := tonapi.GetAccountJettonBalanceParams{
@@ -40,16 +42,46 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 	// получение инфы о монете аккаунта
 	rawJetton, err := tonapiClient.GetAccountJettonBalance(ctx, accountJettonParams)
 	if err != nil {
-		getAccountJettonError := errors.New(fmt.Sprintf("Failed to get account jetton info: %s", err.Error()))
-		return accountJettonInfo, getAccountJettonError
+		// если такой монеты нет у данного аккаунта
+		if strings.HasPrefix(err.Error(), "decode response: error: code 404: {Error:account") {
+			apiErr = coreErrors.New(
+				fmt.Errorf("get account jetton using tonapi: account has not given jetton: %w", err),
+				"account has not given jetton",
+				"ton_api",
+				404,
+			)
+			return accountJettonInfo, apiErr
+		// если был дан неверный адрес
+		} else if strings.HasPrefix(err.Error(), "decode response: error: code 4") {
+			apiErr = coreErrors.New(
+				fmt.Errorf("get account jetton using tonapi: invalid jetton address was given: %w", err),
+				"invalid jetton address was given",
+				"ton_api",
+				400,
+			)
+			return accountJettonInfo, apiErr
+		}
+		// неизвестная ошибка
+		apiErr = coreErrors.New(
+			fmt.Errorf("get account jetton using tonapi: %w", err),
+			"failed to get account jetton",
+			"ton_api",
+			500,
+		)
+		return accountJettonInfo, apiErr
 	}
 	
 	jettonDecimals := rawJetton.Jetton.Decimals
 	// перевод баланса монеты из строкового целого представления в int64
 	intJettonBalance, err := strconv.ParseInt(rawJetton.Balance, 10, 64)
 	if err != nil {
-		parseIntError := errors.New(fmt.Sprintf("Failed to parse int64 from string jetton balance: %s", err.Error()))
-		return accountJettonInfo, parseIntError
+		apiErr = coreErrors.New(
+			fmt.Errorf("get account jetton using tonapi: parse int64 from string jetton balance: %w", err),
+			"failed to get account jetton",
+			"rest_api",
+			500,
+		)
+		return accountJettonInfo, apiErr
 	}
 	// преобразование баланса в строку с точкой
 	beautyJettonBalance := services.JettonBalanceFormat(intJettonBalance, jettonDecimals)
@@ -57,7 +89,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 	// конвертация адреса монеты из HEX в base64
 	jettonAddrBase64, err := myToutilsgoServices.ConvertAddrToBase64(rawJetton.Jetton.Address)
 	if err != nil {
-		return accountJettonInfo, err
+		return accountJettonInfo, fmt.Errorf("failed to get account jetton: %w", err)
 	}
 
 	// создание структуры для новой монеты и добавление её в список к остальным

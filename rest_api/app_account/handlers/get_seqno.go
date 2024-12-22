@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"time"
 	"context"
+	"fmt"
 	"net/http"
+	"time"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -26,18 +27,21 @@ func GetSeqno(ctx echo.Context) error {
 	// создание API клиента TON для tongo с таймаутом в 3 секунд
 	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", 3*time.Second)
 	if err != nil {
-		return coreErrors.GetTongoClientError
+		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 	// получение данных о кошельке через tongo
 	realWallet, err := myTongoWallet.GetWallet(tongoClient)
 	if err != nil {
-		return echo.NewHTTPError(500, map[string]string{"account": err.Error()})
+		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
 	if err != nil {
-		return coreErrors.GetTonapiClientError
+		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 	// создание контекста с таймаутом в 5 секунд
 	tonApiContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -46,7 +50,8 @@ func GetSeqno(ctx echo.Context) error {
 	// получение значения Seqno
 	seqno, err := myTonapiAccount.GetAccountSeqno(tonApiContext, tonapiClient, realWallet)
 	if err != nil {
-		return echo.NewHTTPError(500, map[string]string{"account": err.Error()})
+		settings.ErrorLog.Println(err)
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusOK, serializers.GetSeqnoOut{Seqno: seqno})

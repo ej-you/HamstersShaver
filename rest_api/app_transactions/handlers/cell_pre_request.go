@@ -6,11 +6,12 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	JettonsErrors "github.com/ej-you/HamstersShaver/rest_api/app_jettons/errors"
 	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
 	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 	
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -37,13 +38,11 @@ func CellPreRequest(ctx echo.Context) error {
 		return err
 	}
 
-	// формирование структуры для ответа с таймаутом в 3 секунд
+	// формирование структуры для ответа с таймаутом в 3 секунды
 	dataOut, err = myTongoTransactions.GetPreRequestCellJetton(dataIn.JettonCA, dataIn.Amount, dataIn.Slippage, 3*time.Second)
 	if err != nil {
-		if err.Error() == "Jetton was not found" {
-			return JettonsErrors.InvalidJettonAddressError
-		}
-		return echo.NewHTTPError(500, map[string]string{"transactions": err.Error()})
+		settings.ErrorLog.Println(err)
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

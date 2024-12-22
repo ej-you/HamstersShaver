@@ -2,11 +2,12 @@ package account
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 	tongoWallet "github.com/tonkeeper/tongo/wallet"
+
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 )
 
 
@@ -16,8 +17,13 @@ func GetAccountSeqno(ctx context.Context, tonapiClient *tonapi.Client, realWalle
 	// получение seqno
 	seqno, err := tonapiClient.GetSeqno(ctx, realWallet.GetAddress())
 	if err != nil {
-		getSeqnoError := errors.New(fmt.Sprintf("Failed to get seqno: %s", err.Error()))
-		return seqno, getSeqnoError
+		apiErr := coreErrors.New(
+			fmt.Errorf("get account seqno using tonapi: %w", err),
+			"failed to get account seqno",
+			"ton_api",
+			500,
+		)
+		return seqno, apiErr
 	}
 	
 	return seqno, nil

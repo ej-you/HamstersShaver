@@ -7,11 +7,12 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	JettonsErrors "github.com/ej-you/HamstersShaver/rest_api/app_jettons/errors"
 	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
 	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 	
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
+	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -35,17 +36,15 @@ func CellSend(ctx echo.Context) error {
 		return err
 	}
 
-	// создание контекста с таймаутом в 5 секунд
+	// создание контекста с таймаутом в 10 секунд
 	tonApiContext, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// отправка транзакции на покупку с таймаутом в 5 секунд
+	// отправка транзакции на продажу с таймаутом в 10 секунд
 	err = myTongoTransactions.CellJetton(tonApiContext, 10*time.Second, dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
 	if err != nil {
-		if err.Error() == "Jetton was not found" {
-			return JettonsErrors.InvalidJettonAddressError
-		}
-		return echo.NewHTTPError(500, map[string]string{"transactions": err.Error()})
+		settings.ErrorLog.Println(err)
+		return coreErrors.AssertAPIError(err).GetHTTPError()
 	}
 
 	return ctx.JSON(http.StatusCreated, serializers.CellSendOut{Success: true})
