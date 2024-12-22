@@ -2,7 +2,7 @@ package ton_api_sse
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"time"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
@@ -48,10 +48,10 @@ func SubscribeToTransaction(timeout time.Duration) (string, error) {
 		// ошибка в горутине
 		case err := <-errChan:
 			cancel()
-			return "", errors.New("Failed to wait transaction via SSE: " + err.Error())
+			return "", fmt.Errorf("failed to wait transaction via SSE: %w", err.Error())
 		// если прошло время timeout, а данные не получены
 		case <-time.After(timeout):
 			cancel()
-			return "", errors.New("Failed to wait transaction via SSE: timeout error")
+			return "", fmt.Errorf("failed to wait transaction via SSE: timeout error")
 	}
 }
