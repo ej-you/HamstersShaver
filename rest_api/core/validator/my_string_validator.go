@@ -26,7 +26,7 @@ func myStringValidator(fieldInfo reflect.StructField, fieldValue string, validat
 				// валидация средствами библиотеки
 				errors.Append(validate.Validate(
 					&validators.StringIsPresent{
-						Name: fieldInfo.Name, // название поля
+						Name: "validate_"+fieldNameForError, // название поля
 						Field: fieldValue, // значение поля
 						Message: fmt.Sprintf("%s field must not be blank", fieldNameForError),
 					},
@@ -37,7 +37,7 @@ func myStringValidator(fieldInfo reflect.StructField, fieldValue string, validat
 				// валидация средствами библиотеки
 				errors.Append(validate.Validate(
 					&validators.EmailIsPresent{
-						Name: fieldInfo.Name, // название поля
+						Name: "validate_"+fieldNameForError, // название поля
 						Field: fieldValue, // значение поля
 						Message: "Email is not in the right format",
 					},
@@ -52,7 +52,7 @@ func myStringValidator(fieldInfo reflect.StructField, fieldValue string, validat
 				}
 				// проверка значения поля на соответствие минимальной длине
 				if len(fieldValue) < minLenInt {
-					errors.Add(fieldNameForError, fmt.Sprintf("%s field must contain at least %d symbols", fieldNameForError, minLenInt))
+					errors.Add("validate_"+fieldNameForError, fmt.Sprintf("%s field must contain at least %d symbols", fieldNameForError, minLenInt))
 				}
 
 			// длина меньше чем ... (пример, "max:100")
@@ -64,7 +64,7 @@ func myStringValidator(fieldInfo reflect.StructField, fieldValue string, validat
 				}
 				// проверка значения поля на соответствие минимальной длине
 				if len(fieldValue) > maxLenInt {
-					errors.Add(fieldNameForError, fmt.Sprintf("%s field must contain less than %d symbols", fieldNameForError, maxLenInt))
+					errors.Add("validate_"+fieldNameForError, fmt.Sprintf("%s field must contain less than %d symbols", fieldNameForError, maxLenInt))
 				}
 		}
 	}

@@ -26,7 +26,7 @@ func myIntValidator(fieldInfo reflect.StructField, fieldValue int64, validateTag
 				// валидация средствами библиотеки
 				errors.Append(validate.Validate(
 					&validators.IntIsPresent{
-						Name: fieldInfo.Name, // название поля
+						Name: "validate_"+fieldNameForError, // название поля
 						Field: int(fieldValue), // значение поля
 						Message: fmt.Sprintf("%s field must not be blank", fieldNameForError),
 					},
@@ -41,7 +41,7 @@ func myIntValidator(fieldInfo reflect.StructField, fieldValue int64, validateTag
 				}
 				// проверка значения поля на соответствие минимальному значению
 				if fieldValue < minInt {
-					errors.Add(fieldNameForError, fmt.Sprintf("%s field must be greater than or equal to %d", fieldNameForError, minInt))
+					errors.Add("validate_"+fieldNameForError, fmt.Sprintf("%s field must be greater than or equal to %d", fieldNameForError, minInt))
 				}
 
 			// число (int) меньше чем ... (пример, "max:100")
@@ -53,7 +53,7 @@ func myIntValidator(fieldInfo reflect.StructField, fieldValue int64, validateTag
 				}
 				// проверка значения поля на соответствие максимальному значению
 				if fieldValue > maxInt {
-					errors.Add(fieldNameForError, fmt.Sprintf("%s field must be less than or equal to %d", fieldNameForError, maxInt))
+					errors.Add("validate_"+fieldNameForError, fmt.Sprintf("%s field must be less than or equal to %d", fieldNameForError, maxInt))
 				}
 		}
 	}
