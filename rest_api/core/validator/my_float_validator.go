@@ -24,7 +24,7 @@ func myFloatValidator(fieldInfo reflect.StructField, fieldValue float64, validat
 			case tagValue == "required":
 				// если значение поля не указано (0.0 по умолчанию)
 				if fieldValue == 0.0 {
-					errors.Add(fieldNameForError, fmt.Sprintf("%s field must not be blank", fieldNameForError))
+					errors.Add("validate_"+fieldNameForError, fmt.Sprintf("%s field must not be blank", fieldNameForError))
 				}
 
 			// число (float) больше чем ... (пример, "min:8")
@@ -36,7 +36,7 @@ func myFloatValidator(fieldInfo reflect.StructField, fieldValue float64, validat
 				}
 				// проверка значения поля на соответствие минимальному значению
 				if fieldValue < minFloat {
-					errors.Add(fieldNameForError, fmt.Sprintf("%s field must be greater than or equal to %f", fieldNameForError, minFloat))
+					errors.Add("validate_"+fieldNameForError, fmt.Sprintf("%s field must be greater than or equal to %f", fieldNameForError, minFloat))
 				}
 
 			// число (float) меньше чем ... (пример, "max:100")
@@ -48,7 +48,7 @@ func myFloatValidator(fieldInfo reflect.StructField, fieldValue float64, validat
 				}
 				// проверка значения поля на соответствие максимальному значению
 				if fieldValue > maxFloat {
-					errors.Add(fieldNameForError, fmt.Sprintf("%s field must be less than or equal to %f", fieldNameForError, maxFloat))
+					errors.Add("validate_"+fieldNameForError, fmt.Sprintf("%s field must be less than or equal to %f", fieldNameForError, maxFloat))
 				}
 		}
 	}
