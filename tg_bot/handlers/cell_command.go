@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	telebot "gopkg.in/telebot.v3"
 
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
@@ -16,9 +18,13 @@ func CellHandlerCommand(context telebot.Context) error {
 
 	// получение машины состоянию текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
-	// обновление кэша
-	if err = cellUpdateCache(userStateMachine); err != nil {
-		return err
+	// установка нового состояния
+	if err = userStateMachine.SetStatus("cell"); err != nil {
+		return fmt.Errorf("CellHandlerCommand for user %s: %w", userId, err)
+	}
+	// установка значения действия
+	if err = userStateMachine.SetAction("cell"); err != nil {
+		return fmt.Errorf("CellHandlerCommand for user %s: %w", userId, err)
 	}
 
 	msgText := `📉 Активирован диалог продажи монет. Для отмены всех действий и выхода в главное меню используйте /cancel
@@ -26,9 +32,9 @@ func CellHandlerCommand(context telebot.Context) error {
 Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
 
 	// обновление кнопок клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
-	err = keyboards.SetWalletJettonsBtnRows()
+	err = keyboards.SetWalletJettonsButtons()
 	if err != nil {
-		return err
+		return fmt.Errorf("CellHandlerCommand for user %s: %w", userId, err)
 	}
 	return context.Send(msgText, keyboards.InlineKeyboardWalletJettons)
 }
@@ -41,9 +47,13 @@ func CellHandlerCallback(context telebot.Context) error {
 
 	// получение машины состоянию текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
-	// обновление кэша
-	if err = cellUpdateCache(userStateMachine); err != nil {
-		return err
+	// установка нового состояния
+	if err = userStateMachine.SetStatus("cell"); err != nil {
+		return fmt.Errorf("CellHandlerCommand for user %s: %w", userId, err)
+	}
+	// установка значения действия
+	if err = userStateMachine.SetAction("cell"); err != nil {
+		return fmt.Errorf("CellHandlerCommand for user %s: %w", userId, err)
 	}
 
 	msgText := `Отлично! Выбрано действие продажи монет 📉
@@ -51,23 +61,9 @@ func CellHandlerCallback(context telebot.Context) error {
 Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
 
 	// обновление кнопок клавиатуры в соответствии с текущим списком монет на кошельке аккаунта
-	err = keyboards.SetWalletJettonsBtnRows()
+	err = keyboards.SetWalletJettonsButtons()
 	if err != nil {
-		return err
+		return fmt.Errorf("CellHandlerCommand for user %s: %w", userId, err)
 	}
 	return context.Send(msgText, keyboards.InlineKeyboardWalletJettons)
-}
-
-func cellUpdateCache(userStateMachine stateMachine.UserStateMachine) error {
-	var err error
-
-	// установка нового состояния
-	if err = userStateMachine.SetStatus("cell"); err != nil {
-		return err
-	}
-	// установка значения действия
-	if err = userStateMachine.SetAction("cell"); err != nil {
-		return err
-	}
-	return nil
 }

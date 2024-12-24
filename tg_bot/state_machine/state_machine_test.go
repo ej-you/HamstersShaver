@@ -33,7 +33,7 @@ func SuccessLog(t *testing.T, format string, a ...any) {
 }
 
 func ErrorLog(t *testing.T, err error) {
-	t.Logf("\t%s\tFailed: %v", failedMarker, err)
+	t.Errorf("\t%s\tFailed: %v", failedMarker, err)
 }
 
 
@@ -55,7 +55,7 @@ func TestUserStateMachineStatus(t *testing.T) {
 
 		userTelegramID := "123456789"
 
-		stateMachine.SetUserTelegramID(userTelegramID)
+		stateMachine.setUserTelegramID(userTelegramID)
 
 		if err = stateMachine.SetStatus("smth"); err != nil {
 			ErrorLog(t, err)
@@ -67,7 +67,7 @@ func TestUserStateMachineStatus(t *testing.T) {
 
 	t.Logf("Test success StatusEquals for stateMachine")
 	{
-		isEquals, err := stateMachine.StatusEquals("smth")
+		isEquals, err := stateMachine.StatusEquals("smth", "another")
 		if err != nil {
 			ErrorLog(t, err)
 		}
@@ -266,6 +266,17 @@ func TestUserStateMachineTransactionUUIDs(t *testing.T) {
 			ErrorLog(t, err)
 		} else {
 			SuccessLog(t, "Successfully get transaction UUIDs: %v", pendingTransactions)
+		}
+	}
+	logExecTime(t, &startTime)
+
+	t.Logf("Test delete transaction from empty slice from stateMachine")
+	{
+		err := stateMachine.DeletePendingTransaction("17cc93aa-872e-42a0-9689-2c8fa7b831ae")
+		if err != nil {
+			ErrorLog(t, err)
+		} else {
+			SuccessLog(t, "Successfully did nothing")
 		}
 	}
 	logExecTime(t, &startTime)

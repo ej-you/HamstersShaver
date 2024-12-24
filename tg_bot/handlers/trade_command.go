@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	telebot "gopkg.in/telebot.v3"
 
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
@@ -19,7 +21,7 @@ func TradeHandler(context telebot.Context) error {
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("trade"); err != nil {
-		return err
+		return fmt.Errorf("TradeHandler for user %s: %w", userId, err)
 	}
 
 	msgText := `Активирован диалог трейдинга. Для отмены всех действий и выхода в главное меню используйте /cancel

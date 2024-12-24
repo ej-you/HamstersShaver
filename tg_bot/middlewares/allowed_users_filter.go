@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"errors"
 	"fmt"
 	"slices"
 
@@ -20,7 +19,7 @@ func AllowedUsersFilter(nextHandler telebot.HandlerFunc) telebot.HandlerFunc {
 
 		// проверка на наличие юзера в списке разрешённых юзеров с доступом к боту
 		if !slices.Contains(settings.AllowedUsers, userId) {
-			return errors.New(fmt.Sprintf("User %s is not allowed to use this bot", userId))
+			return fmt.Errorf("access denied: user %s is not allowed to use this bot", userId)
 		}
 		return nextHandler(context)
 	}

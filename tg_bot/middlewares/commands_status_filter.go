@@ -21,15 +21,23 @@ func GeneralCommandsStatusFilter(nextHandler telebot.HandlerFunc) telebot.Handle
 
 		message := context.Message().Text
 		switch message {
-			case "/start", "/help", "/home", "/cancel":
-				// при любом статусе
+			// при любом статусе
+			case "/start", "/help", "/home":
 				return nextHandler(context)
-			case "/trade", "/auto", "/tokens":
-				// статус "home"
-				accepted, err = userStateMachine.StatusEquals("home")
-			case "/buy", "/cell":
-				// статус "home" или "trade"
-				accepted, err = tradeSubfuncsCommandsStatusFilter(userStateMachine)
+			// при любом статусе, кроме "start" и "home"
+			case "/cancel":
+				accepted, err = userStateMachine.StatusEquals("start", "home")
+				accepted = !accepted
+			case "/trade":
+				accepted, err = userStateMachine.StatusEquals("home", "trade")
+			case "/auto":
+				accepted, err = userStateMachine.StatusEquals("home", "auto")
+			case "/tokens":
+				accepted, err = userStateMachine.StatusEquals("home", "tokens")
+			case "/buy":
+				accepted, err = userStateMachine.StatusEquals("home", "trade", "buy")
+			case "/cell":
+				accepted, err = userStateMachine.StatusEquals("home", "trade", "cell")
 		}
 
 		if err != nil {
@@ -44,25 +52,4 @@ func GeneralCommandsStatusFilter(nextHandler telebot.HandlerFunc) telebot.Handle
 
 		return nextHandler(context)
 	}
-}
-
-// возвращает true, если при текущем статусе можно использовать данную команду
-func tradeSubfuncsCommandsStatusFilter(userStateMachine stateMachine.UserStateMachine) (bool, error) {
-	equals, err := userStateMachine.StatusEquals("trade")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	equals, err = userStateMachine.StatusEquals("home")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	return false, nil
 }

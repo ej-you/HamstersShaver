@@ -21,18 +21,13 @@ func GeneralCallbackStatusFilter(nextHandler telebot.HandlerFunc) telebot.Handle
 
 		callback := context.Callback().Unique
 		switch callback {
-			case "hide_help":
-				// при любом статусе
+			// при любом статусе
+			case "hide_help", "to_home":
 				return nextHandler(context)
-			case "to_buy", "to_cell":
-				// статус "trade"
-				accepted, err = userStateMachine.StatusEquals("trade")
 			case "to_trade", "to_auto", "to_tokens":
-				// статус "home"
 				accepted, err = userStateMachine.StatusEquals("home")
-			case "to_home":
-				// статус "start", "in_development" и "home"
-				accepted, err = toHomeButtonStatusFilter(userStateMachine)
+			case "to_buy", "to_cell":
+				accepted, err = userStateMachine.StatusEquals("trade")
 		}
 
 		if err != nil {
@@ -45,33 +40,4 @@ func GeneralCallbackStatusFilter(nextHandler telebot.HandlerFunc) telebot.Handle
 
 		return nextHandler(context)
 	}
-}
-
-// возвращает true, если при текущем статусе можно использовать данную команду
-func toHomeButtonStatusFilter(userStateMachine stateMachine.UserStateMachine) (bool, error) {
-	equals, err := userStateMachine.StatusEquals("start")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	equals, err = userStateMachine.StatusEquals("in_development")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	equals, err = userStateMachine.StatusEquals("home")
-	if err != nil {
-		return false, err
-	}
-	if equals {
-		return true, nil
-	}
-
-	return false, nil
 }

@@ -2,10 +2,10 @@ package state_machine
 
 
 // словарь со всеми машинами состояний юзеров
-type UserStateMachinesMap map[string]UserStateMachine
+type userStateMachinesMap map[string]UserStateMachine
 
 // получение машины состояний для юзера по его телеграмм ID (если такой ещё нет, то создание)
-func (this *UserStateMachinesMap) Get(userTelegramID string) UserStateMachine {
+func (this *userStateMachinesMap) Get(userTelegramID string) UserStateMachine {
 	var userStateMachine UserStateMachine
 
 	userStateMachine, ok := (*this)[userTelegramID]
@@ -21,4 +21,4 @@ func (this *UserStateMachinesMap) Get(userTelegramID string) UserStateMachine {
 
 
 // экземпляр словаря с машинами состояний
-var UserStateMachines = make(UserStateMachinesMap)
+var UserStateMachines = make(userStateMachinesMap)

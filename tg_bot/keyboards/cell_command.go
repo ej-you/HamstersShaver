@@ -1,26 +1,26 @@
 package keyboards
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
+	"time"
 
 	telebot "gopkg.in/telebot.v3"
 
-	"github.com/ej-you/HamstersShaver/tg_bot/settings"
+	apiClient "github.com/ej-you/HamstersShaver/tg_bot/api_client"
 )
 
 
 var InlineKeyboardWalletJettons = &telebot.ReplyMarkup{}
 
 // получение рядов кнопок для клавиатуры с монетами и их количеством на кошельке аккаунта
-func SetWalletJettonsBtnRows() error {
+func SetWalletJettonsButtons() error {
 	var inlineRows []telebot.Row
 
 	// получение нужной информации о всех монетах на кошельке аккаунта
-	allJettons, err := getJettonsInfo()
+	var allJettons []apiClient.AccountJetton
+	err := apiClient.GetRequest("/api/account/get-jettons", nil, &allJettons, 5*time.Second)
 	if err != nil {
-		return err
+		return fmt.Errorf("set wallet jettons buttons: %w", err)
 	}
 
 	// создание рядов кнопок
@@ -34,40 +34,4 @@ func SetWalletJettonsBtnRows() error {
 	// добавление рядов кнопок в клавиатуру
 	InlineKeyboardWalletJettons.Inline(inlineRows...)
 	return nil
-}
-
-
-type jettonInfo struct {
-	Symbol 			string `json:"symbol"`
-	BeautyBalance 	string `json:"beautyBalance"`
-	MasterAddress 	string `json:"masterAddress"`
-}
-
-
-// получение монет аккаунта и их кол-во
-func getJettonsInfo() ([]jettonInfo, error) {
-	var allJettonsInfo []jettonInfo
-	client := &http.Client{}
-
-	// обращение к API для получения баланса TON
-	req, err := http.NewRequest("GET", settings.RestApiHost+"/api/account/get-jettons", nil)
-	if err != nil {
-		return allJettonsInfo, fmt.Errorf("create get account jettons request error: %v", err)
-	}
-	// добавление query-параметров
-	queryParams := req.URL.Query()
-	queryParams.Add("api-key", settings.RestApiKey)
-	req.URL.RawQuery = queryParams.Encode()
-	// отправка запроса
-	resp, err := client.Do(req)
-	if err != nil {
-		return allJettonsInfo, fmt.Errorf("failed to get account jettons: %v", err)
-	}
-	defer resp.Body.Close()
-	// декодирование ответа в структуру
-	if err := json.NewDecoder(resp.Body).Decode(&allJettonsInfo); err != nil {
-		return allJettonsInfo, fmt.Errorf("failed to decode answer from get account jettons response: %v", err)
-	}
-
-	return allJettonsInfo, nil
 }

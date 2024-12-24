@@ -1,9 +1,10 @@
 package state_machine
 
 import (
-	"errors"
 	"fmt"
+	"slices"
 
+	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
 	"github.com/ej-you/HamstersShaver/tg_bot/redis"
 )
 
@@ -23,7 +24,7 @@ func (this *UserStateMachine) setUserTelegramID(userTelegramID string) {
 // возвращает ошибку, если тг ID юзера для экземпляра машины состояний не установлен
 func (this UserStateMachine) errEmptyUserTelegramID() error {
 	if this.userTelegramID == "" {
-		return errors.New("userTelegramID is not specified")
+		return fmt.Errorf("use state machine: userTelegramID is not specified: %w", customErrors.InternalError("cannot use state machine"))
 	}
 	return nil
 }
@@ -50,8 +51,8 @@ func (this UserStateMachine) SetStatus(newStatus string) error {
 	return this.setCacheValue("status", newStatus)
 }
 
-// проверка статуса на совпадение с переданным статусом
-func (this UserStateMachine) StatusEquals(otherStatus string) (bool, error) {
+// проверка статуса на совпадение с одним из переданных статусов
+func (this UserStateMachine) StatusEquals(otherStatuses ...string) (bool, error) {
 	var err error
 
 	if err = this.errEmptyUserTelegramID(); err != nil {
@@ -65,7 +66,7 @@ func (this UserStateMachine) StatusEquals(otherStatus string) (bool, error) {
 		return false, err
 	}
 
-	return otherStatus == redisStatus, nil
+	return slices.Contains(otherStatuses, redisStatus), nil
 }
 
 

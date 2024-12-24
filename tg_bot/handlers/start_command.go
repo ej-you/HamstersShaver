@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	telebot "gopkg.in/telebot.v3"
 
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
@@ -18,11 +20,11 @@ func StartHandler(context telebot.Context) error {
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("start"); err != nil {
-		return err
+		return fmt.Errorf("StartHandler for user %s: %w", userId, err)
 	}
 	// очистка кэша с информацией для новой транзакции
 	if err = userStateMachine.ClearNewTransactionPreparation(); err != nil {
-		return err
+		return fmt.Errorf("StartHandler for user %s: %w", userId, err)
 	}
 
 	msgText := `Привет 👋
