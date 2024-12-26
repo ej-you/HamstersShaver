@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"time"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -12,6 +11,7 @@ import (
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
+	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
@@ -36,12 +36,12 @@ func BuySend(ctx echo.Context) error {
 		return err
 	}
 
-	// создание контекста с таймаутом в 10 секунд
-	tonApiContext, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	// создание контекста с таймаутом
+	sendBuyJettonContext, cancel := context.WithTimeout(context.Background(), constants.SendBuyJettonContextTimeout)
 	defer cancel()
 
-	// отправка транзакции на покупку с таймаутом в 10 секунд
-	err = myTongoTransactions.BuyJetton(tonApiContext, 10*time.Second, dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
+	// отправка транзакции на покупку
+	err = myTongoTransactions.BuyJetton(sendBuyJettonContext, dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
 	if err != nil {
 		settings.ErrorLog.Println(err)
 		return coreErrors.AssertAPIError(err).GetHTTPError()

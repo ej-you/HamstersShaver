@@ -25,6 +25,5 @@ func GetAccountSeqno(ctx context.Context, tonapiClient *tonapi.Client, realWalle
 		)
 		return seqno, apiErr
 	}
-	
 	return seqno, nil
 }

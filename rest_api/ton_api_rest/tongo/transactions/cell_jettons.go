@@ -3,7 +3,6 @@ package transactions
 import (
 	"context"
 	"fmt"
-	"time"
 
 	tongoStonfi "github.com/tonkeeper/tongo/contract/stonfi"
 	tongoTlb "github.com/tonkeeper/tongo/tlb"
@@ -33,16 +32,16 @@ type PreRequestCellJetton struct {
 
 
 // получение данных на подтверждение последующей транзакции продажи монет (Jetton -> TON)
-func GetPreRequestCellJetton(jettonCA string, jettonAmount float64, slippage int, timeout time.Duration) (PreRequestCellJetton, error) {
+func GetPreRequestCellJetton(jettonCA string, jettonAmount float64, slippage int) (PreRequestCellJetton, error) {
 	var preRequestInfo PreRequestCellJetton
 
 	// получение данных о продаваемой монете
-	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, timeout)
+	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, constants.GetJettonInfoByAddressTimeout)
 	if err != nil {
 		return preRequestInfo, fmt.Errorf("get cell pre request: %w", err)
 	}
 	// получение данных о TON
-	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, timeout)
+	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, constants.GetJettonInfoByAddressTimeout)
 	if err != nil {
 		return preRequestInfo, fmt.Errorf("get cell pre request: %w", err)
 	}
@@ -67,9 +66,9 @@ func GetPreRequestCellJetton(jettonCA string, jettonAmount float64, slippage int
 
 
 // продажа монет (Jetton -> TON)
-func CellJetton(ctx context.Context, timeout time.Duration, jettonCA string, amount float64, slippage int) error {
-	// создание API клиента TON для tongo с таймаутом timeout
-	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", timeout)
+func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage int) error {
+	// создание API клиента TON для tongo
+	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", constants.TongoClientTimeout)
 	if err != nil {
 		return fmt.Errorf("send cell transaction: %w", err)
 	}
@@ -79,13 +78,13 @@ func CellJetton(ctx context.Context, timeout time.Duration, jettonCA string, amo
 	if err != nil {
 		return fmt.Errorf("send cell transaction: %w", err)
 	}
-	// получение данных о продаваемой монете с таймаутом timeout
-	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, timeout)
+	// получение данных о продаваемой монете
+	jettonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(jettonCA, constants.GetJettonInfoByAddressTimeout)
 	if err != nil {
 		return fmt.Errorf("send cell transaction: %w", err)
 	}
-	// получение данных о TON с таймаутом timeout
-	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, timeout)
+	// получение данных о TON
+	tonInfo, err := myStonfiJettons.GetJettonInfoByAddressWithTimeout(constants.TonInfoAddr, constants.GetJettonInfoByAddressTimeout)
 	if err != nil {
 		return fmt.Errorf("send cell transaction: %w", err)
 	}
@@ -148,6 +147,5 @@ func CellJetton(ctx context.Context, timeout time.Duration, jettonCA string, amo
 			500,
 		)
 	}
-
 	return nil
 }

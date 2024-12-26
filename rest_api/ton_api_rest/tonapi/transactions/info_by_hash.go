@@ -3,7 +3,6 @@ package transactions
 import (
 	"context"
 	"fmt"
-	"time"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
@@ -35,11 +34,11 @@ type TransactionInfoWithStatusOK struct {
 
 
 // получение информации о транзакции по её хэшу
-func GetTransactionInfoByHash(ctx context.Context, hash string, timeout time.Duration) (TransactionInfo, error) {
+func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo, error) {
 	var transInfo TransactionInfo
 
 	// получение клиента для tonapi-go
-	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", timeout)
+	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
 		return transInfo, fmt.Errorf("get transaction info using tonapi: %w", err)
 	}
@@ -71,7 +70,7 @@ func GetTransactionInfoByHash(ctx context.Context, hash string, timeout time.Dur
 
 // получение информации о транзакции по её хэшу со статусом выполнения транзакции
 // action может быть "buy" или "cell" (покупка и продажа монет соответственно)
-func GetTransactionInfoWithStatusOKByHash(ctx context.Context, hash string, action string, timeout time.Duration) (TransactionInfoWithStatusOK, error) {
+func GetTransactionInfoWithStatusOKByHash(ctx context.Context, hash string, action string) (TransactionInfoWithStatusOK, error) {
 	var transInfoWithStatusOK TransactionInfoWithStatusOK
 	
 	if action != "buy" && action != "cell" {
@@ -85,7 +84,7 @@ func GetTransactionInfoWithStatusOKByHash(ctx context.Context, hash string, acti
 	}
 
 	// получение структуры TransactionInfo
-	transInfo, err := GetTransactionInfoByHash(ctx, hash, timeout)
+	transInfo, err := GetTransactionInfoByHash(ctx, hash)
 	if err != nil {
 		return transInfoWithStatusOK, fmt.Errorf("get transaction info with status using tonapi: %w", err)
 	}

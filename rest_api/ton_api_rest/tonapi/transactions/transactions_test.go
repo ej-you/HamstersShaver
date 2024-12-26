@@ -51,7 +51,7 @@ func TestGetTransactionInfoByHash(t *testing.T) {
 		action := "cell"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action, 10*time.Second)
+		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot cell transaction info: %v", successMarker, transInfo)
 		}
@@ -65,7 +65,7 @@ func TestGetTransactionInfoByHash(t *testing.T) {
 		action := "cell"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action, 10*time.Second)
+		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot cell transaction info: %v", successMarker, transInfo)
 		}
@@ -79,7 +79,7 @@ func TestGetTransactionInfoByHash(t *testing.T) {
 		action := "buy"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action, 10*time.Second)
+		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot buy transaction info: %v", successMarker, transInfo)
 		}
@@ -93,7 +93,7 @@ func TestGetTransactionInfoByHash(t *testing.T) {
 		action := "buy"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action, 10*time.Second)
+		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot buy transaction info: %v", successMarker, transInfo)
 		}

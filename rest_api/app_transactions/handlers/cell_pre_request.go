@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -38,8 +37,8 @@ func CellPreRequest(ctx echo.Context) error {
 		return err
 	}
 
-	// формирование структуры для ответа с таймаутом в 3 секунды
-	dataOut, err = myTongoTransactions.GetPreRequestCellJetton(dataIn.JettonCA, dataIn.Amount, dataIn.Slippage, 3*time.Second)
+	// получение примерных данных о будующей транзакции
+	dataOut, err = myTongoTransactions.GetPreRequestCellJetton(dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
 	if err != nil {
 		settings.ErrorLog.Println(err)
 		return coreErrors.AssertAPIError(err).GetHTTPError()
