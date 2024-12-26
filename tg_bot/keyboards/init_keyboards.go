@@ -31,4 +31,20 @@ func InitKeyboards() {
 		// кнопка для выбора варианта продажи монет (аналог - команда /cell)
 		InlineKeyboardTrade.Row(BtnToCell),
 	)
+
+	// клавиатура для выбора DEX-биржи
+	InlineKeyboardChooseDEX.Inline(
+		// кнопка для выбора stonfi
+		InlineKeyboardChooseDEX.Row(BtnStonfi),
+		// кнопка для выбора dedust
+		InlineKeyboardChooseDEX.Row(BtnDedust),
+	)
+
+	// клавиатура для выбора DEX-биржи
+	InlineKeyboardConfirmNewTransaction.Inline(
+		// кнопка для подтверждения
+		InlineKeyboardConfirmNewTransaction.Row(BtnConfirm),
+		// кнопка для отмены
+		InlineKeyboardConfirmNewTransaction.Row(BtnCancel),
+	)
 }

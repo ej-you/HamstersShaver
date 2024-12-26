@@ -1,4 +1,5 @@
-package handlers
+package cell
+// номер в диалоге: 0
 
 import (
 	"fmt"
@@ -16,7 +17,7 @@ func CellHandlerCommand(context telebot.Context) error {
 	var err error
 	userId := services.GetUserID(context.Chat())
 
-	// получение машины состоянию текущего юзера
+	// получение машины состояний текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("cell"); err != nil {
@@ -56,7 +57,7 @@ func CellHandlerCallback(context telebot.Context) error {
 		return fmt.Errorf("CellHandlerCommand for user %s: %w", userId, err)
 	}
 
-	msgText := `Отлично! Выбрано действие продажи монет 📉
+	msgText := `Хорошо. Выбрано действие продажи монет 📉
 
 Выберите из имеющихся у вас на аккаунте монет ту, которую хотите продать 👇`
 

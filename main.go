@@ -5,9 +5,13 @@ import (
 
 	telebot "gopkg.in/telebot.v3"
 
+	handlersTradeCell "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade/cell"
+	handlersTradeBuy "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade/buy"
+	handlersTrade "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade"
+	handlersHelpers "github.com/ej-you/HamstersShaver/tg_bot/handlers/helpers"
 	"github.com/ej-you/HamstersShaver/tg_bot/handlers"
+	
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
-
 	"github.com/ej-you/HamstersShaver/tg_bot/middlewares"
 	"github.com/ej-you/HamstersShaver/tg_bot/settings"
 )
@@ -19,7 +23,7 @@ func main() {
 		Token:  settings.BotToken,
 		Poller: &telebot.LongPoller{Timeout: 10 * time.Second},
 		// Verbose: true,
-		OnError: handlers.UnknownErrorHandler,
+		OnError: handlersHelpers.MainErrorHandler,
 	}
 
 	// инициализация бота
@@ -33,10 +37,10 @@ func main() {
 
 	// группа хендлеров для обработки всех команд
 	commandsHandlers := bot.Group()
-	commandsHandlers.Use(middlewares.GeneralCommandsLogger, middlewares.GeneralCommandsStatusFilter)
+	commandsHandlers.Use(middlewares.GeneralCommandsLogger) //, middlewares.GeneralCommandsStatusFilter)
 	// группа хендлеров для обработки всех основных (статичных, hard-code) инлайн-кнопок
 	callbackHandlers := bot.Group()
-	callbackHandlers.Use(middlewares.GeneralCallbackLogger, middlewares.GeneralCallbackStatusFilter)
+	callbackHandlers.Use(middlewares.GeneralCallbackLogger) //, middlewares.GeneralCallbackStatusFilter)
 
 	// инициализация хендлеров
 	commandsHandlers.Handle("/start", handlers.StartHandler)
@@ -45,26 +49,36 @@ func main() {
 	callbackHandlers.Handle(&keyboards.BtnHideHelp, handlers.HelpHandler)
 
 	commandsHandlers.Handle("/home", handlers.HomeHandler)
-	commandsHandlers.Handle("/cancel", handlers.HomeHandler)
 	callbackHandlers.Handle(&keyboards.BtnToHome, handlers.HomeHandler)
 
-	commandsHandlers.Handle("/trade", handlers.TradeHandler)
-	callbackHandlers.Handle(&keyboards.BtnToTrade, handlers.TradeHandler)
+	commandsHandlers.Handle("/cancel", handlers.CancelHandler)
+	callbackHandlers.Handle(&keyboards.BtnCancel, handlers.CancelHandler)
+
+	commandsHandlers.Handle("/trade", handlersTrade.TradeHandler)
+	callbackHandlers.Handle(&keyboards.BtnToTrade, handlersTrade.TradeHandler)
 	
+	commandsHandlers.Handle("/buy", handlersTradeBuy.BuyHandlerCommand)
+	callbackHandlers.Handle(&keyboards.BtnToBuy, handlersTradeBuy.BuyHandlerCallback)
+
+	commandsHandlers.Handle("/cell", handlersTradeCell.CellHandlerCommand)
+	callbackHandlers.Handle(&keyboards.BtnToCell, handlersTradeCell.CellHandlerCallback)
+
+	// в разработке (Dedust.io DEX-биржа)
+	callbackHandlers.Handle(&keyboards.BtnDedust, handlersHelpers.InDevelopmentHandler)
+
 	// ВРЕМЕННО
-	commandsHandlers.Handle("/buy", handlers.InDevelopmentHandler)
-	callbackHandlers.Handle(&keyboards.BtnToBuy, handlers.InDevelopmentHandler)
+	callbackHandlers.Handle(&keyboards.BtnConfirm, handlersHelpers.InDevelopmentHandler)
 
-	commandsHandlers.Handle("/cell", handlers.CellHandlerCommand)
-	callbackHandlers.Handle(&keyboards.BtnToCell, handlers.CellHandlerCallback)
-
-	// в разработке
-	commandsHandlers.Handle("/auto", handlers.InDevelopmentHandler)
-	callbackHandlers.Handle(&keyboards.BtnToAuto, handlers.InDevelopmentHandler)
+	// в разработке (функция авто)
+	commandsHandlers.Handle("/auto", handlersHelpers.InDevelopmentHandler)
+	callbackHandlers.Handle(&keyboards.BtnToAuto, handlersHelpers.InDevelopmentHandler)
 	
-	// в разработке
-	commandsHandlers.Handle("/tokens", handlers.InDevelopmentHandler)
-	callbackHandlers.Handle(&keyboards.BtnToTokens, handlers.InDevelopmentHandler)
+	// в разработке (сохранённые токены для покупки)
+	commandsHandlers.Handle("/tokens", handlersHelpers.InDevelopmentHandler)
+	callbackHandlers.Handle(&keyboards.BtnToTokens, handlersHelpers.InDevelopmentHandler)
+
+	bot.Handle(telebot.OnText, handlersHelpers.HandlersDistributor)
+	bot.Handle(telebot.OnCallback, handlersHelpers.HandlersDistributor)
 
 	// запуск бота
 	settings.InfoLog.Printf("Start bot %s...", bot.Me.Username)

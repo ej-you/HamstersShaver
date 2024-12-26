@@ -39,3 +39,11 @@ type InternalError string
 func (this InternalError) Error() string {
 	return string(this)
 }
+
+
+// ошибка доступа к боту
+type AccessError string
+
+func (this AccessError) Error() string {
+	return string(this)
+}

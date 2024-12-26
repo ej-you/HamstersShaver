@@ -1,4 +1,4 @@
-package handlers
+package helpers
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 // обработка функций, находящихся в разработке
 func InDevelopmentHandler(context telebot.Context) error {
 	userId := services.GetUserID(context.Chat())
-	// получение машины состоянию текущего юзера
+	// получение машины состояний текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
 	// установка нового состояния
 	if err := userStateMachine.SetStatus("in_development"); err != nil {

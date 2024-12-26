@@ -94,3 +94,19 @@ func (this UserStateMachine) SetSlippage(slippage string) error {
 func (this UserStateMachine) SetJettonCA(jettonCA string) error {
 	return this.setCacheValue("jettonCA", jettonCA)
 }
+
+// получение CA монеты для покупки/продажи
+func (this UserStateMachine) GetJettonCA() (string, error) {
+	var err error
+	var jettonCA string
+
+	if err = this.errEmptyUserTelegramID(); err != nil {
+		return "", fmt.Errorf("get jettonCA: %w", err)
+	}
+	
+	jettonCA, err = redis.GetString(fmt.Sprintf("user:%s:jettonCA", this.userTelegramID))
+	if err != nil {
+		return "", fmt.Errorf("get new transaction preparation: %w", err)
+	}
+	return jettonCA, nil
+}

@@ -1,4 +1,4 @@
-package handlers
+package trade
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ func TradeHandler(context telebot.Context) error {
 	var err error
 	userId := services.GetUserID(context.Chat())
 
-	// получение машины состоянию текущего юзера
+	// получение машины состояний текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("trade"); err != nil {

@@ -33,9 +33,7 @@ func HelpHandler(context telebot.Context) error {
 
 ✅ • /help — Вывод этой справки
 
-❗️Также сейчас в разработке находится использование DEX-биржи Dedust для проведения транзакций
-
-Для получения полной инструкции введите /help`
+❗️Также сейчас в разработке находится использование DEX-биржи Dedust для проведения транзакций`
 
 	return context.Send(msgText, keyboards.InlineKeyboardHelp)
 }

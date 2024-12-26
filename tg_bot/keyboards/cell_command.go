@@ -27,7 +27,7 @@ func SetWalletJettonsButtons() error {
 	var button telebot.Btn
 	for _, jetton := range allJettons {
 		// создание ряда с кнопкой и добавление его в срез рядов
-		button = InlineKeyboardWalletJettons.Data(fmt.Sprintf("%s — %s", jetton.Symbol, jetton.BeautyBalance), jetton.MasterAddress)
+		button = InlineKeyboardWalletJettons.Data(fmt.Sprintf("%s — %s", jetton.Symbol, jetton.BeautyBalance), "", jetton.MasterAddress)
 		inlineRows = append(inlineRows, InlineKeyboardWalletJettons.Row(button))
 	}
 

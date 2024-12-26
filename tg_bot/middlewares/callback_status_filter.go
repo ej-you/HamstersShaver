@@ -28,6 +28,8 @@ func GeneralCallbackStatusFilter(nextHandler telebot.HandlerFunc) telebot.Handle
 				accepted, err = userStateMachine.StatusEquals("home")
 			case "to_buy", "to_cell":
 				accepted, err = userStateMachine.StatusEquals("trade")
+			default:
+				return nextHandler(context)
 		}
 
 		if err != nil {

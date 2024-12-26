@@ -13,13 +13,19 @@ import (
 )
 
 
-// команды: /home || /cancel
+// команда: /home
 // кнопки: to_home
 func HomeHandler(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
 
-	// получение машины состоянию текущего юзера
+	// сообщение о начале подгрузки данных
+	loadMsg, err := context.Bot().Send(context.Recipient(), "Загрузка...")
+	if err != nil {
+		return err
+	}
+
+	userId := services.GetUserID(context.Chat())
+	// получение машины состояний текущего юзера
 	userStateMachine := stateMachine.UserStateMachines.Get(userId)
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("home"); err != nil {
@@ -39,7 +45,9 @@ func HomeHandler(context telebot.Context) error {
 
 	// получение актуального курса TON в долларах
 	var TONJettonInfo apiClient.JettonInfo
-	getTONJettonInfoParams := apiClient.QueryParams{Params: map[string]string{"MasterAddress": "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c"}}
+	getTONJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
+		"MasterAddress": apiClient.TONMasterAddress,
+	}}
 	err = apiClient.GetRequest("/api/jettons/get-info", &getTONJettonInfoParams, &TONJettonInfo, 5*time.Second)
 	if err != nil {
 		return fmt.Errorf("HomeHandler for user %s: %w", userId, err)
@@ -53,5 +61,7 @@ func HomeHandler(context telebot.Context) error {
 ❗️Для справки используйте /help`,
 	TONAccountInfo.BeautyBalance, TONJettonInfo.PriceUSD)
 
-	return context.Send(msgText, keyboards.InlineKeyboardMainMenu)
+	// редактирование сообщения о загрузку - вывод данных
+	_, err = context.Bot().Edit(loadMsg, msgText, keyboards.InlineKeyboardMainMenu)
+	return err
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
@@ -13,7 +14,8 @@ import (
 
 // структура для query-параметров для GET-запросов
 type QueryParams struct {
-	Params map[string]string
+	// поддерживает значения типов string, int, float64
+	Params map[string]interface{}
 }
 
 
@@ -32,7 +34,18 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any, timeout time
 	queryParams.Add("api-key", settings.RestApiKey)
 	if params != nil {
 		for k, v := range params.Params {
-			queryParams.Add(k, v)
+			// конвертация всех типов в string значения
+			switch v := v.(type) {
+				case string:
+					queryParams.Add(k, v)
+				case int:
+					queryParams.Add(k, fmt.Sprint(v))
+				case float64:
+					queryParams.Add(k, strconv.FormatFloat(v, 'f', -1, 64))
+				default:
+					internalErr := customErrors.InternalError(fmt.Sprintf("failed to add query-param %q", k))
+					return fmt.Errorf("send GET-request to %q: %w", apiPath, fmt.Errorf("unsupported query-param value type %T: %w", v, internalErr))
+			}
 		}
 	}
 	req.URL.RawQuery = queryParams.Encode()

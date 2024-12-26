@@ -12,7 +12,9 @@ import (
 func GeneralCommandsLogger(nextHandler telebot.HandlerFunc) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		telegramUserId := services.GetUserID(context.Chat())
-		settings.InfoLog.Printf("User %s use command %q", telegramUserId, context.Message().Text)
+
+		msgText := context.Message().Text
+		settings.InfoLog.Printf("User %s use command %q", telegramUserId, msgText)
 
 		return nextHandler(context)
 	}
@@ -22,7 +24,9 @@ func GeneralCommandsLogger(nextHandler telebot.HandlerFunc) telebot.HandlerFunc 
 func GeneralCallbackLogger(nextHandler telebot.HandlerFunc) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		telegramUserId := services.GetUserID(context.Chat())
-		settings.InfoLog.Printf("User %s use button %q", telegramUserId, context.Callback().Unique)
+
+		callbackInfo := services.GetCallbackData(context.Callback())
+		settings.InfoLog.Printf("User %s use button %q", telegramUserId, callbackInfo)
 
 		return nextHandler(context)
 	}
