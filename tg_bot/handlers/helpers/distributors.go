@@ -34,15 +34,14 @@ func HandlersDistributor(context telebot.Context) error {
 	var match bool
 	var err error
 
-	userId := services.GetUserID(context.Chat())
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 
 	// перебор в цикле всех статусов, для которых могут быть использованы произвольные кнопки
 	for statusToCheck, handler := range statusesToCheck {
 		match, err = userStateMachine.StatusEquals(statusToCheck)
 		if err != nil {
-			return fmt.Errorf("CallbackDistributor for user %s: %w", userId, err)
+			return fmt.Errorf("CallbackDistributor: %w", err)
 		}
 		if match {
 			return handler(context)

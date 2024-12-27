@@ -15,13 +15,12 @@ import (
 // кнопки: to_trade
 func TradeHandler(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
 
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("trade"); err != nil {
-		return fmt.Errorf("TradeHandler for user %s: %w", userId, err)
+		return fmt.Errorf("TradeHandler: %w", err)
 	}
 
 	msgText := `Активирован диалог трейдинга. Для отмены всех действий и выхода в главное меню используйте /cancel

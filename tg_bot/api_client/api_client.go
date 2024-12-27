@@ -72,10 +72,15 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
 		}
 		// парсинг ответа с ошибкой в RestAPIError (или RestAPITimeoutError) ошибку
 		apiErr = fmt.Errorf("send GET-request to %q: got %d response: %w", apiPath, resp.StatusCode, parseError(resp))
+
 		// если полученная ошибка не timeout ошибка, то возвращаем её
 		if !errors.As(apiErr, restTimeoutErr) {
 			return apiErr
 		}
+	}
+	// если все sendRequestAttemps попытки были неудачными
+	if apiErr != nil {
+		return apiErr
 	}
 
 	// при успешном запросе - декодирование ответа в структуру

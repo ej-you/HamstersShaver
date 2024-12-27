@@ -9,34 +9,34 @@ import (
 
 	apiClient "github.com/ej-you/HamstersShaver/tg_bot/api_client"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
+	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"
 )
 
 
 func BuySlippageHandler(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
 
 	// парсинг значения из строки, введённой юзером
 	tonsAmount, err := services.ParseJettonsAmount(apiClient.TONMasterAddress, strings.TrimSpace(context.Message().Text))
 	if err != nil {
-		return fmt.Errorf("BuySlippageHandler for user %s: %w", userId, err)
+		return fmt.Errorf("BuySlippageHandler: %w", err)
 	}
 
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("buy_slippage"); err != nil {
-		return fmt.Errorf("BuySlippageHandler for user %s: %w", userId, err)
+		return fmt.Errorf("BuySlippageHandler: %w", err)
 	}
 	// установка значения количества TON
 	if err = userStateMachine.SetJettonsAmount(tonsAmount); err != nil {
-		return fmt.Errorf("BuySlippageHandler for user %s: %w", userId, err)
+		return fmt.Errorf("BuySlippageHandler: %w", err)
 	}
 
-	msgText := fmt.Sprintf(`🫰 Количество используемых монет: %s
+	msgText := fmt.Sprintf(`🫰 Количество используемых TON: %s
 
-Теперь введите процент проскальзывания (число от 1 до 100)`, tonsAmount)
+Теперь введите процент проскальзывания или выберите из предложенных вариантов 👇`, tonsAmount)
 
-	return context.Send(msgText)
+	return context.Send(msgText, keyboards.InlineKeyboardSlippageChoices)
 }

@@ -23,23 +23,11 @@ func HomeHandler(context telebot.Context) error {
 		return err
 	}
 
-	userId := services.GetUserID(context.Chat())
-	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
-	// установка нового состояния
-	if err = userStateMachine.SetStatus("home"); err != nil {
-		return fmt.Errorf("HomeHandler for user %s: %w", userId, err)
-	}
-	// очистка кэша с информацией для новой транзакции
-	if err = userStateMachine.ClearNewTransactionPreparation(); err != nil {
-		return fmt.Errorf("HomeHandler for user %s: %w", userId, err)
-	}
-
 	// получение баланса TON у аккаунта
 	var TONAccountInfo apiClient.TONInfo
 	err = apiClient.GetRequest("/api/account/get-ton", nil, &TONAccountInfo)
 	if err != nil {
-		return fmt.Errorf("HomeHandler for user %s: %w", userId, err)
+		return fmt.Errorf("HomeHandler: %w", err)
 	}
 
 	// получение актуального курса TON в долларах
@@ -49,7 +37,18 @@ func HomeHandler(context telebot.Context) error {
 	}}
 	err = apiClient.GetRequest("/api/jettons/get-info", &getTONJettonInfoParams, &TONJettonInfo)
 	if err != nil {
-		return fmt.Errorf("HomeHandler for user %s: %w", userId, err)
+		return fmt.Errorf("HomeHandler: %w", err)
+	}
+
+	// получение машины состояний текущего юзера
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
+	// установка нового состояния
+	if err = userStateMachine.SetStatus("home"); err != nil {
+		return fmt.Errorf("HomeHandler: %w", err)
+	}
+	// очистка кэша с информацией для новой транзакции
+	if err = userStateMachine.ClearNewTransactionPreparation(); err != nil {
+		return fmt.Errorf("HomeHandler: %w", err)
 	}
 
 	msgText := fmt.Sprintf(`Главное меню
@@ -60,7 +59,7 @@ func HomeHandler(context telebot.Context) error {
 ❗️Для справки используйте /help`,
 	TONAccountInfo.BeautyBalance, TONJettonInfo.PriceUSD)
 
-	// редактирование сообщения о загрузку - вывод данных
+	// редактирование сообщения о загрузке - вывод данных
 	_, err = context.Bot().Edit(loadMsg, msgText, keyboards.InlineKeyboardMainMenu)
 	return err
 }

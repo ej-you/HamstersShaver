@@ -47,4 +47,21 @@ func InitKeyboards() {
 		// кнопка для отмены
 		InlineKeyboardConfirmNewTransaction.Row(BtnCancel),
 	)
+
+	// клавиатура с выбором процента проскальзывания
+	InlineKeyboardSlippageChoices.Inline(
+		// кнопки с разными процентами
+		InlineKeyboardSlippageChoices.Row(BtnSlippageChoice15, BtnSlippageChoice30, BtnSlippageChoice60, BtnSlippageChoice100),
+	)
+
+	// клавиатура с выбором процента от общего числа монет на балансе аккаунта для продажи
+	InlineKeyboardJettonsAmountChoices.Inline(
+		// кнопки с разными процентами
+		InlineKeyboardJettonsAmountChoices.Row(
+			BtnJettonsAmountChoice25,
+			BtnJettonsAmountChoice50,
+			BtnJettonsAmountChoice75,
+			BtnJettonsAmountChoice100,
+		),
+	)
 }

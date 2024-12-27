@@ -16,38 +16,50 @@ import (
 
 func CellConfirmTransactionHandler(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
+	var stringSlippage string
 
-	// парсим значение процента проскальзывания из строки (для проверки, что введено корректное число)
-	stringSlippage, err := services.ParseSlippageAmount(strings.TrimSpace(context.Message().Text))
-	if err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+	// если нажата кнопка для выбора процента
+	if context.Callback() != nil {
+		callbackData := services.GetCallbackData(context.Callback())
+		// если нажата левая кнопка (не с выбором процента проскальзывания)		
+		if !strings.HasPrefix(callbackData, "slippage_choice") {
+			return nil
+		}
+		// достаём процент из данных кнопки
+		stringSlippage = strings.TrimPrefix(callbackData, "slippage_choice|")
+	// если процент введён текстом
+	} else {
+		// парсим значение процента проскальзывания из строки (для проверки, что введено корректное число)
+		stringSlippage, err = services.ParseSlippageAmount(strings.TrimSpace(context.Message().Text))
+		if err != nil {
+			return fmt.Errorf("CellConfirmTransactionHandler: %w", err)
+		}
 	}
 
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("cell_confirm_transaction"); err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("CellConfirmTransactionHandler: %w", err)
 	}
 	// установка значения процента проскальзывания
 	if err = userStateMachine.SetSlippage(stringSlippage); err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("CellConfirmTransactionHandler: %w", err)
 	}
 
 	msgText := fmt.Sprintf("🏁 Процент проскальзывания: %s%% \n\nСбор данных для новой транзакции...", stringSlippage)
 	context.Send(msgText)
 
 	// вызов функции для подтверждения транзакции
-	return confirmNewTransaction(context, userStateMachine, userId)
+	return confirmNewTransaction(context, userStateMachine)
 }
 
 
 // подтверждение транзакции
-func confirmNewTransaction(context telebot.Context, userStateMachine stateMachine.UserStateMachine, userId string) error {
+func confirmNewTransaction(context telebot.Context, userStateMachine stateMachine.UserStateMachine) error {
 	newTransInfo, err := userStateMachine.GetNewTransactionPreparation()
 	if err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("CellConfirmTransactionHandler: %w", err)
 	}
 
 	// запрос на получение информации о последующей транзакции продажи монет по собранным данным
@@ -59,7 +71,7 @@ func confirmNewTransaction(context telebot.Context, userStateMachine stateMachin
 	}}
 	err = apiClient.GetRequest("/api/transactions/cell/pre-request", &getCellPreRequestInfoParams, &cellPreRequestInfo)
 	if err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("CellConfirmTransactionHandler: %w", err)
 	}
 
 	msgText := fmt.Sprintf(`🔁 Подтверждение транзакции продажи монет:
@@ -76,7 +88,7 @@ DEX-биржа: %s
 `,
 		cellPreRequestInfo.JettonSymbol,
 		cellPreRequestInfo.JettonCA,
-		cellPreRequestInfo.DEX,
+		newTransInfo.DEX,
 		cellPreRequestInfo.UsedJettons,
 		newTransInfo.Slippage,
 		cellPreRequestInfo.TONsOut,

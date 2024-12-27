@@ -16,35 +16,34 @@ import (
 
 func BuyConfirmTransactionHandler(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
 
 	// получение адреса монеты от юзера
 	jettonCA := strings.TrimSpace(context.Message().Text)
 
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("buy_confirm_transaction"); err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("BuyConfirmTransactionHandler: %w", err)
 	}
 	// установка значения процента проскальзывания
 	if err = userStateMachine.SetJettonCA(jettonCA); err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("BuyConfirmTransactionHandler: %w", err)
 	}
 
 	msgText := fmt.Sprintf("🏁 Адрес монеты: %s \n\nСбор данных для новой транзакции...", jettonCA)
 	context.Send(msgText)
 
 	// вызов функции для подтверждения транзакции
-	return confirmNewTransaction(context, userStateMachine, userId)
+	return confirmNewTransaction(context, userStateMachine)
 }
 
 
 // подтверждение транзакции
-func confirmNewTransaction(context telebot.Context, userStateMachine stateMachine.UserStateMachine, userId string) error {
+func confirmNewTransaction(context telebot.Context, userStateMachine stateMachine.UserStateMachine) error {
 	newTransInfo, err := userStateMachine.GetNewTransactionPreparation()
 	if err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("BuyConfirmTransactionHandler: %w", err)
 	}
 
 	// запрос на получение информации о последующей транзакции продажи монет по собранным данным
@@ -56,7 +55,7 @@ func confirmNewTransaction(context telebot.Context, userStateMachine stateMachin
 	}}
 	err = apiClient.GetRequest("/api/transactions/buy/pre-request", &getBuyPreRequestInfoParams, &buyPreRequestInfo)
 	if err != nil {
-		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
+		return fmt.Errorf("BuyConfirmTransactionHandler: %w", err)
 	}
 
 	msgText := fmt.Sprintf(`🔁 Подтверждение транзакции покупки монет:
@@ -73,7 +72,7 @@ TON для покупки: %s
 `,
 		buyPreRequestInfo.JettonSymbol,
 		buyPreRequestInfo.JettonCA,
-		buyPreRequestInfo.DEX,
+		newTransInfo.DEX,
 		buyPreRequestInfo.UsedTON,
 		newTransInfo.Slippage,
 		buyPreRequestInfo.JettonsOut,

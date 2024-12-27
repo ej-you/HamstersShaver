@@ -15,17 +15,16 @@ import (
 // команды: /buy
 func BuyHandlerCommand(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
 
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("buy"); err != nil {
-		return fmt.Errorf("BuyHandlerCommand for user %s: %w", userId, err)
+		return fmt.Errorf("BuyHandlerCommand: %w", err)
 	}
 	// установка значения действия
 	if err = userStateMachine.SetAction("buy"); err != nil {
-		return fmt.Errorf("BuyHandlerCommand for user %s: %w", userId, err)
+		return fmt.Errorf("BuyHandlerCommand: %w", err)
 	}
 
 	msgText := `📈 Активирован диалог покупки монет. Для отмены всех действий и выхода в главное меню используйте /cancel
@@ -39,17 +38,16 @@ func BuyHandlerCommand(context telebot.Context) error {
 // кнопки: to_buy
 func BuyHandlerCallback(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
 
 	// получение машины состоянию текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("buy"); err != nil {
-		return fmt.Errorf("BuyHandlerCallback for user %s: %w", userId, err)
+		return fmt.Errorf("BuyHandlerCallback: %w", err)
 	}
 	// установка значения действия
 	if err = userStateMachine.SetAction("buy"); err != nil {
-		return fmt.Errorf("BuyHandlerCallback for user %s: %w", userId, err)
+		return fmt.Errorf("BuyHandlerCallback: %w", err)
 	}
 
 	msgText := `Хорошо. Выбрано действие покупки монет 📈

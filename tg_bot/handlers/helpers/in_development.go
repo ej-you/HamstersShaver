@@ -13,14 +13,12 @@ import (
 
 // обработка функций, находящихся в разработке
 func InDevelopmentHandler(context telebot.Context) error {
-	userId := services.GetUserID(context.Chat())
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err := userStateMachine.SetStatus("in_development"); err != nil {
-		return fmt.Errorf("InDevelopmentHandler for user %s: %w", userId, err)
+		return fmt.Errorf("InDevelopmentHandler: %w", err)
 	}
 
-	msgText := `Функция на данный момент находится в разработке ⚙️`
-	return context.Send(msgText, keyboards.InlineKeyboardToHome)
+	return context.Send("Функция на данный момент находится в разработке ⚙️", keyboards.InlineKeyboardToHome)
 }

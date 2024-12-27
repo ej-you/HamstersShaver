@@ -43,7 +43,7 @@ func ParseJettonsAmount(jettonCA, rawJettonsAmount string) (string, error) {
 		return "", fmt.Errorf("parse jettons amount: %w", validateErr)
 	}
 	// получение количества монет по проценту
-	jettonsAmount, err = GetAmountFromPercent(jettonCA, percent)
+	jettonsAmount, err = GetJettonsAmountFromPercent(jettonCA, percent)
 	if err != nil {
 		return "", fmt.Errorf("parse jettons amount: %w", err)
 	}
@@ -52,7 +52,7 @@ func ParseJettonsAmount(jettonCA, rawJettonsAmount string) (string, error) {
 
 
 // получение кол-ва монет по проценту, переданному юзером
-func GetAmountFromPercent(jettonCA string, percent int) (string, error) {
+func GetJettonsAmountFromPercent(jettonCA string, percent int) (string, error) {
 	var err error
 	var jettonsAmount int
 	var jettonsDecimals int

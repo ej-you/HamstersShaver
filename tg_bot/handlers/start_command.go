@@ -14,17 +14,16 @@ import (
 // команды: /start
 func StartHandler(context telebot.Context) error {
 	var err error
-	userId := services.GetUserID(context.Chat())
 
 	// получение машины состояний текущего юзера
-	userStateMachine := stateMachine.UserStateMachines.Get(userId)
+	userStateMachine := stateMachine.UserStateMachines.Get(services.GetUserID(context.Chat()))
 	// установка нового состояния
 	if err = userStateMachine.SetStatus("start"); err != nil {
-		return fmt.Errorf("StartHandler for user %s: %w", userId, err)
+		return fmt.Errorf("StartHandler: %w", err)
 	}
 	// очистка кэша с информацией для новой транзакции
 	if err = userStateMachine.ClearNewTransactionPreparation(); err != nil {
-		return fmt.Errorf("StartHandler for user %s: %w", userId, err)
+		return fmt.Errorf("StartHandler: %w", err)
 	}
 
 	msgText := `Привет 👋
