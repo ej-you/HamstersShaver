@@ -24,6 +24,7 @@ type ResponseError struct {
 func CustomErrorHandler(echoApp *echo.Echo) {
 	echoApp.HTTPErrorHandler = func(err error, ctx echo.Context) {
 		var errMessage ResponseError
+		var httpErrorStatus int
 
 		// если ошибка является структурой *echo.HTTPError
 		httpError := new(echo.HTTPError)
@@ -40,6 +41,7 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 				Timestamp: time.Now().Format(settings.TimeFmt),
 				Errors: errorsInMessage,
 			}
+			httpErrorStatus = httpError.Code
 		// иначе приводим ошибку к APIError
 		} else {
 			apiErr := coreErrors.AssertAPIError(err)
@@ -50,10 +52,11 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 				Timestamp: time.Now().Format(settings.TimeFmt),
 				Errors: map[string]string{apiErr.ErrType: apiErr.Description},
 			}
+			httpErrorStatus = apiErr.ErrCode
 		}
 
 		// отправка ответа
-		respErr := ctx.JSON(httpError.Code, errMessage)
+		respErr := ctx.JSON(httpErrorStatus, errMessage)
 		if respErr != nil {
 			settings.ErrorLog.Println("failed to send error response:", respErr)
 		}
