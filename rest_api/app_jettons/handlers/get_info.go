@@ -9,7 +9,6 @@ import (
 	"github.com/ej-you/HamstersShaver/rest_api/app_jettons/serializers"
 
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
-	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -40,7 +39,7 @@ func GetInfo(ctx echo.Context) error {
 	dataOut, err = myStonfiJettons.GetJettonInfoByAddressWithTimeout(dataIn.MasterAddress, constants.GetJettonInfoByAddressTimeout)
 	if err != nil {
 		settings.ErrorLog.Println(err)
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

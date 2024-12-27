@@ -28,7 +28,7 @@ const (
 	// tonapi
 	GetAccountJettonContextTimeout = 1*time.Second
 	GetBalanceJettonsContextTimeout = 1*time.Second
-	GetBalanceTONContextTimeout = 1*time.Second
+	GetBalanceTONContextTimeout = 2*time.Second
 	GetTransInfoContextTimeout = 1*time.Second
 
 	// tongo

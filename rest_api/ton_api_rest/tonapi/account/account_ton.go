@@ -36,6 +36,7 @@ func GetAccount(ctx context.Context, tonapiClient *tonapi.Client) (*tonapi.Accou
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
 		return account, apiErr
 	}
 

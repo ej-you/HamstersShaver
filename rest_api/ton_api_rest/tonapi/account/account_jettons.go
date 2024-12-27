@@ -42,6 +42,7 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
 		return accountJettonsList, apiErr
 	}
 

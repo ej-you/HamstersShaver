@@ -102,12 +102,14 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	// структура с информацией для Swap транзакции на DEX Stonfi
 	stonfiStruct, err := tongoStonfi.NewStonfi(ctx, tongoClient, jettonRouter, jettonMaster0, jettonMaster1)
 	if err != nil {
-		return coreErrors.New(
+		apiErr := coreErrors.New(
 			fmt.Errorf("send cell transaction: create new stonfiStruct: %w", err),
 			"failed to prepare message",
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
+		return apiErr
 	}
 
 	// TON для газовой комиссии (0.3 TON)
@@ -140,12 +142,14 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	// отправка сообщения в блокчейн
 	err = realWallet.Send(ctx, jettonTransfer)
 	if err != nil {
-		return coreErrors.New(
+		apiErr := coreErrors.New(
 			fmt.Errorf("send cell transaction: send transfer message: %w", err),
 			"failed to send transfer message",
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
+		return apiErr
 	}
 	return nil
 }

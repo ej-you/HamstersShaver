@@ -9,7 +9,6 @@ import (
 
 	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
 
-	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -29,7 +28,7 @@ func GetJettons(ctx echo.Context) error {
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
 		settings.ErrorLog.Println(fmt.Errorf("get account jettons using tonapi: %w", err))
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
 	// создание контекста с таймаутом
@@ -40,7 +39,7 @@ func GetJettons(ctx echo.Context) error {
 	dataOut, err = myTonapiAccount.GetBalanceJettons(getBalanceJettonsContext, tonapiClient)
 	if err != nil {
 		settings.ErrorLog.Println(err)
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

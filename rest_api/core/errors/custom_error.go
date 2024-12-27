@@ -1,47 +1,59 @@
 package errors
 
 import (
+	"context"
 	"github.com/pkg/errors"
-
-	echo "github.com/labstack/echo/v4"
 )
 
 
 type APIError struct {
-	rawError	error
-	description string
-	errType		string
-	errCode		int
+	RawError	error
+	ErrStatus	string
+	ErrCode		int
+	ErrType		string
+	Description string
 }
 
 
 // создание новой API ошибки
 func New(rawError error, description, errType string, errCode int) APIError {
 	return APIError{
-		rawError: rawError,
-		description: description,
-		errType: errType,
-		errCode: errCode,
+		RawError: rawError,
+		ErrStatus: "error",
+		ErrCode: errCode,
+		ErrType: errType,
+		Description: description,
+	}
+}
+// создание новой API timeout ошибки
+func NewTimeout(rawError error, description, errType string, errCode int) APIError {
+	apiErr := New(rawError, description, errType, errCode)
+	apiErr.ErrStatus = "timeout"
+	return apiErr
+}
+
+
+// проверка ошибки на timeout ошибку (если timeout произошёл из-за контекста) и корректирование статуса APIError, если это так
+func (this *APIError) CheckTimeout() {
+	timeoutErr := context.DeadlineExceeded
+	
+	// разворачивание ошибки для логов до самой первой
+	if errors.Is(errors.Cause(this.RawError), timeoutErr) {
+		this.ErrStatus = "timeout"
 	}
 }
 
 
 // реализация интерфейса error
 func (this APIError) Error() string {
-	return this.rawError.Error()
+	return this.RawError.Error()
 }
-
-// получение HTTP ошибки
-func (this APIError) GetHTTPError() error {
-	return echo.NewHTTPError(this.errCode, map[string]string{this.errType: this.description})
-}
-
 
 // приведение ошибки к типу APIError
 func AssertAPIError(err error) APIError {
 	apiErr := new(APIError)
 	
-	// ели ошибка является APIError структурой
+	// если ошибка является APIError структурой
 	if errors.As(err, apiErr) {
 		return *apiErr
 	}
@@ -50,5 +62,6 @@ func AssertAPIError(err error) APIError {
 		return *apiErr
 	}
 
+	// если ошибка не является APIError структурой, то делаем её из неё
 	return New(err, err.Error(), "unknown", 500)
 }

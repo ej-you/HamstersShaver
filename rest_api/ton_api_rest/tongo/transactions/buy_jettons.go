@@ -105,12 +105,14 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	jettonToBuy := tongoJetton.New(jettonMaster1, tongoClient)
 	routersJettonWallet, err := jettonToBuy.GetJettonWallet(ctx, jettonRouter)
 	if err != nil {
-		return coreErrors.New(
+		apiErr := coreErrors.New(
 			fmt.Errorf("send buy transaction: get jetton wallet using jetton master: %w", err),
 			"failed to get jetton wallet",
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
+		return apiErr
 	}
 
 	// кол-во TON для покупки монет (в *big.Int)
@@ -162,12 +164,14 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 
 	// отправка сообщения в блокчейн
 	if err := realWallet.Send(ctx, jettonTransfer); err != nil {
-		return coreErrors.New(
+		apiErr := coreErrors.New(
 			fmt.Errorf("send buy transaction: send transfer message: %w", err),
 			"failed to send transfer message",
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
+		return apiErr
 	}
 	return nil
 }

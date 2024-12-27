@@ -76,10 +76,10 @@ func GetTonClientTonapiWithTimeout(conType string, timeout time.Duration) (*tona
 			return result.Client, nil
 		// если прошло время timeout, а данные не получены, то возвращаем ошибку таймаута
 		case <- time.After(timeout):
-			apiErr := coreErrors.New(
+			apiErr := coreErrors.NewTimeout(
 				fmt.Errorf("get tonapi-go client: timeout error"),
 				"get tonapi-go client: timeout error",
-				"ton_api",
+				"timeout",
 				500,
 			)
 			var emptyClient *tonapi.Client
@@ -140,10 +140,10 @@ func GetTonClientTongoWithTimeout(conType string, timeout time.Duration) (*tongo
 			return result.Client, nil
 		// если прошло время timeout, а данные не получены, то возвращаем ошибку таймаута
 		case <- time.After(timeout):
-			apiErr := coreErrors.New(
+			apiErr := coreErrors.NewTimeout(
 				fmt.Errorf("get tongo client: timeout error"),
 				"get tongo client: timeout error",
-				"tongo_api",
+				"timeout",
 				500,
 			)
 			var emptyClient *tongo.Client
