@@ -12,9 +12,10 @@ import (
 
 // структура для парсинга JSON-ответа от API с ошибкой
 type rawRestAPIError struct {
-	Errors 		map[string]string `json:"errors"`
+	Status 	string `json:"status"`
 	StatusCode 	int `json:"statusCode"`
 	Path 	string `json:"path"`
+	Errors 		map[string]string `json:"errors"`
 }
 
 func parseError(response *http.Response) error {
@@ -32,6 +33,10 @@ func parseError(response *http.Response) error {
 	}
 	errorsString = fmt.Sprintf("code %d: %s", rawErr.StatusCode, strings.TrimSuffix(errorsString, " && "))
 
+	// если timeout ошибка - возврат ошибки RestAPITimeoutError
+	if rawErr.Status == "timeout" {
+		return customErrors.RestAPITimeoutError(errorsString)
+	}
 	// возврат ошибки RestAPIError
 	return customErrors.RestAPIError(errorsString)
 }

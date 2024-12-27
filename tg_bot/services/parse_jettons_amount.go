@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	apiClient "github.com/ej-you/HamstersShaver/tg_bot/api_client"
 	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
@@ -44,7 +43,7 @@ func ParseJettonsAmount(jettonCA, rawJettonsAmount string) (string, error) {
 		return "", fmt.Errorf("parse jettons amount: %w", validateErr)
 	}
 	// получение количества монет по проценту
-	jettonsAmount, err = getAmountFromPercent(jettonCA, percent)
+	jettonsAmount, err = GetAmountFromPercent(jettonCA, percent)
 	if err != nil {
 		return "", fmt.Errorf("parse jettons amount: %w", err)
 	}
@@ -53,7 +52,7 @@ func ParseJettonsAmount(jettonCA, rawJettonsAmount string) (string, error) {
 
 
 // получение кол-ва монет по проценту, переданному юзером
-func getAmountFromPercent(jettonCA string, percent int) (string, error) {
+func GetAmountFromPercent(jettonCA string, percent int) (string, error) {
 	var err error
 	var jettonsAmount int
 	var jettonsDecimals int
@@ -62,7 +61,7 @@ func getAmountFromPercent(jettonCA string, percent int) (string, error) {
 	if jettonCA == apiClient.TONMasterAddress {
 		// получение баланса TON у аккаунта
 		var accountTonInfo apiClient.TONInfo
-		err = apiClient.GetRequest("/api/account/get-ton", nil, &accountTonInfo, 5*time.Second)
+		err = apiClient.GetRequest("/api/account/get-ton", nil, &accountTonInfo)
 		if err != nil {
 			return "", fmt.Errorf("get tons amount from percent: %w", err)
 		}
@@ -76,7 +75,7 @@ func getAmountFromPercent(jettonCA string, percent int) (string, error) {
 		var accountJettonInfo apiClient.AccountJetton
 		getAccountJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{"MasterAddress": jettonCA}}
 		
-		err = apiClient.GetRequest("/api/account/get-jetton", &getAccountJettonInfoParams, &accountJettonInfo, 5*time.Second)
+		err = apiClient.GetRequest("/api/account/get-jetton", &getAccountJettonInfoParams, &accountJettonInfo)
 		if err != nil {
 			return "", fmt.Errorf("get jettons amount from percent: %w", err)
 		}
@@ -91,7 +90,7 @@ func getAmountFromPercent(jettonCA string, percent int) (string, error) {
 		"RawBalance": jettonsAmount,
 		"Decimals": jettonsDecimals,
 	}}
-	err = apiClient.GetRequest("/api/services/beauty-balance", &getBeautyBalanceParams, &beautyBalance, 5*time.Second)
+	err = apiClient.GetRequest("/api/services/beauty-balance", &getBeautyBalanceParams, &beautyBalance)
 	if err != nil {
 		return "", fmt.Errorf("get jettons amount from percent: %w", err)
 	}

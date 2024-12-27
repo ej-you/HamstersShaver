@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"time"
 
 	telebot "gopkg.in/telebot.v3"
 
@@ -38,7 +37,7 @@ func HomeHandler(context telebot.Context) error {
 
 	// получение баланса TON у аккаунта
 	var TONAccountInfo apiClient.TONInfo
-	err = apiClient.GetRequest("/api/account/get-ton", nil, &TONAccountInfo, 5*time.Second)
+	err = apiClient.GetRequest("/api/account/get-ton", nil, &TONAccountInfo)
 	if err != nil {
 		return fmt.Errorf("HomeHandler for user %s: %w", userId, err)
 	}
@@ -48,7 +47,7 @@ func HomeHandler(context telebot.Context) error {
 	getTONJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
 		"MasterAddress": apiClient.TONMasterAddress,
 	}}
-	err = apiClient.GetRequest("/api/jettons/get-info", &getTONJettonInfoParams, &TONJettonInfo, 5*time.Second)
+	err = apiClient.GetRequest("/api/jettons/get-info", &getTONJettonInfoParams, &TONJettonInfo)
 	if err != nil {
 		return fmt.Errorf("HomeHandler for user %s: %w", userId, err)
 	}

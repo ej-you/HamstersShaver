@@ -8,6 +8,14 @@ func (this RestAPIError) Error() string {
 	return string(this)
 }
 
+// timeout ошибка от моего REST API
+type RestAPITimeoutError string
+
+func (this RestAPITimeoutError) Error() string {
+	return string(this)
+}
+
+
 
 // ошибка от Redis
 type RedisError string

@@ -4,7 +4,6 @@ package cell
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	telebot "gopkg.in/telebot.v3"
 
@@ -58,7 +57,7 @@ func confirmNewTransaction(context telebot.Context, userStateMachine stateMachin
 		"Amount": newTransInfo.Amount,
 		"Slippage": newTransInfo.Slippage,
 	}}
-	err = apiClient.GetRequest("/api/transactions/cell/pre-request", &getCellPreRequestInfoParams, &cellPreRequestInfo, 5*time.Second)
+	err = apiClient.GetRequest("/api/transactions/cell/pre-request", &getCellPreRequestInfoParams, &cellPreRequestInfo)
 	if err != nil {
 		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
 	}

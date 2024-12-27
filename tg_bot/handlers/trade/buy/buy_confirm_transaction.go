@@ -4,7 +4,6 @@ package buy
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	telebot "gopkg.in/telebot.v3"
 
@@ -33,7 +32,7 @@ func BuyConfirmTransactionHandler(context telebot.Context) error {
 		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
 	}
 
-	msgText := fmt.Sprintf("🏁 Адрес монеты: %s%% \n\nСбор данных для новой транзакции...", jettonCA)
+	msgText := fmt.Sprintf("🏁 Адрес монеты: %s \n\nСбор данных для новой транзакции...", jettonCA)
 	context.Send(msgText)
 
 	// вызов функции для подтверждения транзакции
@@ -55,7 +54,7 @@ func confirmNewTransaction(context telebot.Context, userStateMachine stateMachin
 		"Amount": newTransInfo.Amount,
 		"Slippage": newTransInfo.Slippage,
 	}}
-	err = apiClient.GetRequest("/api/transactions/buy/pre-request", &getBuyPreRequestInfoParams, &buyPreRequestInfo, 5*time.Second)
+	err = apiClient.GetRequest("/api/transactions/buy/pre-request", &getBuyPreRequestInfoParams, &buyPreRequestInfo)
 	if err != nil {
 		return fmt.Errorf("ConfirmTransactionHandler for user %s: %w", userId, err)
 	}

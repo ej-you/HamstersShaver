@@ -2,7 +2,6 @@ package keyboards
 
 import (
 	"fmt"
-	"time"
 
 	telebot "gopkg.in/telebot.v3"
 
@@ -18,7 +17,7 @@ func SetWalletJettonsButtons() error {
 
 	// получение нужной информации о всех монетах на кошельке аккаунта
 	var allJettons []apiClient.AccountJetton
-	err := apiClient.GetRequest("/api/account/get-jettons", nil, &allJettons, 5*time.Second)
+	err := apiClient.GetRequest("/api/account/get-jettons", nil, &allJettons)
 	if err != nil {
 		return fmt.Errorf("set wallet jettons buttons: %w", err)
 	}
