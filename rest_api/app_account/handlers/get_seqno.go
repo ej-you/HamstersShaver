@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"time"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -13,7 +12,7 @@ import (
 
 	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
 
-	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
+	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
@@ -24,34 +23,34 @@ import (
 // @Tag account
 // @Route /account/get-seqno [get]
 func GetSeqno(ctx echo.Context) error {
-	// создание API клиента TON для tongo с таймаутом в 3 секунд
-	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", 3*time.Second)
+	// создание API клиента TON для tongo
+	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", constants.TongoClientTimeout)
 	if err != nil {
 		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 	// получение данных о кошельке через tongo
 	realWallet, err := myTongoWallet.GetWallet(tongoClient)
 	if err != nil {
 		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
-	// создание API клиента TON для tonapi-go с таймаутом в 3 секунд
-	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
+	// создание API клиента TON для tonapi-go
+	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
 		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
-	// создание контекста с таймаутом в 5 секунд
-	tonApiContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// создание контекста с таймаутом
+	getAccountSeqnoContext, cancel := context.WithTimeout(context.Background(), constants.GetAccountSeqnoContextTimeout)
 	defer cancel()
 
 	// получение значения Seqno
-	seqno, err := myTonapiAccount.GetAccountSeqno(tonApiContext, tonapiClient, realWallet)
+	seqno, err := myTonapiAccount.GetAccountSeqno(getAccountSeqnoContext, tonapiClient, realWallet)
 	if err != nil {
 		settings.ErrorLog.Println(err)
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, serializers.GetSeqnoOut{Seqno: seqno})

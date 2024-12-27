@@ -2,14 +2,12 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
 	echo "github.com/labstack/echo/v4"
 
 	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
 	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 	
-	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
@@ -38,11 +36,11 @@ func CellPreRequest(ctx echo.Context) error {
 		return err
 	}
 
-	// формирование структуры для ответа с таймаутом в 3 секунды
-	dataOut, err = myTongoTransactions.GetPreRequestCellJetton(dataIn.JettonCA, dataIn.Amount, dataIn.Slippage, 3*time.Second)
+	// получение примерных данных о будующей транзакции
+	dataOut, err = myTongoTransactions.GetPreRequestCellJetton(dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
 	if err != nil {
 		settings.ErrorLog.Println(err)
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

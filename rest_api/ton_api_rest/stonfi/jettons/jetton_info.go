@@ -140,10 +140,10 @@ func GetJettonInfoByAddressWithTimeout(jettonAddr string, timeout time.Duration)
 			return result.JettonInfo, result.Error
 		// если прошло время timeout, а данные не получены, то возвращаем ошибку таймаута
 		case <- time.After(timeout):
-			timeoutAPIError := coreErrors.New(
+			timeoutAPIError := coreErrors.NewTimeout(
 				fmt.Errorf("get jetton data from Stonfi API: timeout error"),
-				"timeout error",
-				"stonfi_api",
+				"get jetton data via stonfi: timeout error",
+				"timeout",
 				500,
 			)
 			return JettonParams{}, timeoutAPIError

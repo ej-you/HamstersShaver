@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"fmt"
-	"time"
 	"context"
+	"fmt"
 	"net/http"
 
 	echo "github.com/labstack/echo/v4"
@@ -12,8 +11,8 @@ import (
 	
 	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
 
-	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
+	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
@@ -39,22 +38,22 @@ func GetJetton(ctx echo.Context) error {
 		return err
 	}
 
-	// создание API клиента TON для tonapi-go с таймаутом в 3 секунды
-	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", 3*time.Second)
+	// создание API клиента TON для tonapi-go
+	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
 		settings.ErrorLog.Println(fmt.Errorf("get account jetton using tonapi: %w", err))
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
-	// создание контекста с таймаутом в 5 секунд
-	tonApiContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// создание контекста с таймаутом
+	getAccountJettonContext, cancel := context.WithTimeout(context.Background(), constants.GetAccountJettonContextTimeout)
 	defer cancel()
 
 	// получение информации о монете аккаунта
-	dataOut, err = myTonapiAccount.GetAccountJetton(tonApiContext, tonapiClient, dataIn.MasterAddress)
+	dataOut, err = myTonapiAccount.GetAccountJetton(getAccountJettonContext, tonapiClient, dataIn.MasterAddress)
 	if err != nil {
 		settings.ErrorLog.Println(err)
-		return coreErrors.AssertAPIError(err).GetHTTPError()
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)

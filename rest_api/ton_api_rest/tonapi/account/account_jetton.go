@@ -68,6 +68,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
 		return accountJettonInfo, apiErr
 	}
 	
