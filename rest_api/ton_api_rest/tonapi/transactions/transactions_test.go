@@ -47,7 +47,8 @@ func TestGetTransactionInfoByHash(t *testing.T) {
 	t.Logf("Test getting info about success cell jettons transaction by its hash")
 	{
 		// In
-		hash := "79c2a5559c671e1ea56f6e345eeb88ef9f689d65a27c709be457f4bc4fa1e7a7"
+		// hash := "79c2a5559c671e1ea56f6e345eeb88ef9f689d65a27c709be457f4bc4fa1e7a7"
+		hash := "a8ec992c341230a885f9adfe6598eb307660c306a5f00cf0d302c72e7d966389"
 		action := "cell"
 
 		// Out
