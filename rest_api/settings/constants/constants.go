@@ -26,13 +26,13 @@ const (
 	GetJettonInfoByAddressTimeout = 4*time.Second
 
 	// tonapi
-	GetAccountJettonContextTimeout = 1*time.Second
-	GetBalanceJettonsContextTimeout = 1*time.Second
-	GetBalanceTONContextTimeout = 2*time.Second
-	GetTransInfoContextTimeout = 1*time.Second
+	GetAccountJettonContextTimeout = 2*time.Second
+	GetBalanceJettonsContextTimeout = 2*time.Second
+	GetBalanceTONContextTimeout = 3*time.Second
+	GetTransInfoContextTimeout = 2*time.Second
 
 	// tongo
-	GetAccountSeqnoContextTimeout = 2*time.Second
-	SendBuyJettonContextTimeout = 2*time.Second
-	SendCellJettonContextTimeout = 2*time.Second
+	GetAccountSeqnoContextTimeout = 3*time.Second
+	SendBuyJettonContextTimeout = 3*time.Second
+	SendCellJettonContextTimeout = 3*time.Second
 )
