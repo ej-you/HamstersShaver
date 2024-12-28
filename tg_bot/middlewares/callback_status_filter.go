@@ -24,10 +24,20 @@ func GeneralCallbackStatusFilter(nextHandler telebot.HandlerFunc) telebot.Handle
 			// при любом статусе
 			case "hide_help", "to_home":
 				return nextHandler(context)
-			case "to_trade", "to_auto", "to_tokens":
-				accepted, err = userStateMachine.StatusEquals("home")
-			case "to_buy", "to_cell":
-				accepted, err = userStateMachine.StatusEquals("trade")
+			// при любом статусе, кроме "start" и "home"
+			case "cancel":
+				accepted, err = userStateMachine.StatusEquals("start", "home")
+				accepted = !accepted
+			case "to_trade":
+				accepted, err = userStateMachine.StatusEquals("home", "trade")
+			case "to_auto":
+				accepted, err = userStateMachine.StatusEquals("home", "auto")
+			case "to_tokens":
+				accepted, err = userStateMachine.StatusEquals("home", "tokens")
+			case "to_buy":
+				accepted, err = userStateMachine.StatusEquals("trade", "buy")
+			case "to_cell":
+				accepted, err = userStateMachine.StatusEquals("trade", "cell")
 			default:
 				return nextHandler(context)
 		}

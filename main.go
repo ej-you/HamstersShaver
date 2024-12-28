@@ -37,10 +37,10 @@ func main() {
 
 	// группа хендлеров для обработки всех команд
 	commandsHandlers := bot.Group()
-	commandsHandlers.Use(middlewares.GeneralCommandsLogger) //, middlewares.GeneralCommandsStatusFilter)
+	commandsHandlers.Use(middlewares.GeneralCommandsLogger, middlewares.GeneralCommandsStatusFilter)
 	// группа хендлеров для обработки всех основных (статичных, hard-code) инлайн-кнопок
 	callbackHandlers := bot.Group()
-	callbackHandlers.Use(middlewares.GeneralCallbackLogger) //, middlewares.GeneralCallbackStatusFilter)
+	callbackHandlers.Use(middlewares.GeneralCallbackLogger, middlewares.GeneralCallbackStatusFilter)
 
 	// инициализация хендлеров
 	commandsHandlers.Handle("/start", handlers.StartHandler)
@@ -77,8 +77,8 @@ func main() {
 	commandsHandlers.Handle("/tokens", handlersHelpers.InDevelopmentHandler)
 	callbackHandlers.Handle(&keyboards.BtnToTokens, handlersHelpers.InDevelopmentHandler)
 
-	bot.Handle(telebot.OnText, handlersHelpers.HandlersDistributor)
-	bot.Handle(telebot.OnCallback, handlersHelpers.HandlersDistributor)
+	bot.Handle(telebot.OnText, handlersHelpers.HandlersDistributor, middlewares.GeneralCommandsStatusFilter)
+	bot.Handle(telebot.OnCallback, handlersHelpers.HandlersDistributor, middlewares.GeneralCallbackStatusFilter)
 
 	// запуск бота
 	settings.InfoLog.Printf("Start bot %s...", bot.Me.Username)
