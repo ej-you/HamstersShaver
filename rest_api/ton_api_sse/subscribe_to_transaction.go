@@ -48,7 +48,7 @@ func SubscribeToTransaction(timeout time.Duration) (string, error) {
 		// ошибка в горутине
 		case err := <-errChan:
 			cancel()
-			return "", fmt.Errorf("failed to wait transaction via SSE: %w", err.Error())
+			return "", fmt.Errorf("failed to wait transaction via SSE: %w", err)
 		// если прошло время timeout, а данные не получены
 		case <-time.After(timeout):
 			cancel()
