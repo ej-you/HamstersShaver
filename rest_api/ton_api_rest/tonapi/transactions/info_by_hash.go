@@ -61,8 +61,33 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
 		return transInfo, apiErr
 	}
+
+
+
+
+
+
+
+	fmt.Println("rawTransInfo.PrevTransHash:", rawTransInfo.PrevTransHash)
+	fmt.Println("rawTransInfo.Block:", rawTransInfo.Block)
+	// blockTrans, _ := tonapiClient.GetBlockchainBlockTransactions(ctx, tonapi.GetBlockchainBlockTransactionsParams{BlockID: rawTransInfo.Block})
+	// fmt.Println("blockTrans:", blockTrans)
+
+	notHistory, _ := tonapiClient.GetAccountJettonHistoryByID(ctx, tonapi.GetAccountJettonHistoryByIDParams{
+		AccountID: "0:cb8cc4d28f9f2d1cc73da087a8d3475b57ab263e9d69950c39bd449900379422",
+		JettonID: "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT",
+		Limit: 2,
+	})
+	fmt.Println("notHistory:", notHistory)
+
+	// !!!
+	// GetAccountJettonsHistory
+
+
+
 
 	paramsPreviousTrans := tonapi.GetBlockchainTransactionParams{TransactionID: rawTransInfo.PrevTransHash.Value}
 	// получение всей информации о предыдущей операции транзакции (которая указана в свойствах искомой операции транзакции)
@@ -74,8 +99,27 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 			"ton_api",
 			500,
 		)
+		apiErr.CheckTimeout()
 		return transInfo, apiErr
 	}
+
+
+
+
+
+
+
+
+	fmt.Println("rawTransInfoPrevious.Block:", rawTransInfoPrevious.Block)
+	// prevBlockTrans, _ := tonapiClient.GetBlockchainBlockTransactions(ctx, tonapi.GetBlockchainBlockTransactionsParams{BlockID: rawTransInfoPrevious.Block})
+	// fmt.Println("prevBlockTrans:", prevBlockTrans)
+
+
+
+
+
+
+
 
 	// парсинг seqno до проведения транзакции
 	var seqnoBeforeTransaction decodedPreviousTransOpBody

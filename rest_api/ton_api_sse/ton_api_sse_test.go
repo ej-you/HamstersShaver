@@ -25,15 +25,33 @@ func logExecTime(t *testing.T, startTime *time.Time) {
 	*startTime = endTime
 }
 
-// subscribe_to_transaction.go
-func TestSubscribeToTransaction(t *testing.T) {
+// subscribe_to_next_transaction.go
+func TestSubscribeToNextTransaction(t *testing.T) {
 	startTime := time.Now()
 
-	t.Logf("Test subscribe to transaction via Server Sent Events")
+	t.Logf("Test subscribe to next transaction via Server Sent Events")
 	{
-		transHash, err := SubscribeToTransaction(5*time.Minute)
+		transHash, err := SubscribeToNextTransaction(5*time.Minute)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot finished transaction hash: %s", successMarker, transHash)
+		}
+	}
+	logExecTime(t, &startTime)
+}
+
+// subscribe_to_transaction_with_seqno.go
+func TestSubscribeToTransactionWithSeqno(t *testing.T) {
+	startTime := time.Now()
+
+	t.Logf("Test subscribe to transaction with seqno via Server Sent Events")
+	{
+		timeout := 5*time.Minute
+		seqno := 135
+		action := "buy"
+
+		transInfo, err := SubscribeToTransactionWithSeqno(timeout, seqno, action)
+		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
+			t.Logf("\t%s\tGot finished transaction hash: %v", successMarker, transInfo)
 		}
 	}
 	logExecTime(t, &startTime)
