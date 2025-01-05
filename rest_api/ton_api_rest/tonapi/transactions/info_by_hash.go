@@ -1,7 +1,6 @@
 package transactions
 
 import (
-	"encoding/json"
 	"context"
 	"fmt"
 
@@ -17,7 +16,6 @@ import (
 
 // данные о транзакции по её хэшу
 type TransactionInfo struct {
-	SeqnoBeforeTransaction int `json:"seqnoBeforeTransaction" example:"128"`
 	Hash 		string `json:"hash" example:"ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4"`
 	EndBalance 	string `json:"endBalance" example:"2.689"`
 	Bounce		bool `json:"bounce" example:"true"`
@@ -26,18 +24,12 @@ type TransactionInfo struct {
 
 // данные о транзакции по её хэшу со статусом выполнения транзакции
 type TransactionInfoWithStatusOK struct {
-	SeqnoBeforeTransaction int `json:"seqnoBeforeTransaction" example:"128" description:"seqno аккаунта до проведения транзакции"`
 	Hash 		string `json:"hash" example:"ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4" description:"хэш транзакции"`
 	EndBalance 	string `json:"endBalance" example:"2.689" description:"оставшееся кол-во TON после проведения транзакции"`
 	Bounce		bool `json:"bounce" example:"true" description:"была ли отклонена операция (не означает успех или неудачу транзакции)"`
 	OpName		string `json:"opName" example:"jetton_notify" description:"название операции транзакции"`
 	Action 		string `json:"action" example:"buy" description:"действие с монетами в транзакции (покупка/продажа)"`
 	StatusOK 	bool `json:"statusOK" example:"true" description:"успех или неудача выполнения транзакции"`
-}
-
-// для парсинга seqno до проведения транзакции из информации о транзакции
-type decodedPreviousTransOpBody struct {
-	Seqno int `json:"seqno"`
 }
 
 
@@ -65,78 +57,8 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 		return transInfo, apiErr
 	}
 
-
-
-
-
-
-
-	fmt.Println("rawTransInfo.PrevTransHash:", rawTransInfo.PrevTransHash)
-	fmt.Println("rawTransInfo.Block:", rawTransInfo.Block)
-	// blockTrans, _ := tonapiClient.GetBlockchainBlockTransactions(ctx, tonapi.GetBlockchainBlockTransactionsParams{BlockID: rawTransInfo.Block})
-	// fmt.Println("blockTrans:", blockTrans)
-
-	notHistory, _ := tonapiClient.GetAccountJettonHistoryByID(ctx, tonapi.GetAccountJettonHistoryByIDParams{
-		AccountID: "0:cb8cc4d28f9f2d1cc73da087a8d3475b57ab263e9d69950c39bd449900379422",
-		JettonID: "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT",
-		Limit: 2,
-	})
-	fmt.Println("notHistory:", notHistory)
-
-	// !!!
-	// GetAccountJettonsHistory
-
-
-
-
-	paramsPreviousTrans := tonapi.GetBlockchainTransactionParams{TransactionID: rawTransInfo.PrevTransHash.Value}
-	// получение всей информации о предыдущей операции транзакции (которая указана в свойствах искомой операции транзакции)
-	rawTransInfoPrevious, err := tonapiClient.GetBlockchainTransaction(ctx, paramsPreviousTrans)
-	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get previous transaction info using tonapi: %w", err),
-			"failed to get transaction info",
-			"ton_api",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return transInfo, apiErr
-	}
-
-
-
-
-
-
-
-
-	fmt.Println("rawTransInfoPrevious.Block:", rawTransInfoPrevious.Block)
-	// prevBlockTrans, _ := tonapiClient.GetBlockchainBlockTransactions(ctx, tonapi.GetBlockchainBlockTransactionsParams{BlockID: rawTransInfoPrevious.Block})
-	// fmt.Println("prevBlockTrans:", prevBlockTrans)
-
-
-
-
-
-
-
-
-	// парсинг seqno до проведения транзакции
-	var seqnoBeforeTransaction decodedPreviousTransOpBody
-	err = json.Unmarshal(rawTransInfoPrevious.InMsg.Value.DecodedBody, &seqnoBeforeTransaction)
-	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("parse raw previous transaction body: %w", err),
-			"failed to get transaction info",
-			"ton_api",
-			500,
-		)
-		return transInfo, apiErr
-	}
-
 	// выбор нужной информации
 	transInfo = TransactionInfo{
-		SeqnoBeforeTransaction: seqnoBeforeTransaction.Seqno,
 		Hash: rawTransInfo.Hash,
 		EndBalance: services.JettonBalanceFormat(rawTransInfo.EndBalance, constants.TonDecimals),
 		Bounce: rawTransInfo.InMsg.Value.Bounce,
@@ -179,7 +101,6 @@ func GetTransactionInfoWithStatusOKByHash(ctx context.Context, hash string, acti
 	}
 
 	transInfoWithStatusOK = TransactionInfoWithStatusOK{
-		SeqnoBeforeTransaction: transInfo.SeqnoBeforeTransaction,
 		Hash: transInfo.Hash,
 		EndBalance: transInfo.EndBalance,
 		Bounce: transInfo.Bounce,

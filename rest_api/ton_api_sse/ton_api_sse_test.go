@@ -38,21 +38,3 @@ func TestSubscribeToNextTransaction(t *testing.T) {
 	}
 	logExecTime(t, &startTime)
 }
-
-// subscribe_to_transaction_with_seqno.go
-func TestSubscribeToTransactionWithSeqno(t *testing.T) {
-	startTime := time.Now()
-
-	t.Logf("Test subscribe to transaction with seqno via Server Sent Events")
-	{
-		timeout := 5*time.Minute
-		seqno := 135
-		action := "buy"
-
-		transInfo, err := SubscribeToTransactionWithSeqno(timeout, seqno, action)
-		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
-			t.Logf("\t%s\tGot finished transaction hash: %v", successMarker, transInfo)
-		}
-	}
-	logExecTime(t, &startTime)
-}

@@ -51,19 +51,6 @@ func GetPreRequestBuyJetton(jettonCA string, tonAmount float64, slippage int) (P
 	// цена монеты в TON
 	jettonPriceInTON := jettonInfo.PriceUSD / tonInfo.PriceUSD
 
-
-
-
-
-
-	slippage = -1
-
-
-
-
-
-
-
 	// предположительное кол-во монет на выходе без учёта изменения цены
 	predictedJettonsAmount := tonAmount / jettonPriceInTON
 	// перевод процента проскальзывания в часть от кол-ва монет в виде float64
@@ -137,19 +124,6 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	gasToncoins := tongoTlb.Grams(300_000_000)
 	// прикреплённые TON для газа в сумме с TON для покупки монет
 	attachedToncoins := gasToncoins + tongoTlb.Grams(tonAmount)
-
-
-
-
-
-
-	slippage = -1
-
-
-
-
-
-
 
 	// предположительное кол-во монет на выходе без учёта изменения цены
 	predictedJettonsAmount := amount / jettonPriceInTON
