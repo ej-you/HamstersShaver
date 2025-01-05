@@ -25,13 +25,13 @@ func logExecTime(t *testing.T, startTime *time.Time) {
 	*startTime = endTime
 }
 
-// subscribe_to_transaction.go
-func TestSubscribeToTransaction(t *testing.T) {
+// subscribe_to_next_transaction.go
+func TestSubscribeToNextTransaction(t *testing.T) {
 	startTime := time.Now()
 
-	t.Logf("Test subscribe to transaction via Server Sent Events")
+	t.Logf("Test subscribe to next transaction via Server Sent Events")
 	{
-		transHash, err := SubscribeToTransaction(5*time.Minute)
+		transHash, err := SubscribeToNextTransaction(5*time.Minute)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot finished transaction hash: %s", successMarker, transHash)
 		}

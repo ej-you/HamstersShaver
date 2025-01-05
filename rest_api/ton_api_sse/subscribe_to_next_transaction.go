@@ -11,10 +11,10 @@ import (
 )
 
 
-// ожидание покупки/продажи монеты (полное завершение транзакции)
+// ожидание покупки/продажи монеты (полное завершение любой следующей транзакции)
 // JettonNotify - 0x7362d09c (успех продажи, неудача покупки)
 // Excess -	0xd53276db (успех покупки, неудача продажи)
-func SubscribeToTransaction(timeout time.Duration) (string, error) {
+func SubscribeToNextTransaction(timeout time.Duration) (string, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -48,10 +48,10 @@ func SubscribeToTransaction(timeout time.Duration) (string, error) {
 		// ошибка в горутине
 		case err := <-errChan:
 			cancel()
-			return "", fmt.Errorf("failed to wait transaction via SSE: %w", err)
+			return "", fmt.Errorf("wait next transaction: %v: %w", err, SseError("failed to wait transaction via SSE"))
 		// если прошло время timeout, а данные не получены
 		case <-time.After(timeout):
 			cancel()
-			return "", fmt.Errorf("failed to wait transaction via SSE: timeout error")
+			return "", fmt.Errorf("wait next transaction: %w", SseError("failed to wait transaction via SSE: timeout error"))
 	}
 }

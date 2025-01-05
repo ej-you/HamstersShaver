@@ -37,11 +37,11 @@ func Info(ctx echo.Context) error {
 		return err
 	}
 
-	// создание контекста с таймаутом в 5 секунд
+	// создание контекста с таймаутом
 	getTransInfoContext, cancel := context.WithTimeout(context.Background(), constants.GetTransInfoContextTimeout)
 	defer cancel()
 
-	// формирование структуры для ответа с таймаутом в 3 секунды
+	// получение информации о транзакции
 	dataOut, err = myTonapiTransactions.GetTransactionInfoWithStatusOKByHash(getTransInfoContext, dataIn.TransactionHash, dataIn.Action)
 	if err != nil {
 		settings.ErrorLog.Println(err)

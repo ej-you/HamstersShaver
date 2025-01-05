@@ -24,6 +24,11 @@
 GO_PORT=8000
 REST_API_KEY="your-own-key-for-this-app"
 
+# comma-separated allowed origins for CORS
+CORS_ALLOWED_ORIGINS="*"
+# comma-separated allowed methods for CORS
+CORS_ALLOWED_METHODS="GET,HEAD,POST"
+
 # received from TON Console
 TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 
@@ -43,9 +48,11 @@ TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 1. `/api/jettons/get-info` - returns info about jetton by its address
 
 #### - transactions
-1. `/api/transactions/buy/pre-request` - returns info about pre-request transaction
+1. `/api/transactions/buy/pre-request` - returns info about pre-request buy transaction
 2. `/api/transactions/buy/send` - send buy transaction to blockchain
-3. `/api/transactions/info` - get transaction info by its hash
+3. `/api/transactions/cell/pre-request` - returns info about pre-request cell transaction
+4. `/api/transactions/cell/send` - send cell transaction to blockchain
+5. `/api/transactions/info` - get transaction info by its hash
 
 #### - services
 1. `/api/services/beauty-balance` - returns rounded string balance converted from given int64 balance

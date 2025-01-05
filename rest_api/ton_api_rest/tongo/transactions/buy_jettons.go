@@ -125,7 +125,6 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	// прикреплённые TON для газа в сумме с TON для покупки монет
 	attachedToncoins := gasToncoins + tongoTlb.Grams(tonAmount)
 
-
 	// предположительное кол-во монет на выходе без учёта изменения цены
 	predictedJettonsAmount := amount / jettonPriceInTON
 	// перевод процента проскальзывания в часть от кол-ва монет в виде float64
