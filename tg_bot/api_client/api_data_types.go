@@ -29,6 +29,10 @@ type TONInfo struct {
 	Decimals 		int `json:"decimals"`
 }
 
+// запрос на /api/account/get-seqno
+type AccountSeqno struct {
+	Seqno int `json:"seqno"`
+}
 
 // запрос на /api/services/beauty-balance
 type BeautyBalance struct {

@@ -11,6 +11,7 @@ import (
 	handlersHelpers "github.com/ej-you/HamstersShaver/tg_bot/handlers/helpers"
 	"github.com/ej-you/HamstersShaver/tg_bot/handlers"
 	
+	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/middlewares"
 	"github.com/ej-you/HamstersShaver/tg_bot/settings"
@@ -23,7 +24,7 @@ func main() {
 		Token:  settings.BotToken,
 		Poller: &telebot.LongPoller{Timeout: 10 * time.Second},
 		// Verbose: true,
-		OnError: handlersHelpers.MainErrorHandler,
+		OnError: customErrors.MainErrorHandler,
 	}
 
 	// инициализация бота
@@ -65,9 +66,6 @@ func main() {
 
 	// в разработке (Dedust.io DEX-биржа)
 	callbackHandlers.Handle(&keyboards.BtnDedust, handlersHelpers.InDevelopmentHandler)
-
-	// ВРЕМЕННО
-	callbackHandlers.Handle(&keyboards.BtnConfirm, handlersHelpers.InDevelopmentHandler)
 
 	// в разработке (функция авто)
 	commandsHandlers.Handle("/auto", handlersHelpers.InDevelopmentHandler)

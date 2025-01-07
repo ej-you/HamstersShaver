@@ -5,6 +5,7 @@ import (
 
 	telebot "gopkg.in/telebot.v3"
 
+	handlersTrade "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade"
 	handlersTradeCell "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade/cell"
 	handlersTradeBuy "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade/buy"
 
@@ -20,12 +21,14 @@ var statusesToCheck = map[string]func(context telebot.Context)error{
 	"cell_dex": handlersTradeCell.CellJettonsAmountHandler, // кол-во монет
 	"cell_jettons_amount": handlersTradeCell.CellSlippageHandler, // процент проскальзывания
 	"cell_slippage": handlersTradeCell.CellConfirmTransactionHandler, // подтверждение транзакции
+	"cell_confirm_transaction": handlersTrade.SendTransaction, // отправка транзакции (общая функция)
 
 	// в самом начале: выбор биржи
 	"buy": handlersTradeBuy.BuyTonsAmountHandler, // кол-во монет
 	"buy_tons_amount": handlersTradeBuy.BuySlippageHandler, // процент проскальзывания
 	"buy_slippage": handlersTradeBuy.BuyJettonCAHandler, // адрес монеты
 	"buy_jetton_ca": handlersTradeBuy.BuyConfirmTransactionHandler, // подтверждение транзакции
+	"buy_confirm_transaction": handlersTrade.SendTransaction, // отправка транзакции (общая функция)
 }
 
 

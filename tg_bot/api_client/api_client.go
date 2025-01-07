@@ -1,6 +1,7 @@
 package api_client
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -22,11 +23,64 @@ type QueryParams struct {
 	Params map[string]interface{}
 }
 
+// структура для JSON-body для POST-запросов
+type JsonBody struct {
+	Data map[string]interface{}
+	// Amount		float64 `json:"amount"`
+	// JettonCA 	string `json:"jettonCA"`
+	// Slippage 	int `json:"slippage"`
+}
+
+
+func sendRequest(req *http.Request, method, apiPath string, outStruct any) error {
+	var err error
+	client := &http.Client{Timeout: 10*time.Second}
+
+	var resp *http.Response
+	restTimeoutErr := new(customErrors.RestAPITimeoutError)
+	var apiErr error
+	// отправляем запрос и, если получаем timeout ошибку, то пытаемся ещё sendRequestAttemps-1 раз
+	for i := 0; i < sendRequestAttemps; i++ {
+		// отправка запроса
+		resp, err = client.Do(req)
+		if err != nil {
+			internalErr := customErrors.InternalError(fmt.Sprintf("failed to do request"))
+			return fmt.Errorf("send %s-request to %q: %v: %w", method, apiPath, err, internalErr)
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode / 100 == 2 { // 2xx код
+			break
+		}
+		// парсинг ответа с ошибкой в RestAPIError (или RestAPITimeoutError) ошибку
+		apiErr = fmt.Errorf("send %s-request to %q: got %d response: %w", method, apiPath, resp.StatusCode, parseError(resp))
+
+		// если полученная ошибка не timeout ошибка, то возвращаем её
+		if !errors.As(apiErr, restTimeoutErr) {
+			return apiErr
+		}
+	}
+	// если все sendRequestAttemps попытки были неудачными
+	if apiErr != nil {
+		return apiErr
+	}
+
+	// если для ответа не передана структура, то пропускаем парсинг ответа в неё
+	if outStruct == nil {
+		return nil
+	}
+	// при успешном запросе - декодирование ответа в структуру
+	if err := json.NewDecoder(resp.Body).Decode(outStruct); err != nil {
+		internalErr := customErrors.InternalError("failed to decode answer from request")
+	    return fmt.Errorf("send %s-request to %q: %w", method, apiPath, fmt.Errorf("%v: %w", err, internalErr))
+	}
+	return nil
+
+}
+
 
 // получение данных в структуру outStruct по GET-запросу на apiPath с query-параметрами params
 func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
-	client := &http.Client{Timeout: 10*time.Second}
-
 	// обращение к API
 	req, err := http.NewRequest("GET", settings.RestApiHost+apiPath, nil)
 	if err != nil {
@@ -54,39 +108,35 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
 	}
 	req.URL.RawQuery = queryParams.Encode()
 
-	var resp *http.Response
-	restTimeoutErr := new(customErrors.RestAPITimeoutError)
-	var apiErr error
-	// отправляем запрос и, если получаем timeout ошибку, то пытаемся ещё sendRequestAttemps-1 раз
-	for i := 0; i < sendRequestAttemps; i++ {
-		// отправка запроса
-		resp, err = client.Do(req)
-		if err != nil {
-			internalErr := customErrors.InternalError(fmt.Sprintf("failed to do request"))
-			return fmt.Errorf("failed to get account jettons: %v: %w", err, internalErr)
-		}
-		defer resp.Body.Close()
+	// отправка запроса и обработка ответа
+	return sendRequest(req, "GET", apiPath, outStruct)
+}
 
-		if resp.StatusCode == 200 {
-			break
-		}
-		// парсинг ответа с ошибкой в RestAPIError (или RestAPITimeoutError) ошибку
-		apiErr = fmt.Errorf("send GET-request to %q: got %d response: %w", apiPath, resp.StatusCode, parseError(resp))
 
-		// если полученная ошибка не timeout ошибка, то возвращаем её
-		if !errors.As(apiErr, restTimeoutErr) {
-			return apiErr
-		}
-	}
-	// если все sendRequestAttemps попытки были неудачными
-	if apiErr != nil {
-		return apiErr
+// получение данных в структуру outStruct по GET-запросу на apiPath
+func PostRequest(apiPath string, body *JsonBody, outStruct any) error {
+	// перевод JSON-body в байты
+	bytesBody, err := json.Marshal(body.Data)
+	if err != nil {
+		internalErr := customErrors.InternalError(fmt.Sprintf("failed to marshal json-body"))
+		return fmt.Errorf("send POST-request to %q: %v: %w", apiPath, err, internalErr)
 	}
 
-	// при успешном запросе - декодирование ответа в структуру
-	if err := json.NewDecoder(resp.Body).Decode(outStruct); err != nil {
-		internalErr := customErrors.InternalError("failed to decode answer from GET-request")
-	    return fmt.Errorf("send GET-request to %q: %w", apiPath, fmt.Errorf("%v: %w", err, internalErr))
+	// обращение к API
+	req, err := http.NewRequest("POST", settings.RestApiHost+apiPath, bytes.NewReader(bytesBody))
+	if err != nil {
+		internalErr := customErrors.InternalError("failed to create POST-request")
+	    return fmt.Errorf("send POST-request to %q: %w", apiPath, fmt.Errorf("%v: %w", err, internalErr))
 	}
-	return nil
+
+	// добавление query-параметра - API ключа
+	queryParams := req.URL.Query()
+	queryParams.Add("api-key", settings.RestApiKey)
+	req.URL.RawQuery = queryParams.Encode()
+
+	// установка типа контента JSON для данных в body
+	req.Header.Add("Content-Type", "application/json")
+
+	// отправка запроса и обработка ответа
+	return sendRequest(req, "POST", apiPath, outStruct)
 }

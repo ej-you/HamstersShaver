@@ -74,7 +74,7 @@ func confirmNewTransaction(context telebot.Context, userStateMachine stateMachin
 		return fmt.Errorf("CellConfirmTransactionHandler: %w", err)
 	}
 
-	msgText := fmt.Sprintf(`🔁 Подтверждение транзакции продажи монет:
+	msgText := fmt.Sprintf(`⏩ Подтверждение транзакции продажи монет:
 
 Монета: %s
 Адрес монеты: %s
