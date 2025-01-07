@@ -43,11 +43,6 @@ func (this *APIError) CheckTimeout() {
 	}
 }
 
-// возвращает true, если ошибка с timeout
-func (this APIError) IsTimeout() bool {
-	return this.ErrStatus == "timeout"
-}
-
 
 // реализация интерфейса error
 func (this APIError) Error() string {

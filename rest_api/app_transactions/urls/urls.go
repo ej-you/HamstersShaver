@@ -15,4 +15,5 @@ func RouterGroup(group *echo.Group) {
 	group.POST("/cell/send", handlers.CellSend)
 
 	group.GET("/info", handlers.Info)
+	group.GET("/wait-next", handlers.WaitNext)
 }

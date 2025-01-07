@@ -53,6 +53,7 @@ TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 3. `/api/transactions/cell/pre-request` - returns info about pre-request cell transaction
 4. `/api/transactions/cell/send` - send cell transaction to blockchain
 5. `/api/transactions/info` - get transaction info by its hash
+6. `/api/transactions/wait-next` - wait the end of next transaction
 
 #### - services
 1. `/api/services/beauty-balance` - returns rounded string balance converted from given int64 balance

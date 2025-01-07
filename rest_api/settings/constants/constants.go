@@ -35,4 +35,7 @@ const (
 	GetAccountSeqnoContextTimeout = 3*time.Second
 	SendBuyJettonContextTimeout = 3*time.Second
 	SendCellJettonContextTimeout = 3*time.Second
+
+	// SSE
+	WaitNextTransactionTimeout = 5*time.Minute
 )
