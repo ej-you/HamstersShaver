@@ -16,7 +16,7 @@ components:
           type: integer
         masterAddress:
           description: мастер-адрес монеты (jetton_master)
-          example: 0:b8ef4f77a17e5785bd31ba4da50abd91852f2b8febee97ad6ee16d941f939198
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
           type: string
         symbol:
           description: символ монеты
@@ -201,6 +201,13 @@ components:
           example: true
           type: boolean
       type: object
+    WaitNextOut:
+      properties:
+        hash:
+          description: хэш отловленной транзакции
+          example: 1a47b792640313b2d3ee6c05795364e95fedb9c6a55f8b9227fbfaa5c46c08ff
+          type: string
+      type: object
     myTonapiAccount.AccountJetton:
       properties:
         balance:
@@ -217,7 +224,7 @@ components:
           type: integer
         masterAddress:
           description: мастер-адрес монеты (jetton_master)
-          example: 0:b8ef4f77a17e5785bd31ba4da50abd91852f2b8febee97ad6ee16d941f939198
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
           type: string
         symbol:
           description: символ монеты
@@ -411,7 +418,7 @@ paths:
               $ref: '#/components/schemas/BuySendIn'
         required: true
       responses:
-        "201":
+        "202":
           content:
             application/json:
               schema:
@@ -472,7 +479,7 @@ paths:
               $ref: '#/components/schemas/CellSendIn'
         required: true
       responses:
-        "201":
+        "202":
           content:
             application/json:
               schema:
@@ -511,6 +518,19 @@ paths:
                 $ref: '#/components/schemas/TransactionInfoWithStatusOK'
           description: TransactionInfoWithStatusOK JSON
       summary: Transaction info
+      tags:
+      - transactions
+  /transactions/wait-next:
+    get:
+      description: ' Wait the end of any next transaction'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaitNextOut'
+          description: Transaction hash
+      summary: Wait the end of transaction
       tags:
       - transactions
 security:

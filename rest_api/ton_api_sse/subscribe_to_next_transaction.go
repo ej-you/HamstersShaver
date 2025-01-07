@@ -7,6 +7,7 @@ import (
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
@@ -48,10 +49,20 @@ func SubscribeToNextTransaction(timeout time.Duration) (string, error) {
 		// ошибка в горутине
 		case err := <-errChan:
 			cancel()
-			return "", fmt.Errorf("wait next transaction: %v: %w", err, SseError("failed to wait transaction via SSE"))
+			return "", coreErrors.New(
+				fmt.Errorf("wait next transaction: %w", err),
+				"failed to wait transaction via SSE",
+				"sse",
+				500,
+			)
 		// если прошло время timeout, а данные не получены
 		case <-time.After(timeout):
 			cancel()
-			return "", fmt.Errorf("wait next transaction: %w", SseError("failed to wait transaction via SSE: timeout error"))
+			return "", coreErrors.NewTimeout(
+				fmt.Errorf("wait next transaction: timeout error"),
+				"wait transaction via SSE: timeout error",
+				"sse",
+				500,
+			)
 	}
 }
