@@ -3,6 +3,8 @@ package transactions
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
@@ -44,9 +46,21 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 	}
 
 	params := tonapi.GetBlockchainTransactionParams{TransactionID: hash}
-	// получение всей информации о транзакции
-	rawTransInfo, err := tonapiClient.GetBlockchainTransaction(ctx, params)
-	if err != nil {
+
+	// делаем вторую попытку через 1 секунду (если не успешно с первой попытки или не неизвестная ошибка),
+	// потому что сразу после завершения последней операции транзакции ещё нет по ней иинформации (не успела обработаться)
+	var rawTransInfo *tonapi.Transaction
+	for i := 0; i < 2; i++ {
+		// получение всей информации о транзакции
+		rawTransInfo, err = tonapiClient.GetBlockchainTransaction(ctx, params)
+		if err == nil { // NOT err
+			break
+		}
+		if strings.HasPrefix(err.Error(), "decode response: error: code 404") {
+			time.Sleep(time.Second)
+			continue
+		}
+		// неизвестная ошибка
 		apiErr := coreErrors.New(
 			fmt.Errorf("get transaction info using tonapi: %w", err),
 			"failed to get transaction info",
@@ -54,6 +68,16 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 			500,
 		)
 		apiErr.CheckTimeout()
+		return transInfo, apiErr
+	}
+	// если не получилось с двух попыток
+	if err != nil {
+		apiErr := coreErrors.New(
+			fmt.Errorf("get transaction info using tonapi: %w", err),
+			"failed to get transaction info",
+			"ton_api",
+			500,
+		)
 		return transInfo, apiErr
 	}
 
