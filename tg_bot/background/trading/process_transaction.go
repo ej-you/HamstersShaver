@@ -11,6 +11,7 @@ import (
 	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
+	"github.com/ej-you/HamstersShaver/tg_bot/settings"
 )
 
 
@@ -18,13 +19,13 @@ const waitSeqnoIncrementTimes = 6
 
 
 // вся обработка транзакции в фоне
-func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, transInfo stateMachine.NewTransactionPreparation) {
+func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, transInfo stateMachine.NewTransactionPreparation, transactionUUID string) {
 	// получение seqno аккаунта до проведения транзакции
 	var seqnoBeforeTrans, seqnoAfterTrans apiClient.AccountSeqno
 	err := apiClient.GetRequest("/api/account/get-seqno", nil, &seqnoBeforeTrans)
 	if err != nil {
 		context.Bot().Edit(sentTransMsg, "🤷‍♂️ Упс... Произошла ошибка 👆", keyboards.InlineKeyboardToHome)
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 
@@ -33,7 +34,7 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	if err != nil {
 		context.Bot().Edit(sentTransMsg, "🤷‍♂️ Упс... Произошла ошибка 👆", keyboards.InlineKeyboardToHome)
 		internalErr := customErrors.InternalError("failed to parse amount to float value")
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %v: %w", err, internalErr), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %v: %w", err, internalErr), context)
 		return
 	}
 	// перевод процента проскальзывания в число
@@ -41,7 +42,7 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	if err != nil {
 		context.Bot().Edit(sentTransMsg, "🤷‍♂️ Упс... Произошла ошибка 👆", keyboards.InlineKeyboardToHome)
 		internalErr := customErrors.InternalError("failed to parse slippage to int value")
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %v: %w", err, internalErr), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %v: %w", err, internalErr), context)
 		return
 	}
 
@@ -54,11 +55,12 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	err = apiClient.PostRequest(fmt.Sprintf("/api/transactions/%s/send", transInfo.Action), &postSendTransData, nil)
 	if err != nil {
 		context.Bot().Edit(sentTransMsg, "🤷‍♂️ Упс... Произошла ошибка 👆", keyboards.InlineKeyboardToHome)
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 
 	// изменение сообщения на "транзакция в mempool"
+	settings.InfoLog.Printf("Transaction %q: was sent to mempool", transactionUUID)
 	context.Bot().Edit(sentTransMsg, "⏸️ Транзакция отправлена в mempool 👆", keyboards.InlineKeyboardToHome)
 
 	// ожидание инкрементации seqno в течение ~30 секунд
@@ -74,18 +76,19 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	// если все попытки были неуспешными
 	if seqnoErr != nil {
 		context.Bot().Edit(sentTransMsg, "🤷‍♂️ Упс... Произошла ошибка 👆", keyboards.InlineKeyboardToHome)
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 	// если seqno так и не увеличился
 	if seqnoAfterTrans.Seqno == seqnoBeforeTrans.Seqno {
 		context.Bot().Edit(sentTransMsg, "🤷‍♂️ Упс... Произошла ошибка 👆", keyboards.InlineKeyboardToHome)
 		internalErr := customErrors.InternalError("wait process transaction in mempool: timeout")
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %w", internalErr), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", internalErr), context)
 		return
 	}
 
 	// изменение сообщения на "ожидание окончания транзакции"
+	settings.InfoLog.Printf("Transaction %q: seqno was incremented", transactionUUID)
 	context.Bot().Edit(sentTransMsg, "🔄 Ожидание окончания транзакции... 👆", keyboards.InlineKeyboardToHome)
 
 	// ожидание окончания следующей транзакции
@@ -93,11 +96,12 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	err = apiClient.SseRequest("/api/transactions/wait-next", &waitedTransHash)
 	if err != nil {
 		context.Bot().Edit(sentTransMsg, "🤷‍♂️ Упс... Произошла ошибка 👆", keyboards.InlineKeyboardToHome)
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 
 	// изменение сообщения на "транзакция завершена"
+	settings.InfoLog.Printf("Transaction %q: was finished", transactionUUID)
 	context.Bot().Edit(sentTransMsg, "✅ Транзакция завершена! 👆", keyboards.InlineKeyboardToHome)
 
 	// получение информации по хэшу отловленной транзакции
@@ -108,7 +112,7 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	}}
 	err = apiClient.GetRequest("/api/transactions/info", &getEndTransInfoParams, &endTransInfo)
 	if err != nil {
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 
@@ -119,7 +123,7 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	}}
 	err = apiClient.GetRequest("/api/account/get-jetton", &getJettonInfoParams, &jettonInfo)
 	if err != nil {
-		go customErrors.MainErrorHandler(fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 

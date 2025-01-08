@@ -39,6 +39,7 @@ func MainErrorHandler(err error, context telebot.Context) {
 		case errors.As(err, accessErr):
 			settings.InfoLog.Printf("USER BLOCKED: %v", err)
 			return
+
 		case errors.As(err, restAPIErr):
 			settings.ErrorLog.Printf("REST API ERROR (user %d): %v", userId, err)
 			msgText = fmt.Sprintf("🛠 Возникла ошибка API:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", restAPIErr)
@@ -52,7 +53,7 @@ func MainErrorHandler(err error, context telebot.Context) {
 		case errors.As(err, DBErr):
 			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
 			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", DBErr)
-		
+
 		case errors.As(err, validateErr):
 			context.Send("😬 Упсс.. Введено некорректное значение! Попробуйте ещё раз 💪")
 			return
@@ -65,4 +66,49 @@ func MainErrorHandler(err error, context telebot.Context) {
 			msgText = "☠️ Возникла неизвестная ошибка. Попробуйте выйти в главное меню и попробовать ещё раз"
 	}
 	context.Send(msgText, inlineKeyboardToHome)
+}
+
+
+// обработчик ошибок в фоновых функциях
+func BackgroundErrorHandler(action, uuid string, err error, context telebot.Context) {
+	userId := context.Chat().ID
+
+	// создание начала текста сообщения с использованием фонового действия и его uuid
+	var msgText string
+	switch action {
+		case "transaction":
+			msgText = fmt.Sprintf("Обработка транзакции %s\n", uuid)
+		default:
+			msgText = fmt.Sprintf("Обработка фонового действия %s\n", uuid)
+	}
+
+	restAPIErr := new(RestAPIError)
+	restAPITimeoutErr := new(RestAPITimeoutError)
+	redisErr := new(RedisError)
+	DBErr := new(DBError)
+	internalErr := new(InternalError)
+
+	switch {
+		case errors.As(err, restAPIErr):
+			settings.ErrorLog.Printf("REST API ERROR (user %d): %v", userId, err)
+			msgText += fmt.Sprintf("🛠 Возникла ошибка API:\n\n%v", restAPIErr)
+		case errors.As(err, restAPITimeoutErr):
+			settings.ErrorLog.Printf("REST API TIMEOUT ERROR (user %d): %v", userId, err)
+			msgText += fmt.Sprintf("⌛️ Возникла ошибка ожидания API:\n\n%v", restAPITimeoutErr)
+
+		case errors.As(err, redisErr):
+			settings.ErrorLog.Printf("REDIS ERROR (user %d): %v", userId, err)
+			msgText += fmt.Sprintf("☁️ Возникла ошибка кэша:\n\n%v", redisErr)
+		case errors.As(err, DBErr):
+			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
+			msgText += fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v", DBErr)
+
+		case errors.As(err, internalErr):
+			settings.ErrorLog.Printf("INTERNAL ERROR (user %d): %v", userId, err)
+			msgText += fmt.Sprintf("❌ Возникла внутренняя ошибка:\n\n%v", internalErr)
+		default:
+			settings.ErrorLog.Printf("UNKNOWN ERROR (user %d): %v", userId, err)
+			msgText += "☠️ Возникла неизвестная ошибка."
+	}
+	context.Send(msgText)
 }

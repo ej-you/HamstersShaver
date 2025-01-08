@@ -14,7 +14,9 @@ import (
 )
 
 
-const sendRequestAttemps = 3
+const getSendRequestAttemps = 3
+const postSendRequestAttemps = 3
+const sseSendRequestAttemps = 1
 
 const getRequestTimeout = 10*time.Second
 const postRequestTimeout = 10*time.Second
@@ -37,7 +39,7 @@ type JsonBody struct {
 
 
 // отправка запроса и обработка ответа с указанием timeout времени на запрос
-func sendRequest(req *http.Request, method, apiPath string, outStruct any, timeout time.Duration) error {
+func sendRequest(req *http.Request, method, apiPath string, outStruct any, sendRequestAttemps int, timeout time.Duration) error {
 	var err error
 	client := &http.Client{Timeout: timeout}
 
@@ -117,7 +119,7 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
 	req.URL.RawQuery = queryParams.Encode()
 
 	// отправка запроса и обработка ответа
-	return sendRequest(req, "GET", apiPath, outStruct, getRequestTimeout)
+	return sendRequest(req, "GET", apiPath, outStruct, getSendRequestAttemps, getRequestTimeout)
 }
 
 
@@ -141,7 +143,7 @@ func PostRequest(apiPath string, body *JsonBody, outStruct any) error {
 	req.Header.Add("Content-Type", "application/json")
 
 	// отправка запроса и обработка ответа
-	return sendRequest(req, "POST", apiPath, outStruct, postRequestTimeout)
+	return sendRequest(req, "POST", apiPath, outStruct, postSendRequestAttemps, postRequestTimeout)
 }
 
 
@@ -155,5 +157,5 @@ func SseRequest(apiPath string, outStruct any) error {
 	}
 
 	// отправка запроса и обработка ответа
-	return sendRequest(req, "GET", apiPath, outStruct, sseRequestTimeout)
+	return sendRequest(req, "GET", apiPath, outStruct, sseSendRequestAttemps, sseRequestTimeout)
 }

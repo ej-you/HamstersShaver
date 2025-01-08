@@ -36,7 +36,9 @@ func SendTransaction(context telebot.Context) error {
 		return fmt.Errorf("SendTransaction (start processing): %w", err)
 	}
 
+	transUUID := "mvjehkgcelm8l4wgh5"
+
 	// запуск обработки в фоне
-	go backgroundTrading.ProcessTransaction(context, sentTransMsg, newTrans)
+	go backgroundTrading.ProcessTransaction(context, sentTransMsg, newTrans, transUUID)
 	return nil
 }
