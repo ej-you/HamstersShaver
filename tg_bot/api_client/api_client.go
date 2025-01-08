@@ -16,6 +16,10 @@ import (
 
 const sendRequestAttemps = 3
 
+const getRequestTimeout = 10*time.Second
+const postRequestTimeout = 10*time.Second
+const sseRequestTimeout = 6*time.Minute
+
 
 // структура для query-параметров для GET-запросов
 type QueryParams struct {
@@ -32,9 +36,15 @@ type JsonBody struct {
 }
 
 
-func sendRequest(req *http.Request, method, apiPath string, outStruct any) error {
+// отправка запроса и обработка ответа с указанием timeout времени на запрос
+func sendRequest(req *http.Request, method, apiPath string, outStruct any, timeout time.Duration) error {
 	var err error
-	client := &http.Client{Timeout: 10*time.Second}
+	client := &http.Client{Timeout: timeout}
+
+	// добавление query-параметра - API ключа
+	queryParams := req.URL.Query()
+	queryParams.Add("api-key", settings.RestApiKey)
+	req.URL.RawQuery = queryParams.Encode()
 
 	var resp *http.Response
 	restTimeoutErr := new(customErrors.RestAPITimeoutError)
@@ -75,7 +85,6 @@ func sendRequest(req *http.Request, method, apiPath string, outStruct any) error
 	    return fmt.Errorf("send %s-request to %q: %w", method, apiPath, fmt.Errorf("%v: %w", err, internalErr))
 	}
 	return nil
-
 }
 
 
@@ -89,7 +98,6 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
 	}
 	// добавление query-параметров
 	queryParams := req.URL.Query()
-	queryParams.Add("api-key", settings.RestApiKey)
 	if params != nil {
 		for k, v := range params.Params {
 			// конвертация всех типов в string значения
@@ -109,11 +117,11 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
 	req.URL.RawQuery = queryParams.Encode()
 
 	// отправка запроса и обработка ответа
-	return sendRequest(req, "GET", apiPath, outStruct)
+	return sendRequest(req, "GET", apiPath, outStruct, getRequestTimeout)
 }
 
 
-// получение данных в структуру outStruct по GET-запросу на apiPath
+// получение данных в структуру outStruct после отправки данных body POST-запросом на apiPath
 func PostRequest(apiPath string, body *JsonBody, outStruct any) error {
 	// перевод JSON-body в байты
 	bytesBody, err := json.Marshal(body.Data)
@@ -129,14 +137,23 @@ func PostRequest(apiPath string, body *JsonBody, outStruct any) error {
 	    return fmt.Errorf("send POST-request to %q: %w", apiPath, fmt.Errorf("%v: %w", err, internalErr))
 	}
 
-	// добавление query-параметра - API ключа
-	queryParams := req.URL.Query()
-	queryParams.Add("api-key", settings.RestApiKey)
-	req.URL.RawQuery = queryParams.Encode()
-
 	// установка типа контента JSON для данных в body
 	req.Header.Add("Content-Type", "application/json")
 
 	// отправка запроса и обработка ответа
-	return sendRequest(req, "POST", apiPath, outStruct)
+	return sendRequest(req, "POST", apiPath, outStruct, postRequestTimeout)
+}
+
+
+// обращение к apiPath и получение данных в структуру outStruct после продолжительного ожидания
+func SseRequest(apiPath string, outStruct any) error {
+	// обращение к API
+	req, err := http.NewRequest("GET", settings.RestApiHost+apiPath, nil)
+	if err != nil {
+		internalErr := customErrors.InternalError("failed to create GET-request")
+	    return fmt.Errorf("send GET-request to %q: %w", apiPath, fmt.Errorf("%v: %w", err, internalErr))
+	}
+
+	// отправка запроса и обработка ответа
+	return sendRequest(req, "GET", apiPath, outStruct, sseRequestTimeout)
 }

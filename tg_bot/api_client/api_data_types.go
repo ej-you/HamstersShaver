@@ -58,3 +58,18 @@ type PreRequestCellJetton struct {
 	MinOut	 		string `json:"minOut"`
 	JettonSymbol 	string `json:"jettonSymbol"`
 }
+
+// запрос на /api/transactions/wait-next
+type WaitTransactionHash struct {
+	Hash string `json:"hash"`
+}
+
+// запрос на /api/transactions/info
+type TransactionInfo struct {
+	Hash 		string `json:"hash"`
+	EndBalance 	string `json:"endBalance"`
+	Bounce		bool `json:"bounce"`
+	OpName		string `json:"opName"`
+	Action 		string `json:"action"`
+	StatusOK 	bool `json:"statusOK"`
+}

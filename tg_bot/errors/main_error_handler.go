@@ -48,7 +48,7 @@ func MainErrorHandler(err error, context telebot.Context) {
 
 		case errors.As(err, redisErr):
 			settings.ErrorLog.Printf("REDIS ERROR (user %d): %v", userId, err)
-			msgText = fmt.Sprintf("💸 Возникла ошибка кэша:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", redisErr)
+			msgText = fmt.Sprintf("☁️ Возникла ошибка кэша:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", redisErr)
 		case errors.As(err, DBErr):
 			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
 			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", DBErr)
