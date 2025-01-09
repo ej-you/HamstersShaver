@@ -34,4 +34,4 @@ COPY --from=build /go/src/settings/config/wallet.json ./settings/config/wallet.j
 COPY --from=build /go/src/docs ./docs
 
 # run app
-CMD ["/bin/sh", "-c", "/app/rest_api >> /logs/info-log.log 2>> /logs/error-log.log"]
+CMD ["/bin/sh", "-c", "/app/rest_api 2>> /logs/error-log.log"]

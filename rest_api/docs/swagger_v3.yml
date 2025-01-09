@@ -83,6 +83,13 @@ components:
           example: 105
           type: integer
       type: object
+    JettonAmountFromPercentOut:
+      properties:
+        jettonAmount:
+          description: строковое кол-во монет, эквивалентное проценту от их баланса
+          example: "124.533915351"
+          type: string
+      type: object
     JettonParams:
       properties:
         decimals:
@@ -157,6 +164,13 @@ components:
           description: кол-во используемых монет на продажу в формате, удобном для
             человека
           example: "200.0"
+          type: string
+      type: object
+    TonAmountFromPercentOut:
+      properties:
+        tonAmount:
+          description: строковое кол-во TON, эквивалентное проценту от баланса
+          example: "1.533915351"
           type: string
       type: object
     TonJetton:
@@ -241,7 +255,7 @@ info:
     API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key
     in query.
   title: RESTful API for TON API interaction
-  version: 1.0.0
+  version: 1.4.0
 openapi: 3.0.0
 paths:
   /account/get-jetton:
@@ -364,6 +378,63 @@ paths:
                 $ref: '#/components/schemas/BeautyBalanceOut'
           description: BeautyBalance value
       summary: Convert raw balance into beauty balance
+      tags:
+      - services
+  /services/jetton-amount-from-percent:
+    get:
+      description: ' Get jettons amount from percent of its balance (in string format
+        and not floored)'
+      parameters:
+      - description: процент от баланса монеты
+        example: "50"
+        in: query
+        name: Percent
+        required: true
+        schema:
+          description: процент от баланса монеты
+          format: int64
+          type: integer
+      - description: мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        in: query
+        name: MasterAddress
+        required: true
+        schema:
+          description: мастер-адрес монеты (jetton_master)
+          format: string
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JettonAmountFromPercentOut'
+          description: JettonAmountFromPercent value
+      summary: Get jettons amount from percent of its balance
+      tags:
+      - services
+  /services/ton-amount-from-percent:
+    get:
+      description: ' Get TON amount from percent of its balance (in string format
+        and not floored)'
+      parameters:
+      - description: процент от баланса TON
+        example: "100"
+        in: query
+        name: Percent
+        required: true
+        schema:
+          description: процент от баланса TON
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TonAmountFromPercentOut'
+          description: TonAmountFromPercent value
+      summary: Get TON amount from percent of its balance
       tags:
       - services
   /transactions/buy/pre-request:
