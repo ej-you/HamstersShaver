@@ -28,72 +28,48 @@ func ParseJettonsAmount(jettonCA, rawJettonsAmount string) (string, error) {
 		return rawJettonsAmount, nil
 	}
 
-	// если введён процент от баланса
-	var jettonsAmount string
-
+	// если введён процент от баланса монеты
 	// парсим значение процента из строки
 	percent, err := strconv.Atoi(strings.TrimSuffix(rawJettonsAmount, "%"))
 	if err != nil {
 		validateErr := customErrors.ValidateError("failed to parse percent value")
 		return "", fmt.Errorf("parse jettons amount: %w", fmt.Errorf("parse int from %s: %v: %w", rawJettonsAmount, err, validateErr))
 	}
-	// проверка значения процента в пределах 1..100
-	if percent <= 0 || percent > 100 {
-		validateErr := customErrors.ValidateError("invalid percent value")
-		return "", fmt.Errorf("parse jettons amount: %w", validateErr)
-	}
+
 	// получение количества монет по проценту
-	jettonsAmount, err = GetJettonsAmountFromPercent(jettonCA, percent)
+	var jettonAmountFromPercent apiClient.JettonAmountFromPercent
+	getJettonAmountFromPercentParams := apiClient.QueryParams{Params: map[string]interface{}{
+		"percent": percent,
+		"masterAddress": jettonCA,
+	}}
+	err = apiClient.GetRequest("/api/services/jetton-amount-from-percent", &getJettonAmountFromPercentParams, &jettonAmountFromPercent)
 	if err != nil {
-		return "", fmt.Errorf("parse jettons amount: %w", err)
+		return "", fmt.Errorf("parse jetton amount: get jetton amount from percent: %w", err)
 	}
-	return jettonsAmount, nil
+
+	return jettonAmountFromPercent.JettonAmount, nil
 }
 
 
 // получение кол-ва монет по проценту, переданному юзером
-func GetJettonsAmountFromPercent(jettonCA string, percent int) (string, error) {
-	var err error
-	var jettonsAmount int
-	var jettonsDecimals int
-
-	// если нужен баланс TON
-	if jettonCA == apiClient.TONMasterAddress {
-		// получение баланса TON у аккаунта
-		var accountTonInfo apiClient.TONInfo
-		err = apiClient.GetRequest("/api/account/get-ton", nil, &accountTonInfo)
-		if err != nil {
-			return "", fmt.Errorf("get tons amount from percent: %w", err)
-		}
-		// рассчёт процента от общего баланса TON
-		jettonsAmount = accountTonInfo.Balance / 100 * percent
-		jettonsDecimals = accountTonInfo.Decimals
-
-	// если нужен баланс монеты
-	} else {
-		// получение баланса монеты у аккаунта
-		var accountJettonInfo apiClient.AccountJetton
-		getAccountJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{"MasterAddress": jettonCA}}
-		
-		err = apiClient.GetRequest("/api/account/get-jetton", &getAccountJettonInfoParams, &accountJettonInfo)
-		if err != nil {
-			return "", fmt.Errorf("get jettons amount from percent: %w", err)
-		}
-		// рассчёт процента от общего баланса монеты
-		jettonsAmount = accountJettonInfo.Balance / 100 * percent
-		jettonsDecimals = accountJettonInfo.Decimals
-	}
-
-	// запрос на перевод кол-ва монет в человекочитаемый вид
-	var beautyBalance apiClient.BeautyBalance
-	getBeautyBalanceParams := apiClient.QueryParams{Params: map[string]interface{}{
-		"RawBalance": jettonsAmount,
-		"Decimals": jettonsDecimals,
-	}}
-	err = apiClient.GetRequest("/api/services/beauty-balance", &getBeautyBalanceParams, &beautyBalance)
+func GetJettonAmountFromPercentFromCallback(jettonCA string, callbackData string) (string, error) {
+	// достаём процент из данных кнопки и переводим его в int
+	intPercent, err := strconv.Atoi(strings.TrimPrefix(callbackData, "jettons_amount_choice|"))
 	if err != nil {
-		return "", fmt.Errorf("get jettons amount from percent: %w", err)
+		internalErr := customErrors.InternalError("failed to parse percent value")
+		return "", fmt.Errorf("get jetton amount from callback: parse int from jettons_amount_choice button: %v: %w", err, internalErr)
 	}
 
-	return beautyBalance.BeautyBalance, nil
+	// получение количества монет по проценту
+	var jettonAmountFromPercent apiClient.JettonAmountFromPercent
+	getJettonAmountFromPercentParams := apiClient.QueryParams{Params: map[string]interface{}{
+		"percent": intPercent,
+		"masterAddress": jettonCA,
+	}}
+	err = apiClient.GetRequest("/api/services/jetton-amount-from-percent", &getJettonAmountFromPercentParams, &jettonAmountFromPercent)
+	if err != nil {
+		return "", fmt.Errorf("parse jetton amount: get jetton amount from percent: %w", err)
+	}
+
+	return jettonAmountFromPercent.JettonAmount, nil
 }

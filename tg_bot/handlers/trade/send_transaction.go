@@ -5,7 +5,7 @@ import (
 
 	telebot "gopkg.in/telebot.v3"
 
-	backgroundTrading "github.com/ej-you/HamstersShaver/tg_bot/background/trading"
+	// backgroundTrading "github.com/ej-you/HamstersShaver/tg_bot/background/trading"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"

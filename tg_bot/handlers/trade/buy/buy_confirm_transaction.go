@@ -4,13 +4,17 @@ package buy
 import (
 	"fmt"
 	"strings"
+	"strconv"
 
 	telebot "gopkg.in/telebot.v3"
 
 	apiClient "github.com/ej-you/HamstersShaver/tg_bot/api_client"
+	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"
+
+	"github.com/ej-you/HamstersShaver/tg_bot/settings/constants"
 )
 
 
@@ -39,11 +43,26 @@ func BuyConfirmTransactionHandler(context telebot.Context) error {
 }
 
 
-// подтверждение транзакции
+// подтверждение транзакции покупки
 func confirmNewTransaction(context telebot.Context, userStateMachine stateMachine.UserStateMachine) error {
 	newTransInfo, err := userStateMachine.GetNewTransactionPreparation()
 	if err != nil {
 		return fmt.Errorf("BuyConfirmTransactionHandler: %w", err)
+	}
+
+	// получение баланса TON у аккаунта
+	var TONAccountInfo apiClient.TONInfo
+	err = apiClient.GetRequest("/api/account/get-ton", nil, &TONAccountInfo)
+	if err != nil {
+		return fmt.Errorf("BuyConfirmTransactionHandler: %w", err)
+	}
+
+	// проверяем, что кол-во TON на покупку + газ меньше общего баланса TON
+	tonAmountFloat, _ := strconv.ParseFloat(newTransInfo.Amount, 64)
+	tonBalanceFloat := services.ConvertBalanceToFloat64(TONAccountInfo.Balance, TONAccountInfo.Decimals)
+	if (tonAmountFloat + constants.GasAmountFloat64) > tonBalanceFloat {
+		internalErr := customErrors.InternalError("not enough TONs for create transaction")
+		return fmt.Errorf("BuyConfirmTransactionHandler: balance - %s TON && TONs for transaction - %s: %w", TONAccountInfo.BeautyBalance, newTransInfo.Amount, internalErr)
 	}
 
 	// запрос на получение информации о последующей транзакции продажи монет по собранным данным

@@ -1,16 +1,12 @@
 package api_client
 
 
-// мастер-адрес TON для получения информации о нём
-const TONMasterAddress = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c"
-
-
 // запрос на /api/account/get-jetton
 // запрос на /api/account/get-jettons
 type AccountJetton struct {
 	Symbol 			string `json:"symbol"`
 	Decimals 		int `json:"decimals"`
-	Balance 		int `json:"balance"`
+	Balance 		int64 `json:"balance"`
 	BeautyBalance 	string `json:"beautyBalance"`
 	MasterAddress 	string `json:"masterAddress"`
 }
@@ -25,7 +21,7 @@ type JettonInfo struct {
 // запрос на /api/account/get-ton
 type TONInfo struct {
 	BeautyBalance 	string `json:"beautyBalance"`
-	Balance 		int `json:"balance"`
+	Balance 		int64 `json:"balance"`
 	Decimals 		int `json:"decimals"`
 }
 
@@ -34,10 +30,22 @@ type AccountSeqno struct {
 	Seqno int `json:"seqno"`
 }
 
+
 // запрос на /api/services/beauty-balance
 type BeautyBalance struct {
 	BeautyBalance string `json:"beautyBalance"`
 }
+
+// запрос на /api/services/jetton-amount-from-percent
+type JettonAmountFromPercent struct {
+	JettonAmount string `json:"jettonAmount"`
+}
+
+// запрос на /api/services/ton-amount-from-percent
+type TonAmountFromPercent struct {
+	TonAmount string `json:"tonAmount"`
+}
+
 
 // запрос на /api/transactions/buy/pre-request
 type PreRequestBuyJetton struct {

@@ -9,6 +9,8 @@ import (
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"
+
+	"github.com/ej-you/HamstersShaver/tg_bot/settings/constants"
 )
 
 
@@ -33,7 +35,7 @@ func HomeHandler(context telebot.Context) error {
 	// получение актуального курса TON в долларах
 	var TONJettonInfo apiClient.JettonInfo
 	getTONJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
-		"MasterAddress": apiClient.TONMasterAddress,
+		"MasterAddress": constants.TONMasterAddress,
 	}}
 	err = apiClient.GetRequest("/api/jettons/get-info", &getTONJettonInfoParams, &TONJettonInfo)
 	if err != nil {

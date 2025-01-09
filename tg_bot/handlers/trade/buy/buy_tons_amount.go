@@ -8,6 +8,7 @@ import (
 
 	apiClient "github.com/ej-you/HamstersShaver/tg_bot/api_client"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
+	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
 	"github.com/ej-you/HamstersShaver/tg_bot/services"
 )
 
@@ -38,10 +39,12 @@ func BuyTonsAmountHandler(context telebot.Context) error {
 
 	msgText := fmt.Sprintf(`💹 Выбранная биржа - %s
 
-Теперь введите количество используемых TON с кошелька или их процент
+Теперь введите количество используемых TON с кошелька или их процент или выберите процент из предложенных вариантов 👇
 
-💰 Напоминаю, что ваш текущий баланс TON: %s`,
+💰 Напоминаю, что ваш текущий баланс - %s TON
+
+❗️Также не забывайте про 0.3 TON, которые используются для газовой комиссии`,
 	chosenDex, TONAccountInfo.BeautyBalance)
 
-	return context.Send(msgText)
+	return context.Send(msgText, keyboards.InlineKeyboardJettonsAmountChoices)
 }
