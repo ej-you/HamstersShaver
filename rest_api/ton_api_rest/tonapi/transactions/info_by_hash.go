@@ -84,7 +84,7 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 	// выбор нужной информации
 	transInfo = TransactionInfo{
 		Hash: rawTransInfo.Hash,
-		EndBalance: services.JettonBalanceFormat(rawTransInfo.EndBalance, constants.TonDecimals),
+		EndBalance: services.BeautyJettonAmountFromInt64(rawTransInfo.EndBalance, constants.TonDecimals),
 		Bounce: rawTransInfo.InMsg.Value.Bounce,
 		OpName: rawTransInfo.InMsg.Value.DecodedOpName.Value,
 	}

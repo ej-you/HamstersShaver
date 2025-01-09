@@ -36,7 +36,7 @@ func BeautyBalance(ctx echo.Context) error {
 
 	// формирование структуры для ответа
 	dataOut = serializers.BeautyBalanceOut{
-		BeautyBalance: myTonapiServices.JettonBalanceFormat(dataIn.RawBalance, dataIn.Decimals),
+		BeautyBalance: myTonapiServices.BeautyJettonAmountFromInt64(dataIn.RawBalance, dataIn.Decimals),
 	}
 
 	return ctx.JSON(http.StatusOK, dataOut)
