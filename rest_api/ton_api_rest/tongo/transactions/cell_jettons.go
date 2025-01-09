@@ -54,7 +54,7 @@ func GetPreRequestCellJetton(jettonCA string, jettonAmount float64, slippage int
 	slippageAmount := predictedTonAmount * (1.0 - float64(slippage) / 100)
 
 	preRequestInfo = PreRequestCellJetton{
-		UsedJettons: myTonapiServices.BeautyJettonAmountFromFloat64(jettonAmount, jettonInfo.Decimals),
+		UsedJettons: myTonapiServices.StringJettonAmountFromFloat64(jettonAmount, jettonInfo.Decimals),
 		JettonCA: jettonInfo.MasterAddress,
 		DEX: "Stonfi",
 		TONsOut: myTonapiServices.BeautyJettonAmountFromFloat64(predictedTonAmount, tonInfo.Decimals),
