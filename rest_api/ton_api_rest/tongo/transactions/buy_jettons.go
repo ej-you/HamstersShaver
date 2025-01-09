@@ -57,11 +57,11 @@ func GetPreRequestBuyJetton(jettonCA string, tonAmount float64, slippage int) (P
 	slippageAmount := predictedJettonsAmount * (1.0 - float64(slippage) / 100)
 
 	preRequestInfo = PreRequestBuyJetton{
-		UsedTON: myTonapiServices.JettonFloatAmountFormat(tonAmount, tonInfo.Decimals),
+		UsedTON: myTonapiServices.BeautyJettonAmountFromFloat64(tonAmount, tonInfo.Decimals),
 		JettonCA: jettonInfo.MasterAddress,
 		DEX: "Stonfi",
-		JettonsOut: myTonapiServices.JettonFloatAmountFormat(predictedJettonsAmount, jettonInfo.Decimals),
-		MinOut: myTonapiServices.JettonFloatAmountFormat(slippageAmount, jettonInfo.Decimals),
+		JettonsOut: myTonapiServices.BeautyJettonAmountFromFloat64(predictedJettonsAmount, jettonInfo.Decimals),
+		MinOut: myTonapiServices.BeautyJettonAmountFromFloat64(slippageAmount, jettonInfo.Decimals),
 		JettonSymbol: jettonInfo.Symbol,
 	}
 	return preRequestInfo, nil
@@ -120,8 +120,8 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	// кол-во TON для покупки монет (в uint64)
 	tonAmount := myTongoServices.ConvertJettonsAmountToUint(constants.TonDecimals, amount)
 
-	// TON для газовой комиссии (0.3 TON)
-	gasToncoins := tongoTlb.Grams(300_000_000)
+	// TON для газовой комиссии
+	gasToncoins := tongoTlb.Grams(constants.GasAmountInt)
 	// прикреплённые TON для газа в сумме с TON для покупки монет
 	attachedToncoins := gasToncoins + tongoTlb.Grams(tonAmount)
 

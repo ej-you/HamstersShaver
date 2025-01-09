@@ -85,7 +85,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 		return accountJettonInfo, apiErr
 	}
 	// преобразование баланса в строку с точкой
-	beautyJettonBalance := services.JettonBalanceFormat(intJettonBalance, jettonDecimals)
+	beautyJettonBalance := services.BeautyJettonAmountFromInt64(intJettonBalance, jettonDecimals)
 
 	// конвертация адреса монеты из HEX в base64
 	jettonAddrBase64, err := myToutilsgoServices.ConvertAddrToBase64(rawJetton.Jetton.Address)

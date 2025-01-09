@@ -54,11 +54,11 @@ func GetPreRequestCellJetton(jettonCA string, jettonAmount float64, slippage int
 	slippageAmount := predictedTonAmount * (1.0 - float64(slippage) / 100)
 
 	preRequestInfo = PreRequestCellJetton{
-		UsedJettons: myTonapiServices.JettonFloatAmountFormat(jettonAmount, jettonInfo.Decimals),
+		UsedJettons: myTonapiServices.BeautyJettonAmountFromFloat64(jettonAmount, jettonInfo.Decimals),
 		JettonCA: jettonInfo.MasterAddress,
 		DEX: "Stonfi",
-		TONsOut: myTonapiServices.JettonFloatAmountFormat(predictedTonAmount, tonInfo.Decimals),
-		MinOut: myTonapiServices.JettonFloatAmountFormat(slippageAmount, tonInfo.Decimals),
+		TONsOut: myTonapiServices.BeautyJettonAmountFromFloat64(predictedTonAmount, tonInfo.Decimals),
+		MinOut: myTonapiServices.BeautyJettonAmountFromFloat64(slippageAmount, tonInfo.Decimals),
 		JettonSymbol: jettonInfo.Symbol,
 	}
 	return preRequestInfo, nil
@@ -112,10 +112,10 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 		return apiErr
 	}
 
-	// TON для газовой комиссии (0.3 TON)
-	gasToncoins := tongoTlb.Grams(300_000_000)
-	// TON для передачи в следующее сообщение цепочки транзакций (0.2 TON)
-	forwardToncoins := tongoTlb.Grams(200_000_000)
+	// TON для газовой комиссии
+	gasToncoins := tongoTlb.Grams(constants.GasAmountInt)
+	// TON для передачи в следующее сообщение цепочки транзакций
+	forwardToncoins := tongoTlb.Grams(constants.GasAmountForwardInt)
 	// кол-во монет в виде *big.Int
 	bigIntAmount := myTongoServices.ConvertJettonsAmountToBigInt(jettonInfo.Decimals, amount)
 	// адрес отправителя (кошелёк юзера)

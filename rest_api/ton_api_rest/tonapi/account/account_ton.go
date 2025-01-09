@@ -67,7 +67,7 @@ func GetBalanceTON(ctx context.Context, tonapiClient *tonapi.Client) (TonJetton,
 	}
 
 	// преобразование баланса в строку с точкой
-	tonBalance = services.JettonBalanceFormat(account.Balance, 9)
+	tonBalance = services.BeautyJettonAmountFromInt64(account.Balance, 9)
 
 	// создание экзземпляра структуры TonJetton
 	tonJetton = TonJetton{Balance: account.Balance, Decimals: 9, BeautyBalance: tonBalance}

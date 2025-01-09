@@ -57,9 +57,11 @@ TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 
 #### - services
 1. `/api/services/beauty-balance` - returns rounded string balance converted from given int64 balance
+2. `/api/services/jetton-amount-from-percent` - returns not rounded jettons amount from percent of its balance
+3. `/api/services/ton-amount-from-percent` - returns not rounded TON amount from percent of its balance
 
 
-### Swagger Docs can be found at `/api/swagger/index.html`
+### Swagger Docs can be found at `/api/swagger`
 
 <hr>
 
