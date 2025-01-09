@@ -120,8 +120,8 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	// кол-во TON для покупки монет (в uint64)
 	tonAmount := myTongoServices.ConvertJettonsAmountToUint(constants.TonDecimals, amount)
 
-	// TON для газовой комиссии (0.3 TON)
-	gasToncoins := tongoTlb.Grams(300_000_000)
+	// TON для газовой комиссии
+	gasToncoins := tongoTlb.Grams(constants.GasAmountInt)
 	// прикреплённые TON для газа в сумме с TON для покупки монет
 	attachedToncoins := gasToncoins + tongoTlb.Grams(tonAmount)
 

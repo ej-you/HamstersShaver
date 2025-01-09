@@ -12,7 +12,7 @@ import (
 )
 
 
-// эндпоинт получения информации о монете аккаунта по её адресу
+// эндпоинт получения "округлённого" баланса монет в виде строки из баланса в формате int64
 // @Title Convert raw balance into beauty balance
 // @Description Convert raw balance (in int64 forman) into beauty balance (rounded float in string format)
 // @Param RawBalance query int64 true "баланс монеты в int64 формате" "326166742480"

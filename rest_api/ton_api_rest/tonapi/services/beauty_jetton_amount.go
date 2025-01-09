@@ -46,3 +46,9 @@ func BeautyJettonAmountFromFloat64(float64Amount float64, decimals int) string {
 	// "округлённый" результат
 	return strconv.FormatFloat(flooredFloat64Amount, 'f', -1, 64)
 }
+
+
+// перевод float64 значения кол-ва монет в string без округления
+func StringJettonAmountFromFloat64(float64Amount float64, decimals int) string {
+	return clearZerosEnd(strconv.FormatFloat(float64Amount, 'f', decimals, 64))
+}

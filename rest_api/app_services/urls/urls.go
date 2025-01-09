@@ -9,4 +9,6 @@ import (
 
 func RouterGroup(group *echo.Group) {
 	group.GET("/beauty-balance", handlers.BeautyBalance)
+	group.GET("/jetton-amount-from-percent", handlers.JettonAmountFromPercent)
+	group.GET("/ton-amount-from-percent", handlers.TonAmountFromPercent)
 }
