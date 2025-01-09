@@ -116,15 +116,31 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 		return
 	}
 
-	// получение информации о монете аккаунта по её адресу
-	var jettonInfo apiClient.AccountJetton
+	// разные способы получения информации о монете в зависимости от успеха/неудачи проведённой транзакции
 	getJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
 		"MasterAddress": transInfo.JettonCA,
 	}}
-	err = apiClient.GetRequest("/api/account/get-jetton", &getJettonInfoParams, &jettonInfo)
-	if err != nil {
-		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
-		return
+	// используем структуру AccountJetton и для случая с JettonInfo, потому что они имеют общие используемые поля Symbol и MasterAddress
+	var jettonInfo apiClient.AccountJetton
+	var beautyTransResult string
+	var newJettonBalance string
+	if endTransInfo.StatusOK == true {
+		// получение информации о монете аккаунта по её адресу
+		err = apiClient.GetRequest("/api/account/get-jetton", &getJettonInfoParams, &jettonInfo)
+		if err != nil {
+			go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+			return
+		}
+		beautyTransResult = "успешно ✅"
+		newJettonBalance = fmt.Sprintf("Новый баланс монеты: %s", jettonInfo.BeautyBalance)
+	} else {
+		// получение информации о монете по её адресу
+		err = apiClient.GetRequest("/api/jettons/get-info", &getJettonInfoParams, &jettonInfo)
+		if err != nil {
+			go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+			return
+		}
+		beautyTransResult = "неудачно ❌"
 	}
 
 	// данные для сообщения в красивом виде
@@ -133,10 +149,6 @@ func ProcessTransaction(context telebot.Context, sentTransMsg *telebot.Message, 
 	if endTransInfo.Action == "cell" {
 		beautyAction = "продажа монет"
 		beautyWhatUsed = "Монет на продажу"
-	}
-	beautyTransResult := "успешно ✅"
-	if endTransInfo.StatusOK == false {
-		beautyTransResult = "неудачно ❌"
 	}
 
 	// составление текста сообщения
@@ -151,7 +163,7 @@ DEX-биржа: %s
 %s: %s
 
 Новый баланс TON: %s
-Новый баланс монеты: %s
+%s
 `,
 		beautyAction,
 		transInfo.DEX,
@@ -162,7 +174,7 @@ DEX-биржа: %s
 		beautyWhatUsed, transInfo.Amount,
 
 		endTransInfo.EndBalance,
-		jettonInfo.BeautyBalance,
+		newJettonBalance,
 	)
 
 	// отправка нового сообщения с данными о закончившейся транзакции

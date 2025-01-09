@@ -75,8 +75,6 @@ func confirmNewTransaction(context telebot.Context, userStateMachine stateMachin
 	// проверяем, что TON хватит для газовой комиссии
 	tonBalanceFloat := services.ConvertBalanceToFloat64(TONAccountInfo.Balance, TONAccountInfo.Decimals)
 	
-	fmt.Println("tonBalanceFloat:", tonBalanceFloat)
-
 	if tonBalanceFloat < constants.GasAmountFloat64  {
 		internalErr := customErrors.InternalError("you must have minimun 0.3 TON for create transaction")
 		return fmt.Errorf("CellConfirmTransactionHandler: not enough TONs for create transaction (balance - %s TON): %w", TONAccountInfo.BeautyBalance, internalErr)
