@@ -57,7 +57,7 @@ func GetPreRequestBuyJetton(jettonCA string, tonAmount float64, slippage int) (P
 	slippageAmount := predictedJettonsAmount * (1.0 - float64(slippage) / 100)
 
 	preRequestInfo = PreRequestBuyJetton{
-		UsedTON: myTonapiServices.BeautyJettonAmountFromFloat64(tonAmount, tonInfo.Decimals),
+		UsedTON: myTonapiServices.StringJettonAmountFromFloat64(tonAmount, tonInfo.Decimals),
 		JettonCA: jettonInfo.MasterAddress,
 		DEX: "Stonfi",
 		JettonsOut: myTonapiServices.BeautyJettonAmountFromFloat64(predictedJettonsAmount, jettonInfo.Decimals),
