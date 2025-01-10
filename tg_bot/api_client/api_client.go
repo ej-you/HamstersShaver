@@ -14,6 +14,8 @@ import (
 )
 
 
+const breakBetweenAttempts = time.Second
+
 const getSendRequestAttemps = 3
 const postSendRequestAttemps = 3
 const sseSendRequestAttemps = 1
@@ -32,9 +34,6 @@ type QueryParams struct {
 // структура для JSON-body для POST-запросов
 type JsonBody struct {
 	Data map[string]interface{}
-	// Amount		float64 `json:"amount"`
-	// JettonCA 	string `json:"jettonCA"`
-	// Slippage 	int `json:"slippage"`
 }
 
 
@@ -71,6 +70,8 @@ func sendRequest(req *http.Request, method, apiPath string, outStruct any, sendR
 		if !errors.As(apiErr, restTimeoutErr) {
 			return apiErr
 		}
+		// делаем паузу перед следующей попыткой
+		time.Sleep(breakBetweenAttempts)
 	}
 	// если все sendRequestAttemps попытки были неудачными
 	if apiErr != nil {
