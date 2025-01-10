@@ -54,12 +54,12 @@ func CellConfirmTransactionHandler(context telebot.Context) error {
 	context.Send(msgText)
 
 	// вызов функции для подтверждения транзакции
-	return confirmNewTransaction(context, userStateMachine)
+	return confirmNewTransaction(&context, userStateMachine)
 }
 
 
 // подтверждение транзакции продажи
-func confirmNewTransaction(context telebot.Context, userStateMachine stateMachine.UserStateMachine) error {
+func confirmNewTransaction(context *telebot.Context, userStateMachine stateMachine.UserStateMachine) error {
 	newTransInfo, err := userStateMachine.GetNewTransactionPreparation()
 	if err != nil {
 		return fmt.Errorf("CellConfirmTransactionHandler: %w", err)
@@ -112,5 +112,5 @@ DEX-биржа: %s
 		cellPreRequestInfo.TONsOut,
 	)
 
-	return context.Send(msgText, keyboards.InlineKeyboardConfirmNewTransaction)
+	return (*context).Send(msgText, keyboards.InlineKeyboardConfirmNewTransaction)
 }

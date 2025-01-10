@@ -70,8 +70,8 @@ func MainErrorHandler(err error, context telebot.Context) {
 
 
 // обработчик ошибок в фоновых функциях
-func BackgroundErrorHandler(action, uuid string, err error, context telebot.Context) {
-	userId := context.Chat().ID
+func BackgroundErrorHandler(action, uuid string, err error, context *telebot.Context) {
+	userId := (*context).Chat().ID
 
 	// создание начала текста сообщения с использованием фонового действия и его uuid
 	var msgText string
@@ -110,5 +110,5 @@ func BackgroundErrorHandler(action, uuid string, err error, context telebot.Cont
 			settings.ErrorLog.Printf("UNKNOWN ERROR (user %d): %v", userId, err)
 			msgText += "☠️ Возникла неизвестная ошибка."
 	}
-	context.Send(msgText)
+	(*context).Send(msgText)
 }

@@ -39,12 +39,12 @@ func BuyConfirmTransactionHandler(context telebot.Context) error {
 	context.Send(msgText)
 
 	// вызов функции для подтверждения транзакции
-	return confirmNewTransaction(context, userStateMachine)
+	return confirmNewTransaction(&context, userStateMachine)
 }
 
 
 // подтверждение транзакции покупки
-func confirmNewTransaction(context telebot.Context, userStateMachine stateMachine.UserStateMachine) error {
+func confirmNewTransaction(context *telebot.Context, userStateMachine stateMachine.UserStateMachine) error {
 	newTransInfo, err := userStateMachine.GetNewTransactionPreparation()
 	if err != nil {
 		return fmt.Errorf("BuyConfirmTransactionHandler: %w", err)
@@ -97,5 +97,5 @@ TON для покупки: %s
 		buyPreRequestInfo.JettonsOut,
 	)
 
-	return context.Send(msgText, keyboards.InlineKeyboardConfirmNewTransaction)
+	return (*context).Send(msgText, keyboards.InlineKeyboardConfirmNewTransaction)
 }
