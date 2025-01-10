@@ -86,6 +86,7 @@ func (this UserStateMachine) ClearNewTransactionPreparation() error {
 }
 
 
+// НЕ ИСПОЛЬЗУЕТСЯ
 // получение транзакций в списке ожидания
 func (this UserStateMachine) GetPendingTransactions() ([]string, error) {
 	var err error
@@ -111,6 +112,7 @@ func (this UserStateMachine) GetPendingTransactions() ([]string, error) {
 	return pendingTransactions, nil
 }
 
+// НЕ ИСПОЛЬЗУЕТСЯ
 // добавление транзакции в список ожидания
 func (this UserStateMachine) AddPendingTransaction(transactionUUID string) error {
 	var err error
@@ -140,6 +142,7 @@ func (this UserStateMachine) AddPendingTransaction(transactionUUID string) error
 	return nil
 }
 
+// НЕ ИСПОЛЬЗУЕТСЯ
 // удаление транзакции из списка ожидания
 func (this UserStateMachine) DeletePendingTransaction(transactionUUID string) error {
 	var err error

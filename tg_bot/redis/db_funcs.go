@@ -45,6 +45,7 @@ func GetString(key string) (string, error) {
 }
 
 
+// НЕ ИСПОЛЬЗУЕТСЯ
 // установка значения среза строк в кэш
 func SetStringSlice(key string, value []string) error {
 	// если передан пустой список
@@ -72,6 +73,7 @@ func SetStringSlice(key string, value []string) error {
 	return nil
 }
 
+// НЕ ИСПОЛЬЗУЕТСЯ
 // получение значения среза строк из кэша
 func GetStringSlice(key string) ([]string, error) {
 	var unmarshaledValue []string
