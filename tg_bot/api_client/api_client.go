@@ -25,16 +25,10 @@ const postRequestTimeout = 10*time.Second
 const sseRequestTimeout = 6*time.Minute
 
 
-// структура для query-параметров для GET-запросов
-type QueryParams struct {
-	// поддерживает значения типов string, int, float64
-	Params map[string]interface{}
-}
-
+// структура для query-параметров для GET-запросов (поддерживает значения типов string, int, float64)
+type QueryParams map[string]interface{}
 // структура для JSON-body для POST-запросов
-type JsonBody struct {
-	Data map[string]interface{}
-}
+type JsonBody map[string]interface{}
 
 
 // отправка запроса и обработка ответа с указанием timeout времени на запрос
@@ -102,7 +96,7 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
 	// добавление query-параметров
 	queryParams := req.URL.Query()
 	if params != nil {
-		for k, v := range params.Params {
+		for k, v := range (*params) {
 			// конвертация всех типов в string значения
 			switch v := v.(type) {
 				case string:
@@ -127,7 +121,7 @@ func GetRequest(apiPath string, params *QueryParams, outStruct any) error {
 // получение данных в структуру outStruct после отправки данных body POST-запросом на apiPath
 func PostRequest(apiPath string, body *JsonBody, outStruct any) error {
 	// перевод JSON-body в байты
-	bytesBody, err := json.Marshal(body.Data)
+	bytesBody, err := json.Marshal(body)
 	if err != nil {
 		internalErr := customErrors.InternalError(fmt.Sprintf("failed to marshal json-body"))
 		return fmt.Errorf("send POST-request to %q: %v: %w", apiPath, err, internalErr)

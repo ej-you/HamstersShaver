@@ -65,11 +65,11 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 	slippageInt, _ := strconv.Atoi(transInfo.Slippage)
 
 	// POST-запрос для отправки транзакции в блокчейн
-	postSendTransData := apiClient.JsonBody{Data: map[string]interface{}{
+	postSendTransData := apiClient.JsonBody{
 		"jettonCA": transInfo.JettonCA,
 		"amount": amountFloat64,
 		"slippage": slippageInt,
-	}}
+	}
 	err = apiClient.PostRequest(fmt.Sprintf("/api/transactions/%s/send", transInfo.Action), &postSendTransData, nil)
 	if err != nil {
 		editSentMessageToError(context, sentTransMsg)
@@ -107,10 +107,10 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 
 	// получение информации по хэшу отловленной транзакции
 	var endTransInfo apiClient.TransactionInfo
-	getEndTransInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
+	getEndTransInfoParams := apiClient.QueryParams{
 		"TransactionHash": waitedTransHash.Hash,
 		"Action": transInfo.Action,
-	}}
+	}
 	err = apiClient.GetRequest("/api/transactions/info", &getEndTransInfoParams, &endTransInfo)
 	if err != nil {
 		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
@@ -118,9 +118,7 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 	}
 
 	// разные способы получения информации о монете в зависимости от успеха/неудачи проведённой транзакции
-	getJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
-		"MasterAddress": transInfo.JettonCA,
-	}}
+	getJettonInfoParams := apiClient.QueryParams{"MasterAddress": transInfo.JettonCA}
 	// используем структуру AccountJetton и для случая с JettonInfo, потому что они имеют общие используемые поля Symbol и MasterAddress
 	var jettonInfo apiClient.AccountJetton
 	var beautyTransResult string

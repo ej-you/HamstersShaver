@@ -37,9 +37,7 @@ func ParseTonAmount(rawTonAmount string) (string, error) {
 
 	// получение количества TON по проценту
 	var tonAmountFromPercent apiClient.TonAmountFromPercent
-	getTonAmountFromPercentParams := apiClient.QueryParams{Params: map[string]interface{}{
-		"percent": percent,
-	}}
+	getTonAmountFromPercentParams := apiClient.QueryParams{"percent": percent}
 	err = apiClient.GetRequest("/api/services/ton-amount-from-percent", &getTonAmountFromPercentParams, &tonAmountFromPercent)
 	if err != nil {
 		return "", fmt.Errorf("parse TON amount: get TON amount from percent: %w", err)
@@ -60,9 +58,7 @@ func GetTonAmountFromPercentFromCallback(callbackData string) (string, error) {
 	
 	// получение количества TON по проценту
 	var tonAmountFromPercent apiClient.TonAmountFromPercent
-	getTonAmountFromPercentParams := apiClient.QueryParams{Params: map[string]interface{}{
-		"percent": intPercent,
-	}}
+	getTonAmountFromPercentParams := apiClient.QueryParams{"percent": intPercent}
 	err = apiClient.GetRequest("/api/services/ton-amount-from-percent", &getTonAmountFromPercentParams, &tonAmountFromPercent)
 	if err != nil {
 		return "", fmt.Errorf("get TON amount from callback: get TON amount from percent: %w", err)

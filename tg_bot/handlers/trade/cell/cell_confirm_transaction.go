@@ -82,11 +82,11 @@ func confirmNewTransaction(context *telebot.Context, userStateMachine stateMachi
 
 	// запрос на получение информации о последующей транзакции продажи монет по собранным данным
 	var cellPreRequestInfo apiClient.PreRequestCellJetton
-	getCellPreRequestInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
+	getCellPreRequestInfoParams := apiClient.QueryParams{
 		"JettonCA": newTransInfo.JettonCA,
 		"Amount": newTransInfo.Amount,
 		"Slippage": newTransInfo.Slippage,
-	}}
+	}
 	err = apiClient.GetRequest("/api/transactions/cell/pre-request", &getCellPreRequestInfoParams, &cellPreRequestInfo)
 	if err != nil {
 		return fmt.Errorf("CellConfirmTransactionHandler: %w", err)

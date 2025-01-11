@@ -34,9 +34,7 @@ func HomeHandler(context telebot.Context) error {
 
 	// получение актуального курса TON в долларах
 	var TONJettonInfo apiClient.JettonInfo
-	getTONJettonInfoParams := apiClient.QueryParams{Params: map[string]interface{}{
-		"MasterAddress": constants.TONMasterAddress,
-	}}
+	getTONJettonInfoParams := apiClient.QueryParams{"MasterAddress": constants.TONMasterAddress}
 	err = apiClient.GetRequest("/api/jettons/get-info", &getTONJettonInfoParams, &TONJettonInfo)
 	if err != nil {
 		return fmt.Errorf("HomeHandler: %w", err)

@@ -38,10 +38,10 @@ func ParseJettonsAmount(jettonCA, rawJettonsAmount string) (string, error) {
 
 	// получение количества монет по проценту
 	var jettonAmountFromPercent apiClient.JettonAmountFromPercent
-	getJettonAmountFromPercentParams := apiClient.QueryParams{Params: map[string]interface{}{
+	getJettonAmountFromPercentParams := apiClient.QueryParams{
 		"percent": percent,
 		"masterAddress": jettonCA,
-	}}
+	}
 	err = apiClient.GetRequest("/api/services/jetton-amount-from-percent", &getJettonAmountFromPercentParams, &jettonAmountFromPercent)
 	if err != nil {
 		return "", fmt.Errorf("parse jetton amount: get jetton amount from percent: %w", err)
@@ -62,10 +62,10 @@ func GetJettonAmountFromPercentFromCallback(jettonCA string, callbackData string
 
 	// получение количества монет по проценту
 	var jettonAmountFromPercent apiClient.JettonAmountFromPercent
-	getJettonAmountFromPercentParams := apiClient.QueryParams{Params: map[string]interface{}{
+	getJettonAmountFromPercentParams := apiClient.QueryParams{
 		"percent": intPercent,
 		"masterAddress": jettonCA,
-	}}
+	}
 	err = apiClient.GetRequest("/api/services/jetton-amount-from-percent", &getJettonAmountFromPercentParams, &jettonAmountFromPercent)
 	if err != nil {
 		return "", fmt.Errorf("parse jetton amount: get jetton amount from percent: %w", err)
