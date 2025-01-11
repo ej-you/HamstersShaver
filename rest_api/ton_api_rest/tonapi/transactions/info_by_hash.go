@@ -16,6 +16,10 @@ import (
 )
 
 
+// кол-во попыток для полученияинформации о транзакции
+const getTransInfoAttempts = 5
+
+
 // данные о транзакции по её хэшу
 type TransactionInfo struct {
 	Hash 		string `json:"hash" example:"ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4"`
@@ -47,10 +51,10 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 
 	params := tonapi.GetBlockchainTransactionParams{TransactionID: hash}
 
-	// делаем вторую попытку через 1 секунду (если не успешно с первой попытки или не неизвестная ошибка),
-	// потому что сразу после завершения последней операции транзакции ещё нет по ней иинформации (не успела обработаться)
+	// делаем getTransInfoAttempts попыток с интервалом в 1 секунду,
+	// потому что сразу после завершения последней операции транзакции информация о ней не успевает обработаться так быстро
 	var rawTransInfo *tonapi.Transaction
-	for i := 0; i < 2; i++ {
+	for i := 0; i < getTransInfoAttempts; i++ {
 		// получение всей информации о транзакции
 		rawTransInfo, err = tonapiClient.GetBlockchainTransaction(ctx, params)
 		if err == nil { // NOT err
