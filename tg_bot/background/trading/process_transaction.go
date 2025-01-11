@@ -5,8 +5,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	telebot "gopkg.in/telebot.v3"
 
+	"github.com/ej-you/HamstersShaver/tg_bot/mongo"
+	// mongoSchemas "github.com/ej-you/HamstersShaver/tg_bot/mongo/schemas"
+	
 	apiClient "github.com/ej-you/HamstersShaver/tg_bot/api_client"
 	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
 	stateMachine "github.com/ej-you/HamstersShaver/tg_bot/state_machine"
@@ -49,13 +53,19 @@ func waitSeqnoIncrement(seqnoBeforeTrans apiClient.AccountSeqno) error {
 
 
 // вся обработка транзакции в фоне
-func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message, transInfo stateMachine.NewTransactionPreparation, transactionUUID string) {
+func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message, transInfo stateMachine.NewTransactionPreparation, transactionUUID uuid.UUID) {
+	action := "transaction"
+	collectionName := "transactions"
+	stringTransactionUUID := transactionUUID.String()
+	mongoDB := mongo.NewMongoDB()
+
 	// получение seqno аккаунта до проведения транзакции
 	var seqnoBeforeTrans apiClient.AccountSeqno
 	err := apiClient.GetRequest("/api/account/get-seqno", nil, &seqnoBeforeTrans)
 	if err != nil {
 		editSentMessageToError(context, sentTransMsg)
-		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction %s: %w", stringTransactionUUID, err), context)
+		_ = mongoDB.UpdateByID(collectionName, transactionUUID, mongo.AnyCollectionData{"finished": true})
 		return
 	}
 
@@ -73,31 +83,42 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 	err = apiClient.PostRequest(fmt.Sprintf("/api/transactions/%s/send", transInfo.Action), &postSendTransData, nil)
 	if err != nil {
 		editSentMessageToError(context, sentTransMsg)
-		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		_ = mongoDB.UpdateByID(collectionName, transactionUUID, mongo.AnyCollectionData{"finished": true})
 		return
 	}
 
 	// изменение сообщения на "транзакция в mempool"
-	settings.InfoLog.Printf("Transaction %q: was sent to mempool", transactionUUID)
-	(*context).Bot().Edit(sentTransMsg, "⏸️ Транзакция отправлена в mempool 👆", keyboards.InlineKeyboardToHome)
+	settings.InfoLog.Printf("Transaction %q: was sent to mempool", stringTransactionUUID)
+	(*context).Bot().Edit(sentTransMsg, fmt.Sprintf("⏸️ Транзакция отправлена в mempool 👆\n(ID: %s)", stringTransactionUUID), keyboards.InlineKeyboardToHome)
 
 	// ожидание инкрементации seqno в течение ~30 секунд
 	if err = waitSeqnoIncrement(seqnoBeforeTrans); err != nil {
 		editSentMessageToError(context, sentTransMsg)
-		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		_ = mongoDB.UpdateByID(collectionName, transactionUUID, mongo.AnyCollectionData{"finished": true})
 		return
 	}
 
 	// изменение сообщения на "ожидание окончания транзакции"
-	settings.InfoLog.Printf("Transaction %q: seqno was incremented", transactionUUID)
-	(*context).Bot().Edit(sentTransMsg, "🔄 Ожидание окончания транзакции... 👆", keyboards.InlineKeyboardToHome)
+	settings.InfoLog.Printf("Transaction %q: seqno was incremented", stringTransactionUUID)
+	(*context).Bot().Edit(sentTransMsg, fmt.Sprintf("🔄 Ожидание окончания транзакции... 👆\n(ID: %s)", stringTransactionUUID), keyboards.InlineKeyboardToHome)
 
 	// ожидание окончания следующей транзакции
 	var waitedTransHash apiClient.WaitTransactionHash
 	err = apiClient.SseRequest("/api/transactions/wait-next", &waitedTransHash)
 	if err != nil {
 		editSentMessageToError(context, sentTransMsg)
-		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		_ = mongoDB.UpdateByID(collectionName, transactionUUID, mongo.AnyCollectionData{"finished": true})
+		return
+	}
+
+	// добавляем в БД информацию о завершении транзакции и её хэш
+	err = mongoDB.UpdateByID(collectionName, transactionUUID, mongo.AnyCollectionData{"finished": true, "hash": waitedTransHash.Hash})
+	if err != nil {
+		editSentMessageToError(context, sentTransMsg)
+		go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 
@@ -105,8 +126,8 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 	// функция получения информации по хэшу транзакции возвращает ошибку
 	time.Sleep(2*time.Second)
 	// изменение сообщения на "транзакция завершена"
-	settings.InfoLog.Printf("Transaction %q: was finished", transactionUUID)
-	(*context).Bot().Edit(sentTransMsg, "✅ Транзакция завершена! 👆", keyboards.InlineKeyboardToHome)
+	settings.InfoLog.Printf("Transaction %q: was finished", stringTransactionUUID)
+	(*context).Bot().Edit(sentTransMsg, fmt.Sprintf("✅ Транзакция завершена! 👆\n(ID: %s)", stringTransactionUUID), keyboards.InlineKeyboardToHome)
 
 	// получение информации по хэшу отловленной транзакции
 	var endTransInfo apiClient.TransactionInfo
@@ -116,7 +137,15 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 	}
 	err = apiClient.GetRequest("/api/transactions/info", &getEndTransInfoParams, &endTransInfo)
 	if err != nil {
-		go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+		return
+	}
+
+	// добавляем в БД информацию об успехе завершённой транзакции
+	err = mongoDB.UpdateByID(collectionName, transactionUUID, mongo.AnyCollectionData{"success": endTransInfo.StatusOK})
+	if err != nil {
+		editSentMessageToError(context, sentTransMsg)
+		go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 		return
 	}
 
@@ -130,7 +159,7 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 		// получение информации о монете аккаунта по её адресу
 		err = apiClient.GetRequest("/api/account/get-jetton", &getJettonInfoParams, &jettonInfo)
 		if err != nil {
-			go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+			go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 			return
 		}
 		beautyTransResult = "успешно ✅"
@@ -139,7 +168,7 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 		// получение информации о монете по её адресу
 		err = apiClient.GetRequest("/api/jettons/get-info", &getJettonInfoParams, &jettonInfo)
 		if err != nil {
-			go customErrors.BackgroundErrorHandler("transaction", transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
+			go customErrors.BackgroundErrorHandler(action, transactionUUID, fmt.Errorf("processTransaction: %w", err), context)
 			return
 		}
 		beautyTransResult = "неудачно ❌"
@@ -156,6 +185,8 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 	// составление текста сообщения
 	msgText := fmt.Sprintf(`💸 Транзакция завершена!
 
+ID: %s
+
 Действие: %s
 DEX-биржа: %s
 Результат: %s
@@ -167,6 +198,7 @@ DEX-биржа: %s
 Новый баланс TON: %s
 %s
 `,
+		stringTransactionUUID,
 		beautyAction,
 		transInfo.DEX,
 		beautyTransResult,

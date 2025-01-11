@@ -13,13 +13,12 @@ type Transaction struct {
 	UserID string `bson:"userID"`
 
 	ID uuid.UUID `bson:"_id"`
-	// (если завершена)
+	// (если завершена без ошибки)
 	Hash string `bson:"hash,omitempty"`
 	
 	Action string `bson:"action"`
 	DEX string `bson:"dex"`
 
-	JettonSymbol string `bson:"jettonSymbol"`
 	JettonCA string `bson:"jettonCA"`
 	// использованные монеты (для продажи)
 	UsedJettons string `bson:"usedJettons,omitempty"`
@@ -30,8 +29,6 @@ type Transaction struct {
 	Finished bool `bson:"finished"`
 	// true/false (если завершена без ошибки)
 	Success bool `bson:"success,omitempty"`
-	// (если возникла ошибка)
-	Error string `bson:"error,omitempty"`
 }
 func (this Transaction) CollectionName() string {
 	return "transactions"

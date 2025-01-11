@@ -3,8 +3,9 @@ package errors
 import (
 	"fmt"
 
-	telebot "gopkg.in/telebot.v3"
 	"github.com/pkg/errors"
+	"github.com/google/uuid"
+	telebot "gopkg.in/telebot.v3"
 
 	"github.com/ej-you/HamstersShaver/tg_bot/settings"
 )
@@ -33,8 +34,8 @@ func MainErrorHandler(err error, context telebot.Context) {
 	restAPIErr := new(RestAPIError)
 	restAPITimeoutErr := new(RestAPITimeoutError)
 	redisErr := new(RedisError)
-	DBErr := new(DBError)
-	DBNotFoundErr := new(DBNotFoundError)
+	dbErr := new(DBError)
+	dbNotFoundErr := new(DBNotFoundError)
 
 	var msgText string
 	switch {
@@ -63,12 +64,12 @@ func MainErrorHandler(err error, context telebot.Context) {
 		case errors.As(err, redisErr):
 			settings.ErrorLog.Printf("REDIS ERROR (user %d): %v", userId, err)
 			msgText = fmt.Sprintf("☁️ Возникла ошибка кэша:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", redisErr)
-		case errors.As(err, DBErr):
+		case errors.As(err, dbErr):
 			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
-			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", DBErr)
-		case errors.As(err, DBNotFoundErr):
+			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", dbErr)
+		case errors.As(err, dbNotFoundErr):
 			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
-			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", DBNotFoundErr)
+			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", dbNotFoundErr)
 
 		default:
 			settings.ErrorLog.Printf("UNKNOWN ERROR (user %d): %v", userId, err)
@@ -79,45 +80,50 @@ func MainErrorHandler(err error, context telebot.Context) {
 
 
 // обработчик ошибок в фоновых функциях
-func BackgroundErrorHandler(action, uuid string, err error, context *telebot.Context) {
+func BackgroundErrorHandler(action string, actionId uuid.UUID, err error, context *telebot.Context) {
 	userId := (*context).Chat().ID
 
 	// создание начала текста сообщения с использованием фонового действия и его uuid
 	var msgText string
 	switch action {
 		case "transaction":
-			msgText = fmt.Sprintf("Обработка транзакции %s\n\n", uuid)
+			msgText = fmt.Sprintf("Обработка транзакции %s\n\n", actionId)
 		default:
-			msgText = fmt.Sprintf("Обработка фонового действия %s\n\n", uuid)
+			msgText = fmt.Sprintf("Обработка фонового действия %s\n\n", actionId)
 	}
+	logPrefix := fmt.Sprintf("(Background task: %s | UUID: )", action, actionId.String())
 
 	internalErr := new(InternalError)
 	restAPIErr := new(RestAPIError)
 	restAPITimeoutErr := new(RestAPITimeoutError)
 	redisErr := new(RedisError)
-	DBErr := new(DBError)
+	dbErr := new(DBError)
+	dbNotFoundErr := new(DBNotFoundError)
 
 	switch {
 		case errors.As(err, internalErr):
-			settings.ErrorLog.Printf("INTERNAL ERROR (user %d): %v", userId, err)
+			settings.ErrorLog.Printf("%s INTERNAL ERROR (user %d): %v", logPrefix, userId, err)
 			msgText += fmt.Sprintf("❌ Возникла внутренняя ошибка:\n\n%v", internalErr)
 		
 		case errors.As(err, restAPIErr):
-			settings.ErrorLog.Printf("REST API ERROR (user %d): %v", userId, err)
+			settings.ErrorLog.Printf("%s REST API ERROR (user %d): %v", logPrefix, userId, err)
 			msgText += fmt.Sprintf("🛠 Возникла ошибка API:\n\n%v", restAPIErr)
 		case errors.As(err, restAPITimeoutErr):
-			settings.ErrorLog.Printf("REST API TIMEOUT ERROR (user %d): %v", userId, err)
+			settings.ErrorLog.Printf("%s REST API TIMEOUT ERROR (user %d): %v", logPrefix, userId, err)
 			msgText += fmt.Sprintf("⌛️ Возникла ошибка ожидания API:\n\n%v", restAPITimeoutErr)
 
 		case errors.As(err, redisErr):
-			settings.ErrorLog.Printf("REDIS ERROR (user %d): %v", userId, err)
+			settings.ErrorLog.Printf("%s REDIS ERROR (user %d): %v", logPrefix, userId, err)
 			msgText += fmt.Sprintf("☁️ Возникла ошибка кэша:\n\n%v", redisErr)
-		case errors.As(err, DBErr):
-			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
-			msgText += fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v", DBErr)
+		case errors.As(err, dbErr):
+			settings.ErrorLog.Printf("%s DB ERROR (user %d): %v", logPrefix, userId, err)
+			msgText += fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v", dbErr)
+		case errors.As(err, dbNotFoundErr):
+			settings.ErrorLog.Printf("%s DB ERROR (user %d): %v", logPrefix, userId, err)
+			msgText += fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v", dbNotFoundErr)
 
 		default:
-			settings.ErrorLog.Printf("UNKNOWN ERROR (user %d): %v", userId, err)
+			settings.ErrorLog.Printf("%s UNKNOWN ERROR (user %d): %v", logPrefix, userId, err)
 			msgText += "☠️ Возникла неизвестная ошибка."
 	}
 	(*context).Send(msgText)

@@ -66,7 +66,6 @@ func TestInsertOne(t *testing.T) {
 			Action: "cell",
 			DEX: "Ston.fi",
 
-			JettonSymbol: "DOGS",
 			JettonCA: "EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS",
 			UsedJettons: "2000",
 
@@ -91,7 +90,7 @@ func TestUpdateByID(t *testing.T) {
 	t.Logf("Test update Transaction by its ID with given update data in mongo")
 	{
 		id := uuid.MustParse("93af2ff0-1c22-4dc7-9a6a-cc4ae1e3e31e")
-		updater := AnyCollectionData{"finished": false, "error": "wait the end of transaction: timeout error"}
+		updater := AnyCollectionData{"finished": true}
 
 		err := NewMongoDB().UpdateByID("transactions", id, updater)
 
@@ -110,7 +109,7 @@ func TestGetTransactionByFilter(t *testing.T) {
 
 	t.Logf("Test find Transaction with filter from mongo")
 	{
-		filter := AnyCollectionData{"jettonSymbol": "NOT"}
+		filter := AnyCollectionData{"jettonCA": "EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS"}
 
 		var dataFound schemas.Transaction
 		err := NewMongoDB().GetTransactionByFilter(filter, &dataFound)
