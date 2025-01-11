@@ -26,19 +26,32 @@ var inlineKeyboardToHome = func() *telebot.ReplyMarkup {
 func MainErrorHandler(err error, context telebot.Context) {
 	userId := context.Chat().ID
 
+	accessErr := new(AccessError)
+	validateErr := new(ValidateError)
+	lastTransNotFinishedErr := new(LastTransNotFinishedError)
+	internalErr := new(InternalError)
 	restAPIErr := new(RestAPIError)
 	restAPITimeoutErr := new(RestAPITimeoutError)
 	redisErr := new(RedisError)
 	DBErr := new(DBError)
-	validateErr := new(ValidateError)
-	internalErr := new(InternalError)
-	accessErr := new(AccessError)
+	DBNotFoundErr := new(DBNotFoundError)
 
 	var msgText string
 	switch {
 		case errors.As(err, accessErr):
 			settings.InfoLog.Printf("USER BLOCKED: %v", err)
 			return
+
+		case errors.As(err, validateErr):
+			context.Send("😬 Упсс.. Введено некорректное значение! Попробуйте ещё раз 💪")
+			return
+		case errors.As(err, lastTransNotFinishedErr):
+			context.Send("🫷 Стойте. Нельзя начать новую транзакцию. Подождите завершения предыдущей 😉")
+			return
+
+		case errors.As(err, internalErr):
+			settings.ErrorLog.Printf("INTERNAL ERROR (user %d): %v", userId, err)
+			msgText = fmt.Sprintf("❌ Возникла внутренняя ошибка:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", internalErr)
 
 		case errors.As(err, restAPIErr):
 			settings.ErrorLog.Printf("REST API ERROR (user %d): %v", userId, err)
@@ -53,14 +66,10 @@ func MainErrorHandler(err error, context telebot.Context) {
 		case errors.As(err, DBErr):
 			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
 			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", DBErr)
+		case errors.As(err, DBNotFoundErr):
+			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
+			msgText = fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", DBNotFoundErr)
 
-		case errors.As(err, validateErr):
-			context.Send("😬 Упсс.. Введено некорректное значение! Попробуйте ещё раз 💪")
-			return
-
-		case errors.As(err, internalErr):
-			settings.ErrorLog.Printf("INTERNAL ERROR (user %d): %v", userId, err)
-			msgText = fmt.Sprintf("❌ Возникла внутренняя ошибка:\n\n%v \n\nПопробуйте выйти в главное меню и попробовать ещё раз", internalErr)
 		default:
 			settings.ErrorLog.Printf("UNKNOWN ERROR (user %d): %v", userId, err)
 			msgText = "☠️ Возникла неизвестная ошибка. Попробуйте выйти в главное меню и попробовать ещё раз"
@@ -77,18 +86,22 @@ func BackgroundErrorHandler(action, uuid string, err error, context *telebot.Con
 	var msgText string
 	switch action {
 		case "transaction":
-			msgText = fmt.Sprintf("Обработка транзакции %s\n", uuid)
+			msgText = fmt.Sprintf("Обработка транзакции %s\n\n", uuid)
 		default:
-			msgText = fmt.Sprintf("Обработка фонового действия %s\n", uuid)
+			msgText = fmt.Sprintf("Обработка фонового действия %s\n\n", uuid)
 	}
 
+	internalErr := new(InternalError)
 	restAPIErr := new(RestAPIError)
 	restAPITimeoutErr := new(RestAPITimeoutError)
 	redisErr := new(RedisError)
 	DBErr := new(DBError)
-	internalErr := new(InternalError)
 
 	switch {
+		case errors.As(err, internalErr):
+			settings.ErrorLog.Printf("INTERNAL ERROR (user %d): %v", userId, err)
+			msgText += fmt.Sprintf("❌ Возникла внутренняя ошибка:\n\n%v", internalErr)
+		
 		case errors.As(err, restAPIErr):
 			settings.ErrorLog.Printf("REST API ERROR (user %d): %v", userId, err)
 			msgText += fmt.Sprintf("🛠 Возникла ошибка API:\n\n%v", restAPIErr)
@@ -103,9 +116,6 @@ func BackgroundErrorHandler(action, uuid string, err error, context *telebot.Con
 			settings.ErrorLog.Printf("DB ERROR (user %d): %v", userId, err)
 			msgText += fmt.Sprintf("🗃 Возникла ошибка БД:\n\n%v", DBErr)
 
-		case errors.As(err, internalErr):
-			settings.ErrorLog.Printf("INTERNAL ERROR (user %d): %v", userId, err)
-			msgText += fmt.Sprintf("❌ Возникла внутренняя ошибка:\n\n%v", internalErr)
 		default:
 			settings.ErrorLog.Printf("UNKNOWN ERROR (user %d): %v", userId, err)
 			msgText += "☠️ Возникла неизвестная ошибка."

@@ -45,7 +45,7 @@ func TestGetRedisClient(t *testing.T) {
 	{
 		redisConn := GetRedisClient()
 		// если подключение не получится, то случится паника
-		SuccessLog(t, "Successfully got redis connection: %s", redisConn)
+		SuccessLog(t, "Successfully got redis connection: %v", redisConn)
 	}
 	logExecTime(t, &startTime)
 }

@@ -10,6 +10,9 @@ import (
 	handlersTrade "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade"
 	handlersHelpers "github.com/ej-you/HamstersShaver/tg_bot/handlers/helpers"
 	"github.com/ej-you/HamstersShaver/tg_bot/handlers"
+
+	"github.com/ej-you/HamstersShaver/tg_bot/mongo"
+	"github.com/ej-you/HamstersShaver/tg_bot/redis"
 	
 	customErrors "github.com/ej-you/HamstersShaver/tg_bot/errors"
 	"github.com/ej-you/HamstersShaver/tg_bot/keyboards"
@@ -19,6 +22,10 @@ import (
 
 
 func main() {
+	// получаем клиенты для redis и mongo для проверки, что соединение есть
+	_ = redis.GetRedisClient()
+	_ = mongo.NewMongoDB()
+
 	// настройки бота
 	pref := telebot.Settings{
 		Token:  settings.BotToken,
