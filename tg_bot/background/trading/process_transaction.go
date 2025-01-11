@@ -101,6 +101,9 @@ func ProcessTransaction(context *telebot.Context, sentTransMsg *telebot.Message,
 		return
 	}
 
+	// небольшая пауза, потому что без неё не успевает обработаться информация о новой транзакции и
+	// функция получения информации по хэшу транзакции возвращает ошибку
+	time.Sleep(2*time.Second)
 	// изменение сообщения на "транзакция завершена"
 	settings.InfoLog.Printf("Transaction %q: was finished", transactionUUID)
 	(*context).Bot().Edit(sentTransMsg, "✅ Транзакция завершена! 👆", keyboards.InlineKeyboardToHome)
