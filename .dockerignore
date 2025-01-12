@@ -1,0 +1,10 @@
+.env
+
+Makefile
+DockerfileTGBot
+docker-compose.yml
+.gitignore
+
+*_test.go
+
+/rest_api
