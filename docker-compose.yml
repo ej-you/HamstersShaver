@@ -46,7 +46,7 @@ services:
     container_name: hamsters_shaver_tg_bot
     restart: unless-stopped
     env_file:
-      - ./settings/.env
+      - ./.env
     volumes:
       - tg_bot_logs:/logs:rw
     networks:
