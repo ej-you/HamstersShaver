@@ -89,8 +89,8 @@ func TestUpdateByID(t *testing.T) {
 
 	t.Logf("Test update Transaction by its ID with given update data in mongo")
 	{
-		id := uuid.MustParse("93af2ff0-1c22-4dc7-9a6a-cc4ae1e3e31e")
-		updater := AnyCollectionData{"finished": true}
+		id := uuid.MustParse("27c9fa37-a35c-416a-a85c-93398e2659d4")
+		updater := AnyCollectionData{"finished": false}
 
 		err := NewMongoDB().UpdateByID("transactions", id, updater)
 

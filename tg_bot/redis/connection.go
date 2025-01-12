@@ -23,7 +23,6 @@ func GetRedisClient() *goRedis.Client {
 		// создание нового клиента
 		redisClient = goRedis.NewClient(&goRedis.Options{
 			Addr: settings.RedisAddr,
-			Password: settings.RedisPassword,
 			DB: 0,
 		})
 

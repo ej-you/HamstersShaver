@@ -31,12 +31,10 @@ var RestApiKey string = os.Getenv("REST_API_KEY")
 
 // настройки redis
 var RedisAddr string = os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT")
-var RedisPassword string = os.Getenv("REDIS_PASSWORD")
 
 // настройки mongo
 var MongoAddr string = fmt.Sprintf("mongodb://%s:%s/", os.Getenv("MONGO_HOST"), os.Getenv("MONGO_PORT"))
 var MongoDB string = os.Getenv("MONGO_DB")
-// var RedisPassword string = os.Getenv("REDIS_PASSWORD")
 
 // логеры
 var InfoLog *log.Logger = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)
