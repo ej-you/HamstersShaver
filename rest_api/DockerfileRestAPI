@@ -24,14 +24,19 @@ RUN go build -o ./rest_api ./main.go
 
 FROM alpine:3.20 AS run
 
+# set up timezone +3
+RUN apk update
+RUN apk add --no-cache tzdata
+RUN ln -s /usr/share/zoneinfo/Etc/GMT-3 /etc/localtime
+
 # make dir for logs
 RUN mkdir /logs
 
 WORKDIR /app
-# copy compiled file and Makefile to run app
+# copy compiled file, files for swagger and wallet data
 COPY --from=build /go/src/rest_api .
-COPY --from=build /go/src/settings/config/wallet.json ./settings/config/wallet.json
 COPY --from=build /go/src/docs ./docs
+COPY --from=build /go/src/settings/config/wallet.json ./settings/config/wallet.json
 
 # run app
 CMD ["/bin/sh", "-c", "/app/rest_api 2>> /logs/error-log.log"]
