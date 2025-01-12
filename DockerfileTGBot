@@ -16,7 +16,7 @@ RUN go mod download
 COPY . .
 
 # compile app
-RUN go build -o ./tg_bot ./main.go
+RUN go build -o ./tg_bot_app ./main.go
 
 # ---
 # RUN
@@ -34,7 +34,7 @@ RUN mkdir /logs
 
 WORKDIR /app
 # copy compiled file
-COPY --from=build /go/src/tg_bot .
+COPY --from=build /go/src/tg_bot_app .
 
 # run app
-CMD ["/bin/sh", "-c", "/app/tg_bot 2>> /logs/error-log.log"]
+CMD ["/bin/sh", "-c", "/app/tg_bot_app 2>> /logs/error-log.log"]
