@@ -1,3 +1,9 @@
+# PyCharm
+/.idea/
+
+# python
+__pycache__/
+
 # DB
 sqlite3.db
 db.sqlite3
