@@ -1,0 +1,4 @@
+pytoniq==0.1.40
+
+aiofiles==24.1.0
+tonutils==0.2.2
