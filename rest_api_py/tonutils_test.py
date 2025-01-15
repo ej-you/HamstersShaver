@@ -57,9 +57,11 @@ TC_STORAGE = FileStorage("connection.json")
 USER_ID = 123
 RPC_REQUEST_ID = 123
 
+WALLET_ADDRESS = "UQDLjMTSj58tHMc9oIeo00dbV6smPp1plQw5vUSZADeUInM9"
+
 
 # Create an instance of TonConnect with the specified storage and manifest
-tc = TonConnect(storage=TC_STORAGE, manifest_url=TC_MANIFEST_URL)
+tc = TonConnect(storage=TC_STORAGE, manifest_url=TC_MANIFEST_URL, include_wallets=[WALLET_ADDRESS])
 
 
 @tc.on_event(Event.TRANSACTION)
@@ -76,6 +78,8 @@ async def main() -> None:
     # Initialize the connector for the user
     connector = await tc.init_connector(USER_ID)
     print("connector:", connector)
+
+    print(await tc.get_wallets())
 
     # async with connector.pending_transaction_context(RPC_REQUEST_ID) as response:
     #     if isinstance(response, TonConnectError):
