@@ -16,7 +16,7 @@ import (
 )
 
 
-// кол-во попыток для полученияинформации о транзакции
+// кол-во попыток для получения информации о транзакции
 const getTransInfoAttempts = 5
 
 
@@ -74,7 +74,7 @@ func GetTransactionInfoByHash(ctx context.Context, hash string) (TransactionInfo
 		apiErr.CheckTimeout()
 		return transInfo, apiErr
 	}
-	// если не получилось с двух попыток
+	// если не получилось с getTransInfoAttempts попыток
 	if err != nil {
 		apiErr := coreErrors.New(
 			fmt.Errorf("get transaction info using tonapi: %w", err),

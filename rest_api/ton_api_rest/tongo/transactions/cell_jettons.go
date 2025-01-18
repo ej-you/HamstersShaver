@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	tongoStonfi "github.com/tonkeeper/tongo/contract/stonfi"
+	tongoBoc "github.com/tonkeeper/tongo/boc"
 	tongoTlb "github.com/tonkeeper/tongo/tlb"
 	tongoTon "github.com/tonkeeper/tongo/ton"
 
@@ -140,7 +141,7 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	}
 
 	// отправка сообщения в блокчейн
-	err = realWallet.Send(ctx, jettonTransfer)
+	transHash, err := realWallet.SendV2(ctx, 0, jettonTransfer)
 	if err != nil {
 		apiErr := coreErrors.New(
 			fmt.Errorf("send cell transaction: send transfer message: %w", err),
@@ -151,5 +152,8 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 		apiErr.CheckTimeout()
 		return apiErr
 	}
+
+	fmt.Printf("\ntransHash: %v\nhex transHash: %s\n", transHash, transHash.Hex())
+	
 	return nil
 }

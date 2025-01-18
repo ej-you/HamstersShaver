@@ -143,10 +143,11 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	}
 	// преобразование ForwardPayload в cell представление
 	cell := tongoBoc.NewCell()
-	if err := cell.WriteUint(0x25938561, 32); err != nil {
+	// StonfiSwap - 0x25938561
+	if err = cell.WriteUint(0x25938561, 32); err != nil {
 		return err
 	}
-	if err := tongoTlb.Marshal(cell, payload); err != nil {
+	if err = tongoTlb.Marshal(cell, payload); err != nil {
 		return err
 	}
 
@@ -162,7 +163,8 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	}
 
 	// отправка сообщения в блокчейн
-	if err := realWallet.Send(ctx, jettonTransfer); err != nil {
+	transHash, err := realWallet.SendV2(ctx, 0, jettonTransfer)
+	if err != nil {
 		apiErr := coreErrors.New(
 			fmt.Errorf("send buy transaction: send transfer message: %w", err),
 			"failed to send transfer message",
@@ -172,5 +174,8 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 		apiErr.CheckTimeout()
 		return apiErr
 	}
+
+	fmt.Printf("\ntransHash: %v\nhex transHash: %s\n", transHash, transHash.Hex())
+
 	return nil
 }
