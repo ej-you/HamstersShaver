@@ -31,7 +31,7 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 	accountJettonsList := []AccountJetton{}
 
 	// конфиг API для получения монет аккаунта
-	accountJettonsParams := tonapi.GetAccountJettonsBalancesParams{AccountID: settings.JsonWallet.Hash}
+	accountJettonsParams := tonapi.GetAccountJettonsBalancesParams{AccountID: settings.GetJsonWallet().Hash}
 
 	// получение всех монет аккаунта
 	rawJettons, err := tonapiClient.GetAccountJettonsBalances(ctx, accountJettonsParams)

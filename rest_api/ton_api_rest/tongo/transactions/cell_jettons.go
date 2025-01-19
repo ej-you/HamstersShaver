@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	tongoStonfi "github.com/tonkeeper/tongo/contract/stonfi"
-	tongoBoc "github.com/tonkeeper/tongo/boc"
 	tongoTlb "github.com/tonkeeper/tongo/tlb"
 	tongoTon "github.com/tonkeeper/tongo/ton"
 
@@ -120,7 +119,7 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	// кол-во монет в виде *big.Int
 	bigIntAmount := myTongoServices.ConvertJettonsAmountToBigInt(jettonInfo.Decimals, amount)
 	// адрес отправителя (кошелёк юзера)
-	senderAddrID := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
+	senderAddrID := tongoTon.MustParseAccountID(settings.GetJsonWallet().Hash)
 
 	// предположительное кол-во TON на выходе без учёта изменения цены и газовой комиссии
 	predictedTonAmount := amount * jettonPriceInTON

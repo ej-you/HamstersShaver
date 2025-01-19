@@ -4,27 +4,15 @@ import (
 	"log"
 	"os"
 	"strings"
-
-	"github.com/joho/godotenv"
 )
 
 
-// путь до директории с конфигом
-var configPath = func() string {
-	fullPath := os.Getenv("CONFIG_PATH")
-	// если переменная окружения не задана, то ставим дефолтное значение
-	if fullPath == "" {
-		return "./settings/config/"
-	}
-	return fullPath
-}()
+// даннные кошелька
+var hash string = os.Getenv("WALLET_HASH")
+var seedPhrase string = os.Getenv("WALLET_SEED_PHRASE")
 
-
-// загрузка переменных окружения
-var _ error = godotenv.Load(configPath + ".env")
-
-// распаковка переменных окружения
-var Port string = os.Getenv("GO_PORT")
+// данные REST API
+var Port string = os.Getenv("REST_API_PORT")
 var RestApiKey string = os.Getenv("REST_API_KEY")
 
 // разрешённые источники и методы
@@ -33,6 +21,7 @@ var CorsAllowedMethods []string = strings.Split(os.Getenv("CORS_ALLOWED_METHODS"
 
 // TON API ключ для SSE запросов
 var TonApiToken string = os.Getenv("TON_API_TOKEN")
+
 
 // формат логов (для Echo)
 var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} |\n"

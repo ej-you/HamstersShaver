@@ -12,10 +12,6 @@ import (
 )
 
 
-// обязательно указать эту переменную окружения перед командой запуска тестов (go test)
-// CONFIG_PATH=../../../settings/config/
-
-
 // hash транзакции
 const hash = "99821a8101a7d25e76811e01e97d606d5caa5f62419867245b8fd1f5f362590b"
 
@@ -92,7 +88,7 @@ func TestNew(t *testing.T) {
 
 	go func() {
 		err := streamingAPI.SubscribeToTraces(ctx,
-			[]string{settings.JsonWallet.Hash, "UQA4mfrV45OEIuTyJKDQe41FX1X0XD8IPJ9UYb7Tpu3gK6kO"},
+			[]string{settings.GetJsonWallet().Hash, "UQA4mfrV45OEIuTyJKDQe41FX1X0XD8IPJ9UYb7Tpu3gK6kO"},
 			func(data tonapi.TraceEventData) {
 				// cancel()
 				t.Log("data:", data)

@@ -133,7 +133,7 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	minOut := myTongoServices.ConvertJettonsAmountToBigInt(jettonInfo.Decimals, slippageAmount)
 
 	// адрес получателя (кошелёк юзера)
-	toAddrID := tongoTon.MustParseAccountID(settings.JsonWallet.Hash)
+	toAddrID := tongoTon.MustParseAccountID(settings.GetJsonWallet().Hash)
 
 	// определение ForwardPayload
 	payload := tongoAbi.StonfiSwapJettonPayload{
