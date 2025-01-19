@@ -7,20 +7,20 @@
 
 ```dotenv
 # wallet address
-WALLET_HASH="sample4ch9wko3g3rkjowfw3lpgfkejg5h49eomi45g"
+TON_API_WALLET_HASH="sample4ch9wko3g3rkjowfw3lpgfkejg5h49eomi45g"
 # wallet mnemonics
-WALLET_SEED_PHRASE="your long seed phrase containing twenty four words"
+TON_API_WALLET_SEED_PHRASE="your long seed phrase containing twenty four words"
 
-REST_API_PORT=""
-REST_API_KEY="your-own-key-for-this-app"
+REST_API_TON_API_PORT=8000
+REST_API_TON_API_KEY="your-own-key-for-this-app"
 
 # comma-separated allowed origins for CORS
-CORS_ALLOWED_ORIGINS="*"
+REST_API_TON_API_CORS_ALLOWED_ORIGINS="*"
 # comma-separated allowed methods for CORS
-CORS_ALLOWED_METHODS="GET,HEAD,POST"
+REST_API_TON_API_CORS_ALLOWED_METHODS="GET,HEAD,POST"
 
 # TON API key for SSE requests (received from TON Console)
-TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
+SSE_API_TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 
 ```
 

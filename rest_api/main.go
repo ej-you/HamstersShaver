@@ -8,6 +8,8 @@ import (
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	openapidocs "github.com/kohkimakimoto/echo-openapidocs"
 
+	"github.com/ej-you/go-utils/env"
+
 	coreErrorHandler "github.com/ej-you/HamstersShaver/rest_api/core/error_handler"
 	coreUrls "github.com/ej-you/HamstersShaver/rest_api/core/urls"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
@@ -22,7 +24,13 @@ import (
 // @SecurityScheme APIKey apiKey header Authorization
 // @Security APIKey
 func main() {
-	settings.CheckEnv()
+	// проверка, что эти переменные окружения заданы
+	env.MustBePresented(
+		"TON_API_WALLET_HASH", "TON_API_WALLET_SEED_PHRASE",
+		"REST_API_TON_API_PORT", "REST_API_TON_API_KEY",
+		"REST_API_TON_API_CORS_ALLOWED_ORIGINS", "REST_API_TON_API_CORS_ALLOWED_METHODS",
+		"SSE_API_TON_API_TOKEN",
+	)
 
 	echoApp := echo.New()
 	echoApp.HideBanner = true
