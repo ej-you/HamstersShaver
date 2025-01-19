@@ -9,10 +9,9 @@ import (
 
 
 // токен бота
-var BotToken string = os.Getenv("BOT_TOKEN")
-
+var BotToken string = os.Getenv("TG_BOT_TOKEN")
 // список ID юзеров с доступом к боту
-var AllowedUsers []string = strings.Split(os.Getenv("ALLOWED_USERS"), ",")
+var AllowedUsers []string = strings.Split(os.Getenv("TG_BOT_ALLOWED_USERS"), ",")
 
 // настройки redis
 var RedisAddr string = os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT")
@@ -22,8 +21,8 @@ var MongoAddr string = fmt.Sprintf("mongodb://%s:%s/", os.Getenv("MONGO_HOST"), 
 var MongoDB string = os.Getenv("MONGO_DB")
 
 // настройки для REST API
-var RestApiHost string = os.Getenv("REST_API_HOST")
-var RestApiKey string = os.Getenv("REST_API_KEY")
+var RestApiHost string = os.Getenv("REST_API_TON_API_HOST")
+var RestApiKey string = os.Getenv("REST_API_TON_API_KEY")
 
 
 // логеры

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	telebot "gopkg.in/telebot.v3"
+	"github.com/ej-you/go-utils/env"
 
 	handlersTradeCell "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade/cell"
 	handlersTradeBuy "github.com/ej-you/HamstersShaver/tg_bot/handlers/trade/buy"
@@ -22,8 +23,13 @@ import (
 
 
 func main() {
-	// проверка переменных окружения
-	settings.CheckEnv()
+	// проверка, что эти переменные окружения заданы
+	env.MustBePresented(
+		"TG_BOT_TOKEN", "TG_BOT_ALLOWED_USERS",
+		"REST_API_TON_API_HOST", "REST_API_TON_API_KEY",
+		"REDIS_HOST", "REDIS_PORT",
+		"MONGO_HOST", "MONGO_PORT", "MONGO_DB",
+	)
 	// получаем клиенты для redis и mongo для проверки, что соединение есть
 	_ = redis.GetRedisClient()
 	_ = mongo.NewMongoDB()

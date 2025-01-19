@@ -3,8 +3,8 @@ module github.com/ej-you/HamstersShaver
 go 1.22.2
 
 require (
+	github.com/ej-you/go-utils v0.1.0
 	github.com/google/uuid v1.1.2
-	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.7.0
 	go.mongodb.org/mongo-driver v1.17.2
