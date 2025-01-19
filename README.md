@@ -4,8 +4,7 @@
 
 #### About REST API for TON API interaction read [here](./rest_api/README.md)
 
-#### File `.env` must be contained in project root
-##### Content:
+### Needed `.env` variables:
 
 ```dotenv
 # Bot token (gotten form BotFather)
@@ -14,9 +13,9 @@ BOT_TOKEN="7589679:FslNG9krgnk4gihgl3h4MSDK-vjeH4t8"
 # comma-separated allowed users' IDs
 ALLOWED_USERS="123456789,012345678"
 
-# My REST API
+# My REST API for TON API
 REST_API_HOST="https://domain.com"
-# Key for my REST API
+# Key for my REST API for TON API
 REST_API_KEY="your-own-key-for-your-rest-api"
 
 # redis server settings

@@ -28,7 +28,9 @@ services:
     container_name: hamsters_shaver_rest_api
     restart: always
     env_file:
-      - ./rest_api/settings/config/.env
+      - ./env/ton_api.env
+      - ./env/rest_api_ton_api.env
+      - ./env/sse_api_ton_api.env
     volumes:
       - rest_api_logs:/logs:rw
     # expose:
@@ -46,7 +48,10 @@ services:
     container_name: hamsters_shaver_tg_bot
     restart: unless-stopped
     env_file:
-      - ./.env
+      - ./env/tg_bot.env
+      - ./env/redis.env
+      - ./env/mongo.env
+      - ./env/rest_api_ton_api.env
     volumes:
       - tg_bot_logs:/logs:rw
     networks:

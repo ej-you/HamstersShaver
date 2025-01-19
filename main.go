@@ -22,6 +22,8 @@ import (
 
 
 func main() {
+	// проверка переменных окружения
+	settings.CheckEnv()
 	// получаем клиенты для redis и mongo для проверки, что соединение есть
 	_ = redis.GetRedisClient()
 	_ = mongo.NewMongoDB()
