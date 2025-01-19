@@ -2,7 +2,10 @@
 
 Makefile
 DockerfileTGBot
+
+docker-compose.dev.yml
 docker-compose.yml
+
 .gitignore
 
 *_test.go
