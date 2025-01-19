@@ -3,25 +3,15 @@
 ## RESTful API for TON API interaction
 
 
-### Config dir (`./settings/config/`) must contain the next files:
-
-#### 1. `wallet.json`
-##### Content:
-
-```json5
-{
-	// wallet address
-	"hash": "sample4ch9wko3g3rkjowfw3lpgfkejg5h49eomi45g",
-	// wallet mnemonics
-	"seed_phrase": "your long seed phrase containing twenty four words"
-}
-```
-
-#### 2. `.env`
-##### Content:
+### Needed `.env` variables:
 
 ```dotenv
-GO_PORT=8000
+# wallet address
+WALLET_HASH="sample4ch9wko3g3rkjowfw3lpgfkejg5h49eomi45g"
+# wallet mnemonics
+WALLET_SEED_PHRASE="your long seed phrase containing twenty four words"
+
+REST_API_PORT=""
 REST_API_KEY="your-own-key-for-this-app"
 
 # comma-separated allowed origins for CORS
@@ -29,7 +19,7 @@ CORS_ALLOWED_ORIGINS="*"
 # comma-separated allowed methods for CORS
 CORS_ALLOWED_METHODS="GET,HEAD,POST"
 
-# received from TON Console
+# TON API key for SSE requests (received from TON Console)
 TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 
 ```

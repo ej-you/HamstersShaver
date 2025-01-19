@@ -25,7 +25,7 @@ func GetAccount(ctx context.Context, tonapiClient *tonapi.Client) (*tonapi.Accou
 	var account *tonapi.Account
 
 	// конфиг API для получения аккаунта
-	accountParams := tonapi.GetAccountParams{AccountID: settings.JsonWallet.Hash}
+	accountParams := tonapi.GetAccountParams{AccountID: settings.GetJsonWallet().Hash}
 
 	// получение аккаунта по его адресу
 	account, err := tonapiClient.GetAccount(ctx, accountParams)

@@ -36,7 +36,6 @@ WORKDIR /app
 # copy compiled file, files for swagger and wallet data
 COPY --from=build /go/src/rest_api_app .
 COPY --from=build /go/src/docs ./docs
-COPY --from=build /go/src/settings/config/wallet.json ./settings/config/wallet.json
 
 # run app
 CMD ["/bin/sh", "-c", "/app/rest_api_app 2>> /logs/error-log.log"]

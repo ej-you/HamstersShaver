@@ -17,7 +17,7 @@ func GetWallet(tongoClient *tongo.Client) (tongoWallet.Wallet, error) {
 	var err error
 
 	// получаем доступ к кошельку (строка слов сид-фразы, tongoClient)
-	realWallet, err = tongoWallet.DefaultWalletFromSeed(settings.JsonWallet.SeedPhrase, tongoClient)
+	realWallet, err = tongoWallet.DefaultWalletFromSeed(settings.GetJsonWallet().SeedPhrase, tongoClient)
 	
 	if err != nil {
 		apiErr := coreErrors.New(

@@ -1,9 +1,6 @@
 package settings
 
-import (
-	"os"
-	"encoding/json"
-)
+import "sync"
 
 
 type JsonWalletData struct {
@@ -11,23 +8,20 @@ type JsonWalletData struct {
 	SeedPhrase	string	`json:"seed_phrase"`
 }
 
-// путь до JSON-файла с данными кошелька
-var pathToWalletData string = configPath + "wallet.json"
+
+var once sync.Once
+// данные кошелька
+var jsonWallet *JsonWalletData
+
 
 // получение данных о кошельке из JSON-файла
-func getJsonWallet() JsonWalletData {
-	var jsonWallet JsonWalletData
-
-	// открытие файла
-	fileData, err := os.ReadFile(pathToWalletData)
-	DieIf(err)
-
-	// перевод данных из JSON в структуру JsonWalletData
-	err = json.Unmarshal(fileData, &jsonWallet)
-	DieIf(err)
-
+func GetJsonWallet() *JsonWalletData {
+	once.Do(func() {
+		// создание структуры
+		jsonWallet = &JsonWalletData{
+			Hash: hash,
+			SeedPhrase: seedPhrase,
+		}
+	})
 	return jsonWallet
 }
-
-// данные кошелька из JSON-конфига
-var JsonWallet JsonWalletData = getJsonWallet()

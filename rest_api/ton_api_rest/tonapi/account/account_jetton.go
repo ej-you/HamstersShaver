@@ -34,7 +34,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 
 	// конфиг API для получения инфы о монете аккаунта
 	accountJettonParams := tonapi.GetAccountJettonBalanceParams{
-		AccountID: settings.JsonWallet.Hash,
+		AccountID: settings.GetJsonWallet().Hash,
 		JettonID: jettonCA,
 		Currencies: []string{},
 	}

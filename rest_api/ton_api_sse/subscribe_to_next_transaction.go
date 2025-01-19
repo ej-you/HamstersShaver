@@ -28,7 +28,7 @@ func SubscribeToNextTransaction(timeout time.Duration) (string, error) {
 
 	go func() {
 		err := streamingAPI.SubscribeToTransactions(ctx,
-			[]string{settings.JsonWallet.Hash},
+			[]string{settings.GetJsonWallet().Hash},
 			// получение транзакций только с этими операциями
 			[]string{"0x7362d09c", "0xd53276db"},
 			func(data tonapi.TransactionEventData) {

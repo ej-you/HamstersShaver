@@ -92,7 +92,7 @@ func TestNew(t *testing.T) {
 
 	go func() {
 		err := streamingAPI.SubscribeToTraces(ctx,
-			[]string{settings.JsonWallet.Hash, "UQA4mfrV45OEIuTyJKDQe41FX1X0XD8IPJ9UYb7Tpu3gK6kO"},
+			[]string{settings.GetJsonWallet().Hash, "UQA4mfrV45OEIuTyJKDQe41FX1X0XD8IPJ9UYb7Tpu3gK6kO"},
 			func(data tonapi.TraceEventData) {
 				// cancel()
 				t.Log("data:", data)
