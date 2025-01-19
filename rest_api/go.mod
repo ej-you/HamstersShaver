@@ -3,19 +3,20 @@ module github.com/ej-you/HamstersShaver/rest_api
 go 1.22.2
 
 require (
+	github.com/ej-you/go-utils v0.1.0
 	github.com/gobuffalo/validate/v3 v3.3.3
-	github.com/joho/godotenv v1.5.1
 	github.com/kohkimakimoto/echo-openapidocs v0.1.0
 	github.com/labstack/echo/v4 v4.13.0
+	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/tonkeeper/tonapi-go v0.0.8
 	github.com/tonkeeper/tongo v1.14.1
+	github.com/xssnick/tonutils-go v1.10.2
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.10.0 // indirect
-	github.com/ej-you/go-utils v0.1.0 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/errors v0.6.1 // indirect
@@ -32,7 +33,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/oasisprotocol/curve25519-voi v0.0.0-20220328075252-7dd334e3daae // indirect
 	github.com/ogen-go/ogen v0.77.0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/r3labs/sse/v2 v2.10.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
@@ -40,7 +40,6 @@ require (
 	github.com/snksoft/crc v1.1.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	github.com/xssnick/tonutils-go v1.10.2 // indirect
 	go.opentelemetry.io/otel v1.19.0 // indirect
 	go.opentelemetry.io/otel/metric v1.19.0 // indirect
 	go.opentelemetry.io/otel/trace v1.19.0 // indirect
