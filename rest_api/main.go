@@ -14,12 +14,12 @@ import (
 )
 
 // Настройка Swagger документации
-// @Version 1.4.2
+// @Version 1.5.0
 // @Title RESTful API for TON API interaction
 // @Description RESTful API for TON API interaction written on Golang using "Stonfi" API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key in query.
 // @Server http://150.241.82.68:8000/api Remote server
 // @Server http://127.0.0.1:8000/api Local machine
-// @SecurityScheme APIKey apiKey query api-key
+// @SecurityScheme APIKey apiKey header Authorization
 // @Security APIKey
 func main() {
 	settings.CheckEnv()
@@ -55,15 +55,15 @@ func main() {
 	echoApp.File("/favicon.ico", "./docs/favicon.ico")
 	openapidocs.SwaggerUIDocuments(echoApp, "/api/swagger", openapidocs.SwaggerUIConfig{
 		SpecUrl: "/api/docs/swagger_v3.yml",
-		Title:   "OpenAI API",
+		Title:   "REST API for TON API",
 	})
 
 	// создание группы для ресурсов, защищённых API-ключом
 	apiKeyProtected := echoApp.Group("/api")
 
-	// добавление middleware для проверки API Key в строке запроса
+	// добавление middleware для проверки API Key в заголовках запроса
 	apiKeyProtected.Use(echoMiddleware.KeyAuthWithConfig(echoMiddleware.KeyAuthConfig{
-		KeyLookup: "query:api-key",
+		AuthScheme: "apiKey",
 		Validator: func(key string, context echo.Context) (bool, error) {
 			// для более простой отладки делаем API-ключ "debug" доступным для авторизации
 			if echoApp.Debug {

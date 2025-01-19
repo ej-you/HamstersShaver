@@ -53,6 +53,12 @@ TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 
 ### Swagger Docs can be found at `/api/swagger`
 
+### Authorization use header "Authorization" and must be like"
+```
+Authorization: apiKey your-own-key-for-this-app
+```
+
+
 <hr>
 
 ### Used tools (for TON interaction):
