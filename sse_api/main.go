@@ -10,7 +10,7 @@ import (
 	"github.com/ej-you/go-utils/env"
 
 	"github.com/ej-you/HamstersShaver/sse_api/handlers"
-	coreErrorHandler "github.com/ej-you/HamstersShaver/sse_api/core/error_handler"
+	errorHandler "github.com/ej-you/HamstersShaver/sse_api/error_handler"
 	"github.com/ej-you/HamstersShaver/sse_api/settings"
 )
 
@@ -48,7 +48,7 @@ func main() {
 	}
 	
 	// настройка кастомного обработчика ошибок
-	coreErrorHandler.CustomErrorHandler(echoApp)
+	errorHandler.CustomErrorHandler(echoApp)
 
 	// создание группы для ресурсов, защищённых API-ключом
 	apiKeyProtected := echoApp.Group("/sse")
@@ -63,7 +63,7 @@ func main() {
 			}
 			return key == settings.MyApisKey, nil
 		},
-		ErrorHandler: coreErrorHandler.CustomApiKeyErrorHandler,
+		ErrorHandler: errorHandler.CustomApiKeyErrorHandler,
 	}))
 
 	// настройка CORS
