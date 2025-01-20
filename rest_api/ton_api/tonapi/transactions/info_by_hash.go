@@ -8,7 +8,7 @@ import (
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
-	"github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
+	"github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/services"
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"

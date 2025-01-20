@@ -6,7 +6,7 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
+	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/transactions"
 	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 	
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"

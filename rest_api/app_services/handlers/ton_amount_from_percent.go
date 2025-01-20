@@ -8,8 +8,8 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
-	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
+	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/account"
+	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/services"
 	"github.com/ej-you/HamstersShaver/rest_api/app_services/serializers"
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"

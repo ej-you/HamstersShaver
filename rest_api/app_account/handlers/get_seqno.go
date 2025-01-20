@@ -7,8 +7,8 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
-	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/wallet"
+	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/account"
+	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/wallet"
 
 	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
 

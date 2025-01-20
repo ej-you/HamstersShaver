@@ -8,11 +8,11 @@ import (
 	tongoTlb "github.com/tonkeeper/tongo/tlb"
 	tongoTon "github.com/tonkeeper/tongo/ton"
 
-	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
-	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/wallet"
-	myTongoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/services"
+	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api/stonfi/jettons"
+	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/wallet"
+	myTongoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/services"
 
-	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
+	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/services"
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"

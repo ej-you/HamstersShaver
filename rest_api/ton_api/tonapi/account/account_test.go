@@ -6,7 +6,7 @@ import (
 	"time"
 	tonapi "github.com/tonkeeper/tonapi-go"
 
-	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/wallet"
+	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/wallet"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 
 	"testing"

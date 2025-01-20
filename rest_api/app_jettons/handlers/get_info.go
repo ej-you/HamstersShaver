@@ -5,7 +5,7 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
+	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api/stonfi/jettons"
 	"github.com/ej-you/HamstersShaver/rest_api/app_jettons/serializers"
 
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"

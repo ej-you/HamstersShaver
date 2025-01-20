@@ -10,12 +10,12 @@ import (
 	tongoTon "github.com/tonkeeper/tongo/ton"
 	tongoJetton "github.com/tonkeeper/tongo/contract/jetton"
 
-	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
+	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api/stonfi/jettons"
 	
-	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/wallet"
-	myTongoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/services"
+	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/wallet"
+	myTongoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/services"
 
-	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
+	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/services"
 	
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"

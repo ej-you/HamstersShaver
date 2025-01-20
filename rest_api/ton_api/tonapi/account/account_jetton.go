@@ -8,10 +8,10 @@ import (
 
 	tonapi "github.com/tonkeeper/tonapi-go"
 
-	myToutilsgoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonutils_go/services"
+	myToutilsgoServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonutils_go/services"
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
-	"github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
+	"github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/services"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 

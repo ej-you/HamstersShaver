@@ -6,7 +6,7 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	myTonapiTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/transactions"
+	myTonapiTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/transactions"
 	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 	
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
