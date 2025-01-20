@@ -23,14 +23,6 @@ components:
           example: GRAM
           type: string
       type: object
-    BeautyBalanceOut:
-      properties:
-        beautyBalance:
-          description: преобразованный баланс монеты из int64 формата в округлённый
-            float в виде строки
-          example: "326.167"
-          type: string
-      type: object
     BuySendIn:
       properties:
         amount:
@@ -215,13 +207,6 @@ components:
           example: true
           type: boolean
       type: object
-    WaitNextOut:
-      properties:
-        hash:
-          description: хэш отловленной транзакции
-          example: 1a47b792640313b2d3ee6c05795364e95fedb9c6a55f8b9227fbfaa5c46c08ff
-          type: string
-      type: object
     myTonapiAccount.AccountJetton:
       properties:
         balance:
@@ -255,7 +240,7 @@ info:
     API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key
     in query.
   title: RESTful API for TON API interaction
-  version: 1.4.2
+  version: 1.5.0
 openapi: 3.0.0
 paths:
   /account/get-jetton:
@@ -347,39 +332,6 @@ paths:
       summary: Get jetton info
       tags:
       - jettons
-  /services/beauty-balance:
-    get:
-      description: ' Convert raw balance (in int64 forman) into beauty balance (rounded
-        float in string format)'
-      parameters:
-      - description: баланс монеты в int64 формате
-        example: "326166742480"
-        in: query
-        name: RawBalance
-        required: true
-        schema:
-          description: баланс монеты в int64 формате
-          format: int64
-          type: integer
-      - description: decimals монеты
-        example: "9"
-        in: query
-        name: Decimals
-        required: true
-        schema:
-          description: decimals монеты
-          format: int64
-          type: integer
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BeautyBalanceOut'
-          description: BeautyBalance value
-      summary: Convert raw balance into beauty balance
-      tags:
-      - services
   /services/jetton-amount-from-percent:
     get:
       description: ' Get jettons amount from percent of its balance (in string format
@@ -589,19 +541,6 @@ paths:
                 $ref: '#/components/schemas/TransactionInfoWithStatusOK'
           description: TransactionInfoWithStatusOK JSON
       summary: Transaction info
-      tags:
-      - transactions
-  /transactions/wait-next:
-    get:
-      description: ' Wait the end of any next transaction'
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WaitNextOut'
-          description: Transaction hash
-      summary: Wait the end of transaction
       tags:
       - transactions
 security:

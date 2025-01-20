@@ -27,9 +27,8 @@ func main() {
 	// проверка, что эти переменные окружения заданы
 	env.MustBePresented(
 		"TON_API_WALLET_HASH", "TON_API_WALLET_SEED_PHRASE",
-		"REST_API_TON_API_PORT", "REST_API_TON_API_KEY",
+		"REST_API_TON_API_PORT", "MY_APIS_KEY",
 		"REST_API_TON_API_CORS_ALLOWED_ORIGINS", "REST_API_TON_API_CORS_ALLOWED_METHODS",
-		"SSE_API_TON_API_TOKEN",
 	)
 
 	echoApp := echo.New()
@@ -75,9 +74,9 @@ func main() {
 		Validator: func(key string, context echo.Context) (bool, error) {
 			// для более простой отладки делаем API-ключ "debug" доступным для авторизации
 			if echoApp.Debug {
-				return key == settings.RestApiKey || key == "debug", nil
+				return key == settings.MyApisKey || key == "debug", nil
 			}
-			return key == settings.RestApiKey, nil
+			return key == settings.MyApisKey, nil
 		},
 		ErrorHandler: coreErrorHandler.CustomApiKeyErrorHandler,
 	}))
