@@ -1,20 +1,22 @@
 package error_handler
 
 import (
-	"errors"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	echo "github.com/labstack/echo/v4"
 
+	customErrors "github.com/ej-you/HamstersShaver/sse_api/errors"
 	"github.com/ej-you/HamstersShaver/sse_api/settings"
 )
 
 
 type ResponseError struct {
-	Status 		string `json:"status"`
-	StatusCode 	int `json:"statusCode"`
 	Path 		string `json:"path"`
 	Timestamp 	string `json:"timestamp"`
+	Status 		string `json:"status"`
+	StatusCode 	int `json:"statusCode"`
 	Errors 		map[string]string `json:"errors"`
 }
 
@@ -22,37 +24,48 @@ type ResponseError struct {
 // настройка обработчика ошибок
 func CustomErrorHandler(echoApp *echo.Echo) {
 	echoApp.HTTPErrorHandler = func(err error, ctx echo.Context) {
-		var errMessage ResponseError
-		var httpErrorStatus int
-
-		// если ошибка является структурой *echo.HTTPError
-		httpError := new(echo.HTTPError)
-		if errors.As(err, &httpError) {
-			// приведение httpError.Message типа interface{} к map[string]string
-			errorsInMessage, ok := httpError.Message.(map[string]string)
-			if !ok {
-				errorsInMessage = map[string]string{"unknown": httpError.Error()}
-			}
-			errMessage = ResponseError{
-				Status: "error",
-				StatusCode: httpError.Code,
-				Path: ctx.Path(),
-				Timestamp: time.Now().Format(settings.TimeFmt),
-				Errors: errorsInMessage,
-			}
-			httpErrorStatus = httpError.Code
-		} else {
-			errMessage = ResponseError{
-				Status: "error",
-				StatusCode: 500,
-				Path: ctx.Path(),
-				Timestamp: time.Now().Format(settings.TimeFmt),
-				Errors: map[string]string{"unknown": err.Error()},
-			}
+		// поля для обрабатываемой ошибки любого типа
+		errMessage := ResponseError{
+			Path: ctx.Path(),
+			Timestamp: time.Now().Format(settings.TimeFmt),
+			Status: "error",
 		}
 
-		// отправка ответа
-		respErr := ctx.JSON(httpErrorStatus, errMessage)
+		// если ошибка является customErrors.SseError ошибкой
+		if sseErr, ok := err.(customErrors.SseError); ok {
+			errMessage.StatusCode = 500
+			errMessage.Errors = map[string]string{"sse_error": sseErr.Error()}
+
+			// отправка ответа (для customErrors.SseError ошибки)
+			respWriter := ctx.Response()
+			respWriter.Header().Set("Content-Type", "text/event-stream")
+			respWriter.Header().Set("Cache-Control", "no-cache")
+			respWriter.Header().Set("Connection", "keep-alive")
+			respWriter.WriteHeader(500)
+
+			byteErrMessage, _ := json.Marshal(errMessage)
+			message := fmt.Sprintf("event: error\ndata: %s\n\n", string(byteErrMessage))
+			_, _ = fmt.Fprint(respWriter, message)
+			respWriter.Flush()
+			return
+		// если ошибка является структурой *echo.HTTPError
+		} else if httpErr, ok := err.(*echo.HTTPError); ok {
+			// приведение httpError.Message типа interface{} к map[string]string
+			errorsInMessage, ok := httpErr.Message.(map[string]string)
+			if !ok {
+				errorsInMessage = map[string]string{"unknown": httpErr.Error()}
+			}
+			errMessage.StatusCode = httpErr.Code
+			errMessage.Errors = errorsInMessage
+
+		// если неизвестная ошибка
+		} else {
+			errMessage.StatusCode = 500
+			errMessage.Errors = map[string]string{"unknown": err.Error()}
+		}
+
+		// отправка ответа (для *echo.HTTPError или неизвестной ошибки)
+		respErr := ctx.JSON(errMessage.StatusCode, errMessage)
 		if respErr != nil {
 			settings.ErrorLog.Println("failed to send error response:", respErr)
 		}

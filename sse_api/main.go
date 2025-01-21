@@ -19,7 +19,7 @@ func main() {
 	// проверка, что эти переменные окружения заданы
 	env.MustBePresented(
 		"TON_API_WALLET_HASH",
-		"SSE_API_TON_API_PORT", "MY_APIS_KEY",
+		"SSE_API_TON_API_PORT",
 		"SSE_API_TON_API_CORS_ALLOWED_ORIGINS", "SSE_API_TON_API_CORS_ALLOWED_METHODS",
 		"SSE_API_TON_API_TOKEN",
 	)
@@ -50,22 +50,6 @@ func main() {
 	// настройка кастомного обработчика ошибок
 	errorHandler.CustomErrorHandler(echoApp)
 
-	// создание группы для ресурсов, защищённых API-ключом
-	apiKeyProtected := echoApp.Group("/sse")
-
-	// добавление middleware для проверки API Key в заголовках запроса
-	apiKeyProtected.Use(echoMiddleware.KeyAuthWithConfig(echoMiddleware.KeyAuthConfig{
-		AuthScheme: "apiKey",
-		Validator: func(key string, context echo.Context) (bool, error) {
-			// для более простой отладки делаем API-ключ "debug" доступным для авторизации
-			if echoApp.Debug {
-				return key == settings.MyApisKey || key == "debug", nil
-			}
-			return key == settings.MyApisKey, nil
-		},
-		ErrorHandler: errorHandler.CustomApiKeyErrorHandler,
-	}))
-
 	// настройка CORS
 	echoApp.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
 		AllowOrigins: settings.CorsAllowedOrigins,
@@ -73,7 +57,7 @@ func main() {
 	}))
 
 	// настройка роутеров для эндпоинтов
-	apiKeyProtected.GET("/account-traces", handlers.SubscribeToAccountTraces)
+	echoApp.GET("/sse/account-traces", handlers.SubscribeToAccountTraces)
 
 	// запуск приложения
 	echoApp.Logger.Fatal(echoApp.Start(fmt.Sprintf(":%s", settings.Port)))

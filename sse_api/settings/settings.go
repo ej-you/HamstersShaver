@@ -12,7 +12,6 @@ var WalletHash string = os.Getenv("TON_API_WALLET_HASH")
 
 // данные REST API
 var Port string = os.Getenv("SSE_API_TON_API_PORT")
-var MyApisKey string = os.Getenv("MY_APIS_KEY")
 
 // разрешённые источники и методы
 var CorsAllowedOrigins []string = strings.Split(os.Getenv("SSE_API_TON_API_CORS_ALLOWED_ORIGINS"), ",")
