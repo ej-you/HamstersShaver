@@ -1,5 +1,5 @@
 # HamstersShaver
 
-## RESTful API for TON API interaction
+## RESTful API for MongoDB
 
-#### READ more [here](./rest_api/README.md)
+#### READ more [here](./rest_api_mongo/README.md)
