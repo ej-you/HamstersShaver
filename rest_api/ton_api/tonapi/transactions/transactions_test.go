@@ -36,64 +36,71 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
-// info_by_hash.go
-func TestGetTransactionInfoByHash(t *testing.T) {
+// info.go
+func TestGetTransactionInfoWithStatusOK(t *testing.T) {
 	startTime := time.Now()
 
-	t.Logf("Test getting info about success cell jettons transaction by its hash")
+	t.Logf("Test getting info about SUCCESS cell jettons transaction by its hash")
 	{
 		// In
-		// hash := "79c2a5559c671e1ea56f6e345eeb88ef9f689d65a27c709be457f4bc4fa1e7a7"
-		hash := "a8ec992c341230a885f9adfe6598eb307660c306a5f00cf0d302c72e7d966389"
+		// hash := "a8ec992c341230a885f9adfe6598eb307660c306a5f00cf0d302c72e7d966389"
+		hash := "4f8ff3378e1d4cc80488750fda3bcc6b730b71b69429d9c44a775b377bdc66a4"
 		action := "cell"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
+		transInfo, err := GetTransactionInfoWithStatusOK(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot cell transaction info: %v", successMarker, transInfo)
 		}
+		assert.Equal(t, transInfo.StatusOK, true, "The StatusOK should be true")
 	}
 	logExecTime(t, &startTime)
 
-	t.Logf("Test getting info about failed (slippage) cell jettons transaction by its hash")
+	t.Logf("Test getting info about FAILED (slippage) cell jettons transaction by its hash")
 	{
 		// In
-		hash := "32fec73c3305a18420cb6568ce56ce960b04b23ccbe07da0cdfb33cac0506c54"
+		// hash := "32fec73c3305a18420cb6568ce56ce960b04b23ccbe07da0cdfb33cac0506c54"
+		hash := "396ae1f2fd595598d9bffb09506d5fd80b12fc5704ce9e6ab0d9782b68da24f7"
 		action := "cell"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
+		transInfo, err := GetTransactionInfoWithStatusOK(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot cell transaction info: %v", successMarker, transInfo)
 		}
+		assert.Equal(t, transInfo.StatusOK, false, "The StatusOK should be false")
 	}
 	logExecTime(t, &startTime)
 
-	t.Logf("Test getting info about success buy jettons transaction by its hash")
+	t.Logf("Test getting info about SUCCESS buy jettons transaction by its hash")
 	{
 		// In
-		hash := "f77c04ca40caf0b606ee1dc4dbd35e578faffdb262b24df99606ee77a35de077"
+		// hash := "f77c04ca40caf0b606ee1dc4dbd35e578faffdb262b24df99606ee77a35de077"
+		hash := "a556193068a7777adc0c6b0ea0feae9878add5eec87dd955d39d83444838cb8e"
 		action := "buy"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
+		transInfo, err := GetTransactionInfoWithStatusOK(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot buy transaction info: %v", successMarker, transInfo)
 		}
+		assert.Equal(t, transInfo.StatusOK, true, "The StatusOK should be true")
 	}
 	logExecTime(t, &startTime)
 
-	t.Logf("Test getting info about failed (slippage) buy jettons transaction by its hash")
+	t.Logf("Test getting info about FAILED (slippage) buy jettons transaction by its hash")
 	{
 		// In
-		hash := "eca5765b54e5a1bc0bf1f4010732ac085edf179c7da19a2b60223cd15a19e862"
+		// hash := "eca5765b54e5a1bc0bf1f4010732ac085edf179c7da19a2b60223cd15a19e862"
+		hash := "caf8d9e8d888395bd1c530a301be6918c2f93fb1aa8ee69eab7fa485a17c624f"
 		action := "buy"
 
 		// Out
-		transInfo, err := GetTransactionInfoWithStatusOKByHash(tonApiContext, hash, action)
+		transInfo, err := GetTransactionInfoWithStatusOK(tonApiContext, hash, action)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tGot buy transaction info: %v", successMarker, transInfo)
 		}
+		assert.Equal(t, transInfo.StatusOK, false, "The StatusOK should be false")
 	}
 	logExecTime(t, &startTime)
 }

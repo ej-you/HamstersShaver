@@ -5,7 +5,7 @@ import (
 )
 
 
-// @Description Cтруктура входных данных для получения информации о прошедшей транзакции по её хэшу
+// @Description Cтруктура входных данных для получения информации о прошедшей транзакции по хэшу её первой операции
 type InfoIn struct {
 	TransactionHash string `query:"transactionHash" json:"transactionHash" myvalid:"required"`
 	Action string `query:"action" json:"action" myvalid:"required"`

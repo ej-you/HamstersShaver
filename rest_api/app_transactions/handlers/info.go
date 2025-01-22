@@ -15,18 +15,18 @@ import (
 )
 
 
-// эндпоинт получения информации о прошедшей транзакции по её хэшу
+// эндпоинт получения информации о прошедшей транзакции по хэшу её первой операции
 // @Title Transaction info
-// @Description Get transaction info by given its hash and action (buy OR cell)
-// @Param TransactionHash query string true "хэш транзакции" "29a301e4d2a05713f4eab6c8f0daa3c58eed15d1d41678068cd50fe46ca7f6a5"
+// @Description Get transaction info by given its hash (hash of first operation) and action (buy OR cell)
+// @Param TransactionHash query string true "хэш транзакции" "4f8ff3378e1d4cc80488750fda3bcc6b730b71b69429d9c44a775b377bdc66a4"
 // @Param Action query string true "действие с монетами в транзакции (покупка/продажа)" "cell"
-// @Success 200 object myTonapiTransactions.TransactionInfoWithStatusOK "TransactionInfoWithStatusOK JSON"
+// @Success 200 object myTonapiTransactions.TransactionInfo "TransactionInfo JSON"
 // @Tag transactions
 // @Route /transactions/info [get]
 func Info(ctx echo.Context) error {
 	var err error
 	var dataIn serializers.InfoIn
-	var dataOut myTonapiTransactions.TransactionInfoWithStatusOK
+	var dataOut myTonapiTransactions.TransactionInfo
 
 	// парсинг query-параметров
 	if err = ctx.Bind(&dataIn); err != nil {
@@ -42,7 +42,7 @@ func Info(ctx echo.Context) error {
 	defer cancel()
 
 	// получение информации о транзакции
-	dataOut, err = myTonapiTransactions.GetTransactionInfoWithStatusOKByHash(getTransInfoContext, dataIn.TransactionHash, dataIn.Action)
+	dataOut, err = myTonapiTransactions.GetTransactionInfoWithStatusOK(getTransInfoContext, dataIn.TransactionHash, dataIn.Action)
 	if err != nil {
 		settings.ErrorLog.Println(err)
 		return err

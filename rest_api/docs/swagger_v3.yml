@@ -180,7 +180,7 @@ components:
           example: 9
           type: integer
       type: object
-    TransactionInfoWithStatusOK:
+    TransactionInfo:
       properties:
         action:
           description: действие с монетами в транзакции (покупка/продажа)
@@ -194,9 +194,17 @@ components:
           description: оставшееся кол-во TON после проведения транзакции
           example: "2.689"
           type: string
+        endTime:
+          description: время окончания транзакции в UNIX-формате
+          example: 1735413815
+          type: integer
         hash:
           description: хэш транзакции
-          example: ed79dafdda1a766dc6d7745e8dd03410adf7ba57bb6fccdb33ee5f5d8c3640f4
+          example: 4f8ff3378e1d4cc80488750fda3bcc6b730b71b69429d9c44a775b377bdc66a4
+          type: string
+        lastTxHash:
+          description: хэш последней операции транзакции
+          example: a8ec992c341230a885f9adfe6598eb307660c306a5f00cf0d302c72e7d966389
           type: string
         opName:
           description: название операции транзакции
@@ -513,10 +521,11 @@ paths:
       - transactions
   /transactions/info:
     get:
-      description: ' Get transaction info by given its hash and action (buy OR cell)'
+      description: ' Get transaction info by given its hash (hash of first operation)
+        and action (buy OR cell)'
       parameters:
       - description: хэш транзакции
-        example: 29a301e4d2a05713f4eab6c8f0daa3c58eed15d1d41678068cd50fe46ca7f6a5
+        example: 4f8ff3378e1d4cc80488750fda3bcc6b730b71b69429d9c44a775b377bdc66a4
         in: query
         name: TransactionHash
         required: true
@@ -538,8 +547,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TransactionInfoWithStatusOK'
-          description: TransactionInfoWithStatusOK JSON
+                $ref: '#/components/schemas/TransactionInfo'
+          description: TransactionInfo JSON
       summary: Transaction info
       tags:
       - transactions

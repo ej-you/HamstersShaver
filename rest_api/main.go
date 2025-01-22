@@ -16,9 +16,9 @@ import (
 )
 
 // Настройка Swagger документации
-// @Version 1.5.0
+// @Version 1.6.0
 // @Title RESTful API for TON API interaction
-// @Description RESTful API for TON API interaction written on Golang using "Stonfi" API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key in query.
+// @Description RESTful API for TON API interaction written on Golang using "Stonfi" API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key in header.
 // @Server http://150.241.82.68:8000/api Remote server
 // @Server http://127.0.0.1:8000/api Local machine
 // @SecurityScheme APIKey apiKey header Authorization
