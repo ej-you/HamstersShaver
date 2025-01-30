@@ -246,9 +246,9 @@ components:
 info:
   description: RESTful API for TON API interaction written on Golang using "Stonfi"
     API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key
-    in query.
+    in header.
   title: RESTful API for TON API interaction
-  version: 1.5.0
+  version: 1.6.1
 openapi: 3.0.0
 paths:
   /account/get-jetton:

@@ -54,7 +54,7 @@ func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
 		apiErr = coreErrors.New(
 			fmt.Errorf("get jetton data from Stonfi API: %w", err),
 			"failed to get jetton data",
-			"stonfi_api",
+			"stonfiApi",
 			500,
 		)
 		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
@@ -67,7 +67,7 @@ func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
 		apiErr = coreErrors.New(
 			fmt.Errorf("get jetton data from Stonfi API: read data from response body: %w", err),
 			"failed to get jetton data",
-			"stonfi_api",
+			"stonfiApi",
 			500,
 		)
 		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
@@ -79,7 +79,7 @@ func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
 		apiErr = coreErrors.New(
 			fmt.Errorf("get jetton data from Stonfi API: jetton was not found: unmarshal json: %w", err),
 			"jetton was not found",
-			"stonfi_api",
+			"stonfiApi",
 			400,
 		)
 		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
@@ -90,7 +90,7 @@ func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
 		apiErr = coreErrors.New(
 			fmt.Errorf("get jetton data from Stonfi API: jetton was not found"),
 			"jetton was not found",
-			"stonfi_api",
+			"stonfiApi",
 			400,
 		)
 		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
@@ -102,7 +102,7 @@ func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
 		apiErr = coreErrors.New(
 			fmt.Errorf("get jetton data from Stonfi API: parse float from StringPriceUSD: %w", err),
 			"failed to get jetton data",
-			"rest_api",
+			"restApi",
 			500,
 		)
 		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}

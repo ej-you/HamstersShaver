@@ -52,7 +52,7 @@ func getTransactionInfo(ctx context.Context, txHash string) (TransactionInfo, er
 		apiErr := coreErrors.New(
 			fmt.Errorf("get transaction info using tonapi: get transaction trace: %w", err),
 			"failed to get transaction trace",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()
@@ -84,7 +84,7 @@ func GetTransactionInfoWithStatusOK(ctx context.Context, txHash, action string) 
 		apiErr := coreErrors.New(
 			fmt.Errorf("get transaction info with status: invalid action parameter was given: %s", action),
 			"invalid action parameter",
-			"rest_api",
+			"restApi",
 			400,
 		)
 		return transInfo, apiErr

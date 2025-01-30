@@ -68,7 +68,7 @@ func GetTonClientTonapiWithTimeout(conType string, timeout time.Duration) (*tona
 				apiErr := coreErrors.New(
 					fmt.Errorf("get tonapi-go client: %w", result.Error),
 					"failed to get tonapi-go client",
-					"ton_api",
+					"tonApi",
 					500,
 				)
 				return result.Client, apiErr
@@ -132,7 +132,7 @@ func GetTonClientTongoWithTimeout(conType string, timeout time.Duration) (*tongo
 				apiErr := coreErrors.New(
 					fmt.Errorf("get tongo client: %w", result.Error),
 					"failed to get tongo client",
-					"tongo_api",
+					"tongoApi",
 					500,
 				)
 				return result.Client, apiErr

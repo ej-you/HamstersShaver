@@ -108,7 +108,7 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 		apiErr := coreErrors.New(
 			fmt.Errorf("send buy transaction: get jetton wallet using jetton master: %w", err),
 			"failed to get jetton wallet",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()
@@ -168,7 +168,7 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 		apiErr := coreErrors.New(
 			fmt.Errorf("send buy transaction: send transfer message: %w", err),
 			"failed to send transfer message",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()

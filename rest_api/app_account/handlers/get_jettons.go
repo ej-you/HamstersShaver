@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -42,5 +41,5 @@ func GetJettons(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, dataOut)
+	return ctx.JSON(200, dataOut)
 }

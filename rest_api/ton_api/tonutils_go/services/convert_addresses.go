@@ -19,7 +19,7 @@ func ConvertAddrToBase64(hexAddr string) (string, error) {
 		apiErr = coreErrors.New(
 			fmt.Errorf("invalid hex address was given"),
 			"failed to convert addr to base64",
-			"rest_api",
+			"restApi",
 			500,
 		)
 		return "", apiErr
@@ -30,7 +30,7 @@ func ConvertAddrToBase64(hexAddr string) (string, error) {
 		apiErr = coreErrors.New(
 			fmt.Errorf("failed to parse address: %w", err),
 			"failed to convert addr to base64",
-			"rest_api",
+			"restApi",
 			500,
 		)
 		return "", apiErr
@@ -48,7 +48,7 @@ func ConvertAddrToHEX(base64Addr string) (string, error) {
 		apiErr = coreErrors.New(
 			fmt.Errorf("invalid base64 address was given"),
 			"failed to convert addr to hex",
-			"rest_api",
+			"restApi",
 			500,
 		)
 		return "", apiErr
@@ -59,7 +59,7 @@ func ConvertAddrToHEX(base64Addr string) (string, error) {
 		apiErr = coreErrors.New(
 			fmt.Errorf("failed to parse address: %w", err),
 			"failed to convert addr to hex",
-			"rest_api",
+			"restApi",
 			500,
 		)
 		return "", apiErr

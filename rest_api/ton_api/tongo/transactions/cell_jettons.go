@@ -105,7 +105,7 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 		apiErr := coreErrors.New(
 			fmt.Errorf("send cell transaction: create new stonfiStruct: %w", err),
 			"failed to prepare message",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()
@@ -134,7 +134,7 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 		return coreErrors.New(
 			fmt.Errorf("send cell transaction: make swap message: %w", err),
 			"failed to make swap message",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 	}
@@ -145,7 +145,7 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 		apiErr := coreErrors.New(
 			fmt.Errorf("send cell transaction: send transfer message: %w", err),
 			"failed to send transfer message",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()

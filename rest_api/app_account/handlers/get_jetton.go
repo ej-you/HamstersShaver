@@ -3,18 +3,21 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 
 	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/account"
 	
-	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
-
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
+
+
+// структура входных данных для получения информации о монете аккаунта по её адресу
+type GetJettonIn struct {
+	MasterAddress string `query:"masterAddress" json:"masterAddress" validate:"required"`
+}
 
 
 // эндпоинт получения информации о монете аккаунта по её адресу
@@ -26,7 +29,7 @@ import (
 // @Route /account/get-jetton [get]
 func GetJetton(ctx echo.Context) error {
 	var err error
-	var dataIn serializers.GetJettonIn
+	var dataIn GetJettonIn
 	var dataOut myTonapiAccount.AccountJetton
 
 	// парсинг query-параметров
@@ -34,7 +37,7 @@ func GetJetton(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = coreValidator.Validate(&dataIn); err != nil {
+	if err = coreValidator.GetValidator().Struct(&dataIn); err != nil {
 		return err
 	}
 
@@ -56,5 +59,5 @@ func GetJetton(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, dataOut)
+	return ctx.JSON(200, dataOut)
 }

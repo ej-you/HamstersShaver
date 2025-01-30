@@ -39,7 +39,7 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 		apiErr := coreErrors.New(
 			fmt.Errorf("get account jettons using tonapi: %w", err),
 			"failed to get account jettons",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()
@@ -91,7 +91,7 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 		apiErr := coreErrors.New(
 			fmt.Errorf("get account jettons using tonapi: empty account jettons list: no one account jetton was gotten"),
 			"no one account jetton was gotten",
-			"rest_api",
+			"restApi",
 			500,
 		)
 		return accountJettonsList, apiErr

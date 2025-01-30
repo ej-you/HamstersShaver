@@ -47,7 +47,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 			apiErr = coreErrors.New(
 				fmt.Errorf("get account jetton using tonapi: account has not given jetton: %w", err),
 				"account has not given jetton",
-				"ton_api",
+				"tonApi",
 				404,
 			)
 			return accountJettonInfo, apiErr
@@ -56,7 +56,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 			apiErr = coreErrors.New(
 				fmt.Errorf("get account jetton using tonapi: invalid jetton address was given: %w", err),
 				"invalid jetton address was given",
-				"ton_api",
+				"tonApi",
 				400,
 			)
 			return accountJettonInfo, apiErr
@@ -65,7 +65,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 		apiErr = coreErrors.New(
 			fmt.Errorf("get account jetton using tonapi: %w", err),
 			"failed to get account jetton",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()
@@ -79,7 +79,7 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 		apiErr = coreErrors.New(
 			fmt.Errorf("get account jetton using tonapi: parse int64 from string jetton balance: %w", err),
 			"failed to get account jetton",
-			"rest_api",
+			"restApi",
 			500,
 		)
 		return accountJettonInfo, apiErr

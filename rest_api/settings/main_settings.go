@@ -19,7 +19,6 @@ var MyApisKey string = os.Getenv("MY_APIS_KEY")
 var CorsAllowedOrigins []string = strings.Split(os.Getenv("REST_API_TON_API_CORS_ALLOWED_ORIGINS"), ",")
 var CorsAllowedMethods []string = strings.Split(os.Getenv("REST_API_TON_API_CORS_ALLOWED_METHODS"), ",")
 
-
 // формат логов (для Echo)
 var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} |\n"
 // формат времени (для Echo)

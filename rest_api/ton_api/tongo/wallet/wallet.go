@@ -23,7 +23,7 @@ func GetWallet(tongoClient *tongo.Client) (tongoWallet.Wallet, error) {
 		apiErr := coreErrors.New(
 			fmt.Errorf("get wallet using tongo: %w", err),
 			"get wallet",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		return realWallet, apiErr

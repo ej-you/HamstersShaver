@@ -20,7 +20,7 @@ func GetAccountSeqno(ctx context.Context, tonapiClient *tonapi.Client, realWalle
 		apiErr := coreErrors.New(
 			fmt.Errorf("get account seqno using tonapi: %w", err),
 			"failed to get account seqno",
-			"ton_api",
+			"tonApi",
 			500,
 		)
 		apiErr.CheckTimeout()

@@ -2,17 +2,22 @@ package handlers
 
 import (
 	"context"
-	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 
 	myTonapiTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/transactions"
-	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
 	
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
+
+
+// структура входных данных для получения информации о прошедшей транзакции по хэшу её первой операции
+type InfoIn struct {
+	TransactionHash string `query:"transactionHash" json:"transactionHash" validate:"required"`
+	Action string `query:"action" json:"action" validate:"required,oneof=buy cell"`
+}
 
 
 // эндпоинт получения информации о прошедшей транзакции по хэшу её первой операции
@@ -25,7 +30,7 @@ import (
 // @Route /transactions/info [get]
 func Info(ctx echo.Context) error {
 	var err error
-	var dataIn serializers.InfoIn
+	var dataIn InfoIn
 	var dataOut myTonapiTransactions.TransactionInfo
 
 	// парсинг query-параметров
@@ -33,7 +38,7 @@ func Info(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = coreValidator.Validate(&dataIn); err != nil {
+	if err = coreValidator.GetValidator().Struct(&dataIn); err != nil {
 		return err
 	}
 
@@ -48,5 +53,5 @@ func Info(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, dataOut)
+	return ctx.JSON(200, dataOut)
 }

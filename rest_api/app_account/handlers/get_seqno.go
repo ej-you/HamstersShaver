@@ -3,23 +3,27 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 
 	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/account"
 	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/wallet"
 
-	"github.com/ej-you/HamstersShaver/rest_api/app_account/serializers"
-
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
+
+// seqno аккаунта
+type GetSeqnoOut struct {
+	Seqno uint32 `json:"seqno" example:"105" description:"порядковый номер версии кошелька аккаунта"`
+}
+
+
 // эндпоинт получения Seqno аккаунта
 // @Title Get account seqno
 // @Description Get account seqno
-// @Success 200 object serializers.GetSeqnoOut "Account seqno"
+// @Success 200 object GetSeqnoOut "Account seqno"
 // @Tag account
 // @Route /account/get-seqno [get]
 func GetSeqno(ctx echo.Context) error {
@@ -53,5 +57,5 @@ func GetSeqno(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, serializers.GetSeqnoOut{Seqno: seqno})
+	return ctx.JSON(200, GetSeqnoOut{Seqno: seqno})
 }
