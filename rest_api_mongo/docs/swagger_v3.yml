@@ -1,0 +1,51 @@
+components:
+  schemas:
+    Test:
+      properties:
+        action:
+          description: action [buy OR cell]
+          example: buy
+          type: string
+        user:
+          description: user login
+          example: user1
+          type: string
+      type: object
+  securitySchemes:
+    APIKey:
+      in: header
+      name: Authorization
+      type: apiKey
+info:
+  description: RESTful API for MongoDB written on Golang. All resources is protected
+    with api-key in header.
+  title: RESTful API for MongoDB
+  version: 1.0.0
+openapi: 3.0.0
+paths:
+  /transactions/new:
+    post:
+      description: ' Add new transaction to mongo'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Test'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+          description: New transaction JSON
+      summary: Add new transaction
+      tags:
+      - transactions
+security:
+- APIKey: []
+servers:
+- description: ' Remote server'
+  url: http://150.241.82.68:8002/api
+- description: ' Local machine'
+  url: http://127.0.0.1:8002/api

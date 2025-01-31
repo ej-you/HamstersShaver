@@ -6,8 +6,11 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
-	"github.com/ej-you/HamstersShaver/rest_api/settings"
+	validatorModule "github.com/go-playground/validator/v10"
+	myValidatorModule "github.com/ej-you/go-utils/validator"
+	coreValidator "github.com/ej-you/HamstersShaver/rest_api_mongo/core/validator"
+
+	"github.com/ej-you/HamstersShaver/rest_api_mongo/settings"
 )
 
 
@@ -23,8 +26,20 @@ type ResponseError struct {
 // настройка обработчика ошибок
 func CustomErrorHandler(echoApp *echo.Echo) {
 	echoApp.HTTPErrorHandler = func(err error, ctx echo.Context) {
-		var errMessage ResponseError
-		var httpErrorStatus int
+		errMessage := ResponseError{
+			Path: ctx.Path(),
+			Timestamp: time.Now().Format(settings.TimeFmt),
+		}
+
+		// проверка на ошибки валидации
+		validateErrors, ok := err.(validatorModule.ValidationErrors)
+		if ok {
+			errMessage.Status = "validateError"
+			errMessage.StatusCode = 400
+			errMessage.Errors = myValidatorModule.GetTranslatedMap(validateErrors, coreValidator.GetTranslator())
+			sendErrorResponse(&ctx, &errMessage)
+			return
+		}
 
 		// если ошибка является структурой *echo.HTTPError
 		httpError := new(echo.HTTPError)
@@ -34,31 +49,26 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 			if !ok {
 				errorsInMessage = map[string]string{"unknown": httpError.Error()}
 			}
-			errMessage = ResponseError{
-				Status: "error",
-				StatusCode: httpError.Code,
-				Path: ctx.Path(),
-				Timestamp: time.Now().Format(settings.TimeFmt),
-				Errors: errorsInMessage,
-			}
-			httpErrorStatus = httpError.Code
-		// иначе приводим ошибку к APIError
-		} else {
-			apiErr := coreErrors.AssertAPIError(err)
-			errMessage = ResponseError{
-				Status: apiErr.ErrStatus,
-				StatusCode: apiErr.ErrCode,
-				Path: ctx.Path(),
-				Timestamp: time.Now().Format(settings.TimeFmt),
-				Errors: map[string]string{apiErr.ErrType: apiErr.Description},
-			}
-			httpErrorStatus = apiErr.ErrCode
+			errMessage.Status = "error"
+			errMessage.StatusCode = httpError.Code
+			errMessage.Errors = errorsInMessage
+			sendErrorResponse(&ctx, &errMessage)
+			return
 		}
 
-		// отправка ответа
-		respErr := ctx.JSON(httpErrorStatus, errMessage)
-		if respErr != nil {
-			settings.ErrorLog.Println("failed to send error response:", respErr)
-		}
+		// иначе
+		errMessage.Status = "error"
+		errMessage.StatusCode = 500
+		errMessage.Errors = map[string]string{"unknown": err.Error()}
+		sendErrorResponse(&ctx, &errMessage)
+	}
+}
+
+
+// отправка ответа с сообщением об ошибке
+func sendErrorResponse(ctx *echo.Context, errMessage *ResponseError) {
+	respErr := (*ctx).JSON((*errMessage).StatusCode, *errMessage)
+	if respErr != nil {
+		settings.ErrorLog.Println("failed to send error response:", respErr)
 	}
 }

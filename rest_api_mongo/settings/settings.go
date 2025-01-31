@@ -9,12 +9,12 @@ import (
 
 
 // данные REST API
-var Port string = os.Getenv("REST_API_TON_API_PORT")
+var Port string = os.Getenv("REST_API_MONGO_PORT")
 var MyApisKey string = os.Getenv("MY_APIS_KEY")
 
 // разрешённые источники и методы
-var CorsAllowedOrigins []string = strings.Split(os.Getenv("REST_API_TON_API_CORS_ALLOWED_ORIGINS"), ",")
-var CorsAllowedMethods []string = strings.Split(os.Getenv("REST_API_TON_API_CORS_ALLOWED_METHODS"), ",")
+var CorsAllowedOrigins []string = strings.Split(os.Getenv("REST_API_MONGO_CORS_ALLOWED_ORIGINS"), ",")
+var CorsAllowedMethods []string = strings.Split(os.Getenv("REST_API_MONGO_CORS_ALLOWED_METHODS"), ",")
 
 
 // настройки mongo

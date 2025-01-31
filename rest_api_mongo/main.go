@@ -10,24 +10,24 @@ import (
 
 	"github.com/ej-you/go-utils/env"
 
-	coreErrorHandler "github.com/ej-you/HamstersShaver/rest_api/core/error_handler"
-	coreUrls "github.com/ej-you/HamstersShaver/rest_api/core/urls"
-	"github.com/ej-you/HamstersShaver/rest_api/settings"
+	coreErrorHandler "github.com/ej-you/HamstersShaver/rest_api_mongo/core/error_handler"
+	coreUrls "github.com/ej-you/HamstersShaver/rest_api_mongo/core/urls"
+	"github.com/ej-you/HamstersShaver/rest_api_mongo/settings"
 )
 
 // Настройка Swagger документации
 // @Version 1.0.0
 // @Title RESTful API for MongoDB
 // @Description RESTful API for MongoDB written on Golang. All resources is protected with api-key in header.
-// @Server http://150.241.82.68:8000/api Remote server
-// @Server http://127.0.0.1:8000/api Local machine
+// @Server http://150.241.82.68:8002/api Remote server
+// @Server http://127.0.0.1:8002/api Local machine
 // @SecurityScheme APIKey apiKey header Authorization
 // @Security APIKey
 func main() {
 	// проверка, что эти переменные окружения заданы
 	env.MustBePresented(
-		"REST_API_TON_API_PORT", "MY_APIS_KEY",
-		"REST_API_TON_API_CORS_ALLOWED_ORIGINS", "REST_API_TON_API_CORS_ALLOWED_METHODS",
+		"REST_API_MONGO_PORT", "MY_APIS_KEY",
+		"REST_API_MONGO_CORS_ALLOWED_ORIGINS", "REST_API_MONGO_CORS_ALLOWED_METHODS",
 		"MONGO_HOST", "MONGO_PORT", "MONGO_DB",
 	)
 
