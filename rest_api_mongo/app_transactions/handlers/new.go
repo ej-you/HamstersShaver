@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	echo "github.com/labstack/echo/v4"
 
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api_mongo/core/validator"
@@ -39,7 +38,7 @@ func New(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = coreValidator.GetValidator().Struct(&dataIn); err != nil {
+	if err = coreValidator.GetValidator().Validate(&dataIn); err != nil {
 		return err
 	}
 

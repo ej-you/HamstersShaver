@@ -2,37 +2,20 @@ package validator
 
 import (
 	"sync"
-
-	uniTrans "github.com/go-playground/universal-translator"
-	validatorModule "github.com/go-playground/validator/v10"
 	
-	myValidatorModule "github.com/ej-you/go-utils/validator"
+	validatorModule "github.com/ej-you/go-utils/validator"
 )
 
 
-var (
-	onceTranslator sync.Once
-	onceValidator sync.Once
+var once sync.Once
+// структура для валидации входных данных
+var validator *validatorModule.Validator
 
-	// структура для валидации входных данных
-	validator *validatorModule.Validate
-	// "переводчик" для обработки сообщений ошибок
-	translator *uniTrans.Translator
-)
-
-
-// получение "переводчика" для обработки сообщений ошибок
-func GetTranslator() *uniTrans.Translator {
-	onceTranslator.Do(func() {
-		translator = myValidatorModule.GetTranslator()
-	})
-	return translator
-}
 
 // получение структуры для валидации входных данных
-func GetValidator() *validatorModule.Validate {
-	onceValidator.Do(func() {
-		validator = myValidatorModule.GetValidator(GetTranslator())
+func GetValidator() *validatorModule.Validator {
+	once.Do(func() {
+		validator = validatorModule.New()
 	})
 	return validator
 }
