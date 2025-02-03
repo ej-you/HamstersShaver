@@ -5,7 +5,7 @@ import (
 )
 
 
-const transCollection = "transactions"
+const transactionsCollection = "transactions"
 
 
 // информация о завершившейся транзакции закупки для auto функции
@@ -16,8 +16,8 @@ type InitTransactionInfo struct {
 	LastTxHash 	string		`bson:"lastTxHash,omitempty" json:"lastTxHash,omitempty"` // хэш последней операции (если завершена без ошибки)
 }
 
-// структура для данных об отдельных транзакциях в trading функции
-type Transaction struct {
+// структура для создания записей об отдельных транзакциях в trading функции
+type TransactionCreator struct {
 	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto"`
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required"`
 	UserID 		string 		`bson:"userID" json:"userID" validate:"required"`
@@ -33,12 +33,12 @@ type Transaction struct {
 	Error 		bool		`bson:"error,omitempty" json:"error,omitempty"` // завершена ли от ошибки, не окончившись корректно
 	LastTxHash 	string		`bson:"lastTxHash,omitempty" json:"lastTxHash,omitempty"` // хэш последней операции (если завершена без ошибки)
 }
-func (this Transaction) DataCollectionName() string {
-	return transCollection
+func (this TransactionCreator) CreatorCollectionName() string {
+	return transactionsCollection
 }
 
-// структура для данных о транзакциях в контексте auto функции
-type TransactionAuto struct {
+// структура для создания записей о транзакциях в контексте auto функции
+type TransactionAutoCreator struct {
 	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto"`
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required"`
 	UserID 		string 		`bson:"userID" json:"userID" validate:"required"`
@@ -57,17 +57,36 @@ type TransactionAuto struct {
 	
 	InitTrans	InitTransactionInfo `bson:"initTrans,omitempty" json:"initTrans,omitempty"` // информация о транзакции закупки
 }
-func (this TransactionAuto) DataCollectionName() string {
-	return transCollection
+func (this TransactionAutoCreator) CreatorCollectionName() string {
+	return transactionsCollection
 }
 
-// фильтр для поиска 
-type TransactionFilter struct {
-	ID 			*uuid.UUID 	`bson:"_id,omitempty" json:"id,omitempty"`
-	Hash 		*string 	`bson:"hash,omitempty" json:"hash,omitempty"`
+// структура для получения записей о транзакциях
+type Transaction struct {
+	// обязательные поля для всех записей
+	Type 		string 		`bson:"type" json:"type"`
+	ID 			uuid.UUID 	`bson:"_id" json:"id"`
+	UserID 		string 		`bson:"userID" json:"userID"`
+	JettonCA 	string 		`bson:"jettonCA" json:"jettonCA"`
+	DEX 		string 		`bson:"dex" json:"dex"`
+	Hash 		string 		`bson:"hash" json:"hash"`
+	Finished 	bool 		`bson:"finished" json:"finished"`
+	// обязательные поля для trading функции
+	Action 		string 		`bson:"action,omitempty" json:"action,omitempty"`
+	// обязательные поля для auto функции
+	UsedTON 	string 		`bson:"usedTon,omitempty" json:"usedTon,omitempty"`
+	Status		string		`bson:"status,omitempty" json:"status,omitempty"`
+	TakeProfit	int 		`bson:"takeProfit,omitempty" json:"takeProfit,omitempty"`
+	StopLoss	int 		`bson:"stopLoss,omitempty" json:"stopLoss,omitempty"`
+	// необязательные поля
+	UsedJettons string 		`bson:"usedJettons,omitempty" json:"usedJettons,omitempty"`
+	Success 	bool 		`bson:"success,omitempty" json:"success,omitempty"`
+	Error 		bool		`bson:"error,omitempty" json:"error,omitempty"`
+	LastTxHash 	string		`bson:"lastTxHash,omitempty" json:"lastTxHash,omitempty"`
+	InitTrans	InitTransactionInfo `bson:"initTrans,omitempty" json:"initTrans,omitempty"`
 }
-func (this TransactionFilter) FilterCollectionName() string {
-	return transCollection
+func (this Transaction) DataCollectionName() string {
+	return transactionsCollection
 }
 
 // структура для обновления данных коллекции транзакций
@@ -80,9 +99,18 @@ type TransactionUpdater struct {
 	UsedJettons *string		`bson:"usedJettons,omitempty" json:"usedJettons,omitempty"`
 	UsedTON 	*string		`bson:"usedTon,omitempty" json:"usedTon,omitempty"`
 
-	Status		*string		`bson:"status,omitempty" json:"status,omitempty" validate:"oneof=init auto"`
+	Status		*string		`bson:"status,omitempty" json:"status,omitempty" validate:"omitempty,oneof=init auto"`
 	InitTrans	*InitTransactionInfo `bson:"initTrans,omitempty" json:"initTrans,omitempty"`
 }
 func (this TransactionUpdater) UpdateCollectionName() string {
-	return transCollection
+	return transactionsCollection
+}
+
+// фильтр для поиска транзакций
+type TransactionFilter struct {
+	ID 			*uuid.UUID 	`bson:"_id,omitempty" json:"id,omitempty"`
+	Hash 		*string 	`bson:"hash,omitempty" json:"hash,omitempty"`
+}
+func (this TransactionFilter) FilterCollectionName() string {
+	return transactionsCollection
 }
