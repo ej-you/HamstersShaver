@@ -8,6 +8,7 @@ import (
 const jettonsCollection = "jettons"
 
 
+// для Swagger документации
 // @Enum DEXesEnum
 type DEXesEnum struct {
     DEXesEnum string `enum:"Ston.fi,Dedust.io" example:"Ston.fi" description:"допустимые значения DEX-биржи"`
