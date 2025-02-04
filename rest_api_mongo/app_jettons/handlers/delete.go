@@ -18,7 +18,7 @@ type DeleteOut struct {
 
 // удаление записей монет по фильтру
 // @Title Delete by filter
-// @Description Delete jettons from DB by filter
+// @Description Delete jettons from DB by filter (All parameters is optional)
 // @Param JettonFilter body schemas.JettonFilter false "Фильтр для удаления записей монет"
 // @Success 200 object DeleteOut "Количество удалённых записей монет"
 // @Tag jettons

@@ -95,7 +95,7 @@ openapi: 3.0.0
 paths:
   /jettons:
     delete:
-      description: ' Delete jettons from DB by filter'
+      description: ' Delete jettons from DB by filter (All parameters is optional)'
       requestBody:
         content:
           application/json:
@@ -131,7 +131,7 @@ paths:
       - jettons
   /jettons/get-many:
     get:
-      description: ' Get jettons list from DB by filter'
+      description: ' Get jettons list from DB by filter (All parameters is optional)'
       parameters:
       - description: UUID записи
         example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d
@@ -179,7 +179,7 @@ paths:
       - jettons
   /jettons/get-one:
     get:
-      description: ' Get one jetton from DB by filter'
+      description: ' Get one jetton from DB by filter (All parameters is optional)'
       parameters:
       - description: UUID записи
         example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d

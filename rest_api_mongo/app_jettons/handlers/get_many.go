@@ -12,7 +12,7 @@ import (
 
 // получение записей монет по фильтру
 // @Title Get many by filter
-// @Description Get jettons list from DB by filter
+// @Description Get jettons list from DB by filter (All parameters is optional)
 // @Param ID query string false "UUID записи" "715c0b81-bf1b-46c4-bf08-5c137cc6ec4d"
 // @Param Symbol query string false "Название монеты" "GRAM"
 // @Param JettonCA query string false "Мастер-адрес монеты (jetton_master)" "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
