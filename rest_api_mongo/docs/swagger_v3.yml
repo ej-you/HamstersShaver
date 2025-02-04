@@ -1,16 +1,86 @@
 components:
   schemas:
-    Test:
+    DEXesEnum:
+      description: допустимые значения DEX-биржи
+      enum:
+      - Ston.fi
+      - Dedust.io
+      example: Ston.fi
+      type: string
+    DeleteOut:
       properties:
-        action:
-          description: action [buy OR cell]
-          example: buy
+        deleted:
+          description: количество удалённых записей
+          type: integer
+      type: object
+    Jetton:
+      properties:
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          readOnly: true
+          type: array
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
           type: string
-        user:
-          description: user login
-          example: user1
+        symbol:
+          description: Название монеты
+          example: GRAM
           type: string
       type: object
+    JettonFilter:
+      properties:
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          type: array
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        symbol:
+          description: Название монеты
+          example: GRAM
+          type: string
+      type: object
+    UUID:
+      items: {}
+      type: array
+    schemas.Jetton:
+      properties:
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          readOnly: true
+          type: array
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        symbol:
+          description: Название монеты
+          example: GRAM
+          type: string
+      type: object
+    uuid.UUID:
+      items: {}
+      type: array
   securitySchemes:
     APIKey:
       in: header
@@ -23,25 +93,136 @@ info:
   version: 1.0.0
 openapi: 3.0.0
 paths:
-  /transactions/new:
-    post:
-      description: ' Add new transaction to mongo'
+  /jettons:
+    delete:
+      description: ' Delete jettons from DB by filter'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Test'
+              $ref: '#/components/schemas/JettonFilter'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteOut'
+          description: Количество удалённых записей монет
+      summary: Delete by filter
+      tags:
+      - jettons
+    post:
+      description: ' Create jetton document in DB'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Jetton'
         required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Test'
-          description: New transaction JSON
-      summary: Add new transaction
+                $ref: '#/components/schemas/Jetton'
+          description: Данные созданной записи о монете
+      summary: Create jetton document
       tags:
-      - transactions
+      - jettons
+  /jettons/get-many:
+    get:
+      description: ' Get jettons list from DB by filter'
+      parameters:
+      - description: UUID записи
+        example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d
+        in: query
+        name: ID
+        schema:
+          description: UUID записи
+          format: string
+          type: string
+      - description: Название монеты
+        example: GRAM
+        in: query
+        name: Symbol
+        schema:
+          description: Название монеты
+          format: string
+          type: string
+      - description: Мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        in: query
+        name: JettonCA
+        schema:
+          description: Мастер-адрес монеты (jetton_master)
+          format: string
+          type: string
+      - description: DEX-биржа
+        example: Ston.fi
+        in: query
+        name: DEX
+        schema:
+          $ref: '#/components/schemas/DEXesEnum'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Jetton'
+                type: array
+          description: Список записей монет, подходящих под фильтр
+        "204":
+          description: Пустой ответ, если не найдено ни одной записи
+      summary: Get many by filter
+      tags:
+      - jettons
+  /jettons/get-one:
+    get:
+      description: ' Get one jetton from DB by filter'
+      parameters:
+      - description: UUID записи
+        example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d
+        in: query
+        name: ID
+        schema:
+          description: UUID записи
+          format: string
+          type: string
+      - description: Название монеты
+        example: GRAM
+        in: query
+        name: Symbol
+        schema:
+          description: Название монеты
+          format: string
+          type: string
+      - description: мастер-адрес монеты (jetton_master)
+        example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+        in: query
+        name: JettonCA
+        schema:
+          description: мастер-адрес монеты (jetton_master)
+          format: string
+          type: string
+      - description: DEX-биржа
+        example: Ston.fi
+        in: query
+        name: DEX
+        schema:
+          $ref: '#/components/schemas/DEXesEnum'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jetton'
+          description: Запись монеты, подходящей под фильтр
+        "404":
+          description: Если с данным фильтром запись монеты не была найдена
+      summary: Get one by filter
+      tags:
+      - jettons
 security:
 - APIKey: []
 servers:

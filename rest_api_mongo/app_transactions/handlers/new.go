@@ -28,6 +28,7 @@ type Test struct {
 // @Success 200 object Test "New transaction JSON"
 // @Tag transactions
 // @Route /transactions/new [post]
+
 func New(ctx echo.Context) error {
 	var err error
 	var dataIn Test
