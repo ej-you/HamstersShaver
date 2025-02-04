@@ -6,7 +6,6 @@ import (
 	"time"
 	
 	goMongo "go.mongodb.org/mongo-driver/mongo"
-	// goMongoOptions "go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/ej-you/HamstersShaver/rest_api_mongo/settings"
 )
