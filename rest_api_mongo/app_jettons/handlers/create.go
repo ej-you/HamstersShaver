@@ -34,11 +34,10 @@ func Create(ctx echo.Context) error {
 		return err
 	}
 
-	// получение записи монеты
+	// создание записи монеты
 	err = mongo.NewMongoDB().Insert(dataIn)
 	if err != nil {
 		return err
 	}
-
 	return ctx.JSON(201, dataIn)
 }

@@ -8,11 +8,11 @@ import (
 
 
 func RouterGroup(group *echo.Group) {
-	// group.GET("/buy/pre-request", handlers.BuyPreRequest)
-	// group.POST("/buy/send", handlers.BuySend)
+	group.POST("/create-trade", handlers.CreateTrade)
+	group.POST("/create-auto", handlers.CreateAuto)
 
-	// group.GET("/cell/pre-request", handlers.CellPreRequest)
-	// group.POST("/cell/send", handlers.CellSend)
-
-	group.POST("/new", handlers.New)
+	group.GET("", handlers.GetOne)
+	
+	group.PATCH("", handlers.Update)
+	group.PATCH("/commit-init-trans", handlers.CommitInitTrans)
 }

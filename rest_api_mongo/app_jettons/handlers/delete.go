@@ -42,6 +42,5 @@ func Delete(ctx echo.Context) error {
 	if err != nil {
 		return err
 	}
-
 	return ctx.JSON(200, dataOut)
 }

@@ -8,12 +8,6 @@ import (
 const jettonsCollection = "jettons"
 
 
-// для Swagger документации
-// @Enum DEXesEnum
-type DEXesEnum struct {
-    DEXesEnum string `enum:"Ston.fi,Dedust.io" example:"Ston.fi" description:"допустимые значения DEX-биржи"`
-}
-
 // структура для данных о монетах для покупки
 type Jetton struct {
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи" readOnly:"true"`
