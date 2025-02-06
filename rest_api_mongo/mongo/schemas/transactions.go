@@ -16,13 +16,13 @@ type InitTransactionInfo struct {
 
 // структура для создания записей об отдельных транзакциях в trading функции
 type TransactionCreator struct {
-	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto" example:"trade" description:"Тип транзакции" $ref:"TypesEnum" readOnly:"true"`
+	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto" example:"trade" description:"Тип транзакции" readOnly:"true"`
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи" readOnly:"true"`
-	UserID 		string 		`bson:"userID" json:"userID" validate:"required" example:"1601245210" description:"ID юзера"`
-	JettonCA 	string 		`bson:"jettonCA" json:"jettonCA" validate:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"Мастер-адрес монеты (jetton_master)"`
-	Action 		string 		`bson:"action" json:"action" validate:"required,oneof=buy cell" example:"buy" description:"Продажа/покупка монет" $ref:"ActionsEnum"`
-	DEX 		string 		`bson:"dex" json:"dex" validate:"required,oneof=Ston.fi Dedust.io" example:"Ston.fi" description:"DEX-биржа" $ref:"DEXesEnum"`
-	Hash 		string 		`bson:"hash" json:"hash" validate:"required" example:"009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f" description:"Хэш первой операции цепочки транзакций"`
+	UserID 		string 		`bson:"userID" json:"userID" validate:"required" example:"1601245210" description:"ID юзера" required:"true"`
+	JettonCA 	string 		`bson:"jettonCA" json:"jettonCA" validate:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"Мастер-адрес монеты (jetton_master)" required:"true"`
+	Action 		string 		`bson:"action" json:"action" validate:"required,oneof=buy cell" example:"buy" description:"Продажа/покупка монет" $ref:"ActionsEnum" required:"true"`
+	DEX 		string 		`bson:"dex" json:"dex" validate:"required,oneof=Ston.fi Dedust.io" example:"Ston.fi" description:"DEX-биржа" $ref:"DEXesEnum" required:"true"`
+	Hash 		string 		`bson:"hash" json:"hash" validate:"required" example:"009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f" description:"Хэш первой операции цепочки транзакций" required:"true"`
 	Finished 	bool 		`bson:"finished" json:"finished" example:"true" description:"Завершена ли транзакция (false по умолчанию)" default:"false"`
 
 	UsedJettons string 		`bson:"usedJettons,omitempty" json:"usedJettons,omitempty" example:"2000" description:"Количество монет (для action == cell)"`
@@ -37,24 +37,23 @@ func (this TransactionCreator) CreatorCollectionName() string {
 
 // структура для создания записей о транзакциях в контексте auto функции
 type TransactionAutoCreator struct {
-	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto" example:"auto" description:"Тип транзакции" $ref:"TypesEnum" readOnly:"true"`
+	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto" example:"auto" description:"Тип транзакции" readOnly:"true"`
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи" readOnly:"true"`
-	UserID 		string 		`bson:"userID" json:"userID" validate:"required" example:"1601245210" description:"ID юзера"`
-	UsedTON 	string 		`bson:"usedTon" json:"usedTon" validate:"required" example:"5.5" description:"Количество TON для конфигурации"`
-	StopLoss	int 		`bson:"stopLoss" json:"stopLoss" validate:"required,min=1,max=100" example:"20" description:"Процент стоп-лосса" minimum:"1", maximum:"100"`
-	TakeProfit	int 		`bson:"takeProfit" json:"takeProfit" validate:"required,min=1,max=100" example:"10" description:"Процент тейк-профита" minimum:"1", maximum:"100"`
-	JettonCA 	string 		`bson:"jettonCA" json:"jettonCA" validate:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"Мастер-адрес монеты (jetton_master)"`
-	Action 		string 		`bson:"action" json:"action" validate:"required,oneof=buy cell" example:"buy" description:"Продажа/покупка монет" $ref:"ActionsEnum"`
-	DEX 		string 		`bson:"dex" json:"dex" validate:"required,oneof=Ston.fi Dedust.io" example:"Ston.fi" description:"DEX-биржа" $ref:"DEXesEnum"`
-	Status		string		`bson:"status" json:"status" validate:"required,oneof=init auto" example:"init" description:"Какая из двух транзакций в процессе" $ref:"StatusesEnum" readOnly:"true"`
-	Hash 		string 		`bson:"hash" json:"hash" validate:"required" example:"009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f" description:"Хэш первой операции"`
+	UserID 		string 		`bson:"userID" json:"userID" validate:"required" example:"1601245210" description:"ID юзера" required:"true"`
+	UsedTON 	string 		`bson:"usedTon" json:"usedTon" validate:"required" example:"5.5" description:"Количество TON для конфигурации" required:"true"`
+	StopLoss	int 		`bson:"stopLoss" json:"stopLoss" validate:"required,min=1,max=100" example:"20" description:"Процент стоп-лосса" required:"true" minimum:"1", maximum:"100"`
+	TakeProfit	int 		`bson:"takeProfit" json:"takeProfit" validate:"required,min=1,max=100" example:"10" description:"Процент тейк-профита" required:"true" minimum:"1", maximum:"100"`
+	JettonCA 	string 		`bson:"jettonCA" json:"jettonCA" validate:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"Мастер-адрес монеты (jetton_master)" required:"true"`
+	Action 		string 		`bson:"action" json:"action" validate:"required,oneof=buy cell" example:"buy" description:"Продажа/покупка монет" $ref:"ActionsEnum" required:"true"`
+	DEX 		string 		`bson:"dex" json:"dex" validate:"required,oneof=Ston.fi Dedust.io" example:"Ston.fi" description:"DEX-биржа" $ref:"DEXesEnum" required:"true"`
+	Status		string		`bson:"status" json:"status" validate:"required,oneof=init auto" example:"init" description:"Какая из двух транзакций в процессе" readOnly:"true"`
+	Hash 		string 		`bson:"hash" json:"hash" validate:"required" example:"009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f" description:"Хэш первой операции" required:"true"`
 	Finished 	bool 		`bson:"finished" json:"finished" example:"true" description:"Завершена ли транзакция (false по умолчанию)" default:"false"`
 
 	Success 	bool 		`bson:"success,omitempty" json:"success,omitempty" example:"true" description:"true, если транзакция завершена без ошибки"`
 	Error 		bool		`bson:"error,omitempty" json:"error,omitempty" example:"true" description:"Завершена ли транзакция от ошибки, не окончившись корректно"`
 	LastTxHash 	string		`bson:"lastTxHash,omitempty" json:"lastTxHash,omitempty" example:"9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1" description:"Хэш последней операции (если транзакция завершена без ошибки)"`
-	
-	InitTrans	*InitTransactionInfo `bson:"initTrans,omitempty" json:"initTrans,omitempty" description:"Информация о транзакции закупки (первой транзакции)"`
+	// InitTrans	*InitTransactionInfo `bson:"initTrans,omitempty" json:"initTrans,omitempty" description:"Информация о транзакции закупки (первой транзакции)"`
 }
 func (this TransactionAutoCreator) CreatorCollectionName() string {
 	return transactionsCollection

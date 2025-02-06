@@ -15,7 +15,7 @@ import (
 
 // фиксирование информации о закупочной транзакции auto конфигурации в подструктуре InitTransactionInfo
 // @Title Commit init trans
-// @Description Commit init transaction info into initTrans sub-object
+// @Description Commit init transaction info into initTrans sub-object (must be passed at least one filter parameter)
 // @Param TransactionFilter body schemas.TransactionFilter true "Фильтр для получения транзакции"
 // @Success 200 object schemas.Transaction "Обновлённая запись транзакции"
 // @Tag transactions
@@ -49,6 +49,9 @@ func CommitInitTrans(ctx echo.Context) error {
 	}
 
 	// проверка необходимых полей
+	if dataOut.Type != "auto" {
+		return echo.NewHTTPError(400, map[string]string{"transactions": fmt.Sprintf("commit init trans: transaction type is not auto")})
+	}
 	if dataOut.Status != "init" {
 		return echo.NewHTTPError(400, map[string]string{"transactions": fmt.Sprintf("commit init trans: transaction status is not init")})
 	}

@@ -1,5 +1,12 @@
 components:
   schemas:
+    ActionsEnum:
+      description: допустимые значения действия для транзакции
+      enum:
+      - buy
+      - cell
+      example: buy
+      type: string
     DEXesEnum:
       description: допустимые значения DEX-биржи
       enum:
@@ -12,6 +19,17 @@ components:
         deleted:
           description: количество удалённых записей
           type: integer
+      type: object
+    InitTransactionInfo:
+      properties:
+        hash:
+          description: Хэш первой операции
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если транзакция завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
       type: object
     Jetton:
       properties:
@@ -33,6 +51,10 @@ components:
           description: Название монеты
           example: GRAM
           type: string
+      required:
+      - symbol
+      - jettonCA
+      - dex
       type: object
     JettonFilter:
       properties:
@@ -54,9 +76,304 @@ components:
           example: GRAM
           type: string
       type: object
+    StatusesEnum:
+      description: допустимые значения статуса auto транзакции
+      enum:
+      - init
+      - auto
+      example: init
+      type: string
+    Transaction:
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionsEnum'
+          description: Продажа/покупка монет
+          example: buy
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        error:
+          description: Завершена ли транзакция от ошибки, не окончившись корректно
+          example: true
+          type: boolean
+        finished:
+          description: Завершена ли транзакция
+          example: true
+          type: boolean
+        hash:
+          description: Хэш первой операции
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          type: array
+        initTrans:
+          $ref: '#/components/schemas/InitTransactionInfo'
+          description: Информация о транзакции закупки - первой транзакции (тип auto)
+          type: object
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если транзакция завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusesEnum'
+          description: Какая из двух транзакций в процессе (тип auto)
+          example: init
+        stopLoss:
+          description: Процент стоп-лосса (тип auto)
+          example: 20
+          minimum: 1
+          type: integer
+        success:
+          description: true, если транзакция завершена без ошибки
+          example: true
+          type: boolean
+        takeProfit:
+          description: Процент тейк-профита (тип auto)
+          example: 10
+          minimum: 1
+          type: integer
+        type:
+          $ref: '#/components/schemas/TypesEnum'
+          description: Тип транзакции
+          example: auto
+        usedJettons:
+          description: Количество монет для продажи (тип trade)
+          example: "2000"
+          type: string
+        usedTon:
+          description: Количество TON для конфигурации (тип auto) или для покупки
+            (тип trade)
+          example: "5.5"
+          type: string
+        userID:
+          description: ID юзера
+          example: "1601245210"
+          type: string
+      type: object
+    TransactionAutoCreator:
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionsEnum'
+          description: Продажа/покупка монет
+          example: buy
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        error:
+          description: Завершена ли транзакция от ошибки, не окончившись корректно
+          example: true
+          type: boolean
+        finished:
+          description: Завершена ли транзакция (false по умолчанию)
+          example: true
+          type: boolean
+        hash:
+          description: Хэш первой операции
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          readOnly: true
+          type: array
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если транзакция завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
+        status:
+          description: Какая из двух транзакций в процессе
+          example: init
+          readOnly: true
+          type: string
+        stopLoss:
+          description: Процент стоп-лосса
+          example: 20
+          minimum: 1
+          type: integer
+        success:
+          description: true, если транзакция завершена без ошибки
+          example: true
+          type: boolean
+        takeProfit:
+          description: Процент тейк-профита
+          example: 10
+          minimum: 1
+          type: integer
+        type:
+          description: Тип транзакции
+          example: auto
+          readOnly: true
+          type: string
+        usedTon:
+          description: Количество TON для конфигурации
+          example: "5.5"
+          type: string
+        userID:
+          description: ID юзера
+          example: "1601245210"
+          type: string
+      required:
+      - userID
+      - usedTon
+      - stopLoss
+      - takeProfit
+      - jettonCA
+      - action
+      - dex
+      - hash
+      type: object
+    TransactionCreator:
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionsEnum'
+          description: Продажа/покупка монет
+          example: buy
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        error:
+          description: Завершена ли от ошибки, не окончившись корректно
+          example: true
+          type: boolean
+        finished:
+          description: Завершена ли транзакция (false по умолчанию)
+          example: true
+          type: boolean
+        hash:
+          description: Хэш первой операции цепочки транзакций
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          readOnly: true
+          type: array
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
+        success:
+          description: true, если завершена без ошибки
+          example: true
+          type: boolean
+        type:
+          description: Тип транзакции
+          example: trade
+          readOnly: true
+          type: string
+        usedJettons:
+          description: Количество монет (для action == cell)
+          example: "2000"
+          type: string
+        usedTon:
+          description: Количество TON (для action == buy)
+          example: "5.5"
+          type: string
+        userID:
+          description: ID юзера
+          example: "1601245210"
+          type: string
+      required:
+      - userID
+      - jettonCA
+      - action
+      - dex
+      - hash
+      type: object
+    TransactionFilter:
+      properties:
+        hash:
+          description: Хэш первой операции цепочки транзакций
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          type: array
+      type: object
+    TransactionUpdater:
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionsEnum'
+          description: Продажа/покупка монет
+          example: buy
+        error:
+          description: Завершена ли транзакция от ошибки, не окончившись корректно
+          example: true
+          type: boolean
+        finished:
+          description: Завершена ли транзакция (false по умолчанию)
+          example: true
+          type: boolean
+        hash:
+          description: Хэш первой операции
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если транзакция завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
+        success:
+          description: true, если транзакция завершена без ошибки
+          example: true
+          type: boolean
+        usedJettons:
+          description: Количество монет (для action == cell)
+          example: "2000"
+          type: string
+        usedTon:
+          description: Количество TON (для action == buy)
+          example: "5.5"
+          type: string
+      type: object
+    TypesEnum:
+      description: допустимые значения действия типа записи транзакции
+      enum:
+      - trade
+      - auto
+      example: trade
+      type: string
     UUID:
       items: {}
       type: array
+    UpdateIn:
+      properties:
+        filter:
+          $ref: '#/components/schemas/TransactionFilter'
+          description: фильтр для выборки записей на обновление
+          type: object
+        updater:
+          $ref: '#/components/schemas/TransactionUpdater'
+          description: данные для обновления
+          type: object
+      type: object
+    UpdateOut:
+      properties:
+        updated:
+          description: количество обновлённых записей
+          type: integer
+      type: object
     schemas.Jetton:
       properties:
         dex:
@@ -77,6 +394,239 @@ components:
           description: Название монеты
           example: GRAM
           type: string
+      required:
+      - symbol
+      - jettonCA
+      - dex
+      type: object
+    schemas.Transaction:
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionsEnum'
+          description: Продажа/покупка монет
+          example: buy
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        error:
+          description: Завершена ли транзакция от ошибки, не окончившись корректно
+          example: true
+          type: boolean
+        finished:
+          description: Завершена ли транзакция
+          example: true
+          type: boolean
+        hash:
+          description: Хэш первой операции
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          type: array
+        initTrans:
+          $ref: '#/components/schemas/InitTransactionInfo'
+          description: Информация о транзакции закупки - первой транзакции (тип auto)
+          type: object
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если транзакция завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusesEnum'
+          description: Какая из двух транзакций в процессе (тип auto)
+          example: init
+        stopLoss:
+          description: Процент стоп-лосса (тип auto)
+          example: 20
+          minimum: 1
+          type: integer
+        success:
+          description: true, если транзакция завершена без ошибки
+          example: true
+          type: boolean
+        takeProfit:
+          description: Процент тейк-профита (тип auto)
+          example: 10
+          minimum: 1
+          type: integer
+        type:
+          $ref: '#/components/schemas/TypesEnum'
+          description: Тип транзакции
+          example: auto
+        usedJettons:
+          description: Количество монет для продажи (тип trade)
+          example: "2000"
+          type: string
+        usedTon:
+          description: Количество TON для конфигурации (тип auto) или для покупки
+            (тип trade)
+          example: "5.5"
+          type: string
+        userID:
+          description: ID юзера
+          example: "1601245210"
+          type: string
+      type: object
+    schemas.TransactionAutoCreator:
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionsEnum'
+          description: Продажа/покупка монет
+          example: buy
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        error:
+          description: Завершена ли транзакция от ошибки, не окончившись корректно
+          example: true
+          type: boolean
+        finished:
+          description: Завершена ли транзакция (false по умолчанию)
+          example: true
+          type: boolean
+        hash:
+          description: Хэш первой операции
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          readOnly: true
+          type: array
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если транзакция завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
+        status:
+          description: Какая из двух транзакций в процессе
+          example: init
+          readOnly: true
+          type: string
+        stopLoss:
+          description: Процент стоп-лосса
+          example: 20
+          minimum: 1
+          type: integer
+        success:
+          description: true, если транзакция завершена без ошибки
+          example: true
+          type: boolean
+        takeProfit:
+          description: Процент тейк-профита
+          example: 10
+          minimum: 1
+          type: integer
+        type:
+          description: Тип транзакции
+          example: auto
+          readOnly: true
+          type: string
+        usedTon:
+          description: Количество TON для конфигурации
+          example: "5.5"
+          type: string
+        userID:
+          description: ID юзера
+          example: "1601245210"
+          type: string
+      required:
+      - userID
+      - usedTon
+      - stopLoss
+      - takeProfit
+      - jettonCA
+      - action
+      - dex
+      - hash
+      type: object
+    schemas.TransactionCreator:
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionsEnum'
+          description: Продажа/покупка монет
+          example: buy
+        dex:
+          $ref: '#/components/schemas/DEXesEnum'
+          description: DEX-биржа
+          example: Ston.fi
+        error:
+          description: Завершена ли от ошибки, не окончившись корректно
+          example: true
+          type: boolean
+        finished:
+          description: Завершена ли транзакция (false по умолчанию)
+          example: true
+          type: boolean
+        hash:
+          description: Хэш первой операции цепочки транзакций
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          readOnly: true
+          type: array
+        jettonCA:
+          description: Мастер-адрес монеты (jetton_master)
+          example: EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O
+          type: string
+        lastTxHash:
+          description: Хэш последней операции (если завершена без ошибки)
+          example: 9a730767d311893fb6081b95663aee4d1d69c82f34a960057f15014e86b187c1
+          type: string
+        success:
+          description: true, если завершена без ошибки
+          example: true
+          type: boolean
+        type:
+          description: Тип транзакции
+          example: trade
+          readOnly: true
+          type: string
+        usedJettons:
+          description: Количество монет (для action == cell)
+          example: "2000"
+          type: string
+        usedTon:
+          description: Количество TON (для action == buy)
+          example: "5.5"
+          type: string
+        userID:
+          description: ID юзера
+          example: "1601245210"
+          type: string
+      required:
+      - userID
+      - jettonCA
+      - action
+      - dex
+      - hash
+      type: object
+    schemas.TransactionFilter:
+      properties:
+        hash:
+          description: Хэш первой операции цепочки транзакций
+          example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+          type: string
+        id:
+          description: UUID записи
+          example: invalid example
+          items: {}
+          type: array
       type: object
     uuid.UUID:
       items: {}
@@ -120,7 +670,7 @@ paths:
               $ref: '#/components/schemas/Jetton'
         required: true
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
@@ -223,6 +773,116 @@ paths:
       summary: Get one by filter
       tags:
       - jettons
+  /transactions:
+    get:
+      description: ' Get one transaction from DB by filter (All parameters is optional)'
+      parameters:
+      - description: UUID записи
+        example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d
+        in: query
+        name: ID
+        schema:
+          description: UUID записи
+          format: string
+          type: string
+      - description: Hash первой операции транзакции
+        example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+        in: query
+        name: Hash
+        schema:
+          description: Hash первой операции транзакции
+          format: string
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+          description: Запись транзакции, подходящей под фильтр
+        "404":
+          description: Если с данным фильтром запись монеты не была найдена
+      summary: Get one by filter
+      tags:
+      - transactions
+    patch:
+      description: ' Update transactions in DB by filter (All parameters is optional)'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIn'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateOut'
+          description: Количество обновлённых записей монет
+      summary: Update by filter
+      tags:
+      - transactions
+  /transactions/commit-init-trans:
+    patch:
+      description: ' Commit init transaction info into initTrans sub-object (must
+        be passed at least one filter parameter)'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionFilter'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+          description: Обновлённая запись транзакции
+      summary: Commit init trans
+      tags:
+      - transactions
+  /transactions/create-auto:
+    post:
+      description: ' Create transaction document in DB with info about "auto" configuration
+        from "auto" bot function'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionAutoCreator'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionAutoCreator'
+          description: Данные созданной записи о транзакции
+      summary: Create "auto" transaction document
+      tags:
+      - transactions
+  /transactions/create-trade:
+    post:
+      description: ' Create transaction document in DB with info about transaction
+        from "trade" bot function'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionCreator'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionCreator'
+          description: Данные созданной записи о транзакции
+      summary: Create "trade" transaction document
+      tags:
+      - transactions
 security:
 - APIKey: []
 servers:

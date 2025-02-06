@@ -11,9 +11,9 @@ const jettonsCollection = "jettons"
 // структура для данных о монетах для покупки
 type Jetton struct {
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи" readOnly:"true"`
-	Symbol	 	string 		`bson:"symbol" json:"symbol" validate:"required" example:"GRAM" description:"Название монеты"`
-	JettonCA 	string 		`bson:"jettonCA" json:"jettonCA" validate:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"Мастер-адрес монеты (jetton_master)"`
-	DEX 		string 		`bson:"dex" json:"dex" validate:"required,oneof=Ston.fi Dedust.io" example:"Ston.fi" description:"DEX-биржа" $ref:"DEXesEnum"`
+	Symbol	 	string 		`bson:"symbol" json:"symbol" validate:"required" example:"GRAM" description:"Название монеты" required:"true"`
+	JettonCA 	string 		`bson:"jettonCA" json:"jettonCA" validate:"required" example:"EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O" description:"Мастер-адрес монеты (jetton_master)" required:"true"`
+	DEX 		string 		`bson:"dex" json:"dex" validate:"required,oneof=Ston.fi Dedust.io" example:"Ston.fi" description:"DEX-биржа" $ref:"DEXesEnum" required:"true"`
 }
 func (this Jetton) CreatorCollectionName() string {
 	return jettonsCollection

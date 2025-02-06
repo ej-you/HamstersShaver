@@ -15,7 +15,7 @@ import (
 // @Title Create jetton document
 // @Description Create jetton document in DB
 // @Param Jetton body schemas.Jetton true "Данные о монете"
-// @Success 200 object schemas.Jetton "Данные созданной записи о монете"
+// @Success 201 object schemas.Jetton "Данные созданной записи о монете"
 // @Tag jettons
 // @Route /jettons [post]
 func Create(ctx echo.Context) error {

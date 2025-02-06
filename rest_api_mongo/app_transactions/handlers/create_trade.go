@@ -15,7 +15,7 @@ import (
 // @Title Create "trade" transaction document
 // @Description Create transaction document in DB with info about transaction from "trade" bot function
 // @Param Transaction body schemas.TransactionCreator true "Данные о транзакции trade функции"
-// @Success 200 object schemas.TransactionCreator "Данные созданной записи о транзакции"
+// @Success 201 object schemas.TransactionCreator "Данные созданной записи о транзакции"
 // @Tag transactions
 // @Route /transactions/create-trade [post]
 func CreateTrade(ctx echo.Context) error {

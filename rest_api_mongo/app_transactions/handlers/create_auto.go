@@ -17,7 +17,7 @@ import (
 // @Param Transaction body schemas.TransactionAutoCreator true "Данные о транзакции auto функции"
 // @Success 200 object schemas.TransactionAutoCreator "Данные созданной записи о транзакции"
 // @Tag transactions
-// @Route /transactions/create-trade [post]
+// @Route /transactions/create-auto [post]
 func CreateAuto(ctx echo.Context) error {
 	var err error
 	var dataIn schemas.TransactionAutoCreator
