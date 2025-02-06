@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 )
 
 
@@ -24,8 +25,8 @@ var MongoDB string = os.Getenv("MONGO_DB")
 
 // формат логов (для Echo)
 var LogFmt string = "[${time_rfc3339}] -- ${status} -- from ${remote_ip} to ${host} (${method} ${uri}) [time: ${latency_human}] | ${bytes_in} ${bytes_out} | error: ${error} |\n"
-// формат времени (для Echo)
-var TimeFmt string = "06-01-02 15:04:05 -07"
+// временная зона Москвы
+var TimeZone, _ = time.LoadLocation("Europe/Moscow")
 
 // логеры
 var InfoLog *log.Logger = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)

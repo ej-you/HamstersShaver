@@ -1,6 +1,8 @@
 package schemas
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -16,6 +18,7 @@ type InitTransactionInfo struct {
 
 // структура для создания записей об отдельных транзакциях в trading функции
 type TransactionCreator struct {
+	CreatedAt	time.Time	`bson:"createdAt" json:"createdAt" validate:"required" example:"2025-02-06T21:46:36+03:00" description:"Время создания записи (в формате RFC3339)" readOnly:"true"`
 	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto" example:"trade" description:"Тип транзакции" readOnly:"true"`
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи" readOnly:"true"`
 	UserID 		string 		`bson:"userID" json:"userID" validate:"required" example:"1601245210" description:"ID юзера" required:"true"`
@@ -37,6 +40,7 @@ func (this TransactionCreator) CreatorCollectionName() string {
 
 // структура для создания записей о транзакциях в контексте auto функции
 type TransactionAutoCreator struct {
+	CreatedAt	time.Time	`bson:"createdAt" json:"createdAt" validate:"required" example:"2025-02-06T21:46:36+03:00" description:"Время создания записи (в формате RFC3339)" readOnly:"true"`
 	Type 		string 		`bson:"type" json:"type" validate:"required,oneof=trade auto" example:"auto" description:"Тип транзакции" readOnly:"true"`
 	ID 			uuid.UUID 	`bson:"_id" json:"id" validate:"required" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи" readOnly:"true"`
 	UserID 		string 		`bson:"userID" json:"userID" validate:"required" example:"1601245210" description:"ID юзера" required:"true"`
@@ -62,6 +66,7 @@ func (this TransactionAutoCreator) CreatorCollectionName() string {
 // структура для получения записей о транзакциях
 type Transaction struct {
 	// обязательные поля для всех записей
+	CreatedAt	time.Time	`bson:"createdAt" json:"createdAt" example:"2025-02-06T21:46:36+03:00" description:"Время создания записи (в формате RFC3339)"`
 	Type 		string 		`bson:"type" json:"type" example:"auto" description:"Тип транзакции" $ref:"TypesEnum"`
 	ID 			uuid.UUID 	`bson:"_id" json:"id" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи"`
 	UserID 		string 		`bson:"userID" json:"userID" example:"1601245210" description:"ID юзера"`
@@ -110,6 +115,9 @@ func (this TransactionUpdater) UpdateCollectionName() string {
 type TransactionFilter struct {
 	ID 			*uuid.UUID 	`bson:"_id,omitempty" json:"id,omitempty" query:"id" example:"715c0b81-bf1b-46c4-bf08-5c137cc6ec4d" description:"UUID записи"`
 	Hash 		*string 	`bson:"hash,omitempty" json:"hash,omitempty" query:"hash" example:"009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f" description:"Хэш первой операции цепочки транзакций"`
+
+	Type 		*string 	`bson:"type,omitempty" json:"type,omitempty" query:"type" validate:"omitempty,oneof=trade auto" example:"auto" description:"Тип транзакции" $ref:"TypesEnum"`
+	Finished 	*bool		`bson:"finished,omitempty" json:"finished,omitempty" query:"finished" example:"true" description:"Завершена ли транзакция"`
 }
 func (this TransactionFilter) FilterCollectionName() string {
 	return transactionsCollection

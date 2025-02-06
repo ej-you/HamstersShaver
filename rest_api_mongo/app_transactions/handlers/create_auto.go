@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
 
@@ -32,6 +34,8 @@ func CreateAuto(ctx echo.Context) error {
 	dataIn.ID = uuid.New()
 	// выставляем значение "init" в качестве статуса auto
 	dataIn.Status = "init"
+	// выставляем время создания (в формате RFC3339)
+	dataIn.CreatedAt = time.Now().Truncate(time.Second)
 	
 	// валидация полученной структуры
 	if err = coreValidator.GetValidator().Validate(&dataIn); err != nil {

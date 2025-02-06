@@ -11,21 +11,21 @@ import (
 )
 
 
-// получение записей монет по фильтру
+// получение записей транзакций по фильтру
 // @Title Get many by filter
-// @Description Get jettons list from DB by filter (All parameters is optional)
+// @Description Get transactions list from DB by filter (All parameters is optional)
 // @Param ID query string false "UUID записи" "715c0b81-bf1b-46c4-bf08-5c137cc6ec4d"
-// @Param Symbol query string false "Название монеты" "GRAM"
-// @Param JettonCA query string false "Мастер-адрес монеты (jetton_master)" "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
-// @Param DEX query DEXesEnum false "DEX-биржа" "Ston.fi"
-// @Success 200 array []schemas.Jetton "Список записей монет, подходящих под фильтр"
+// @Param Hash query string false "Хэш первой операции цепочки транзакций" "009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f"
+// @Param Type query TypesEnum false "Тип транзакции" "auto"
+// @Param Finished query bool false "Завершена ли транзакция" "true"
+// @Success 200 array []schemas.Transaction "Список записей транзакций, подходящих под фильтр"
 // @Success 204 "Пустой ответ, если не найдено ни одной записи"
-// @Tag jettons
-// @Route /jettons/get-many [get]
+// @Tag transactions
+// @Route /transactions/get-many [get]
 func GetMany(ctx echo.Context) error {
 	var err error
-	var dataIn schemas.JettonFilter
-	var dataOut []schemas.Jetton
+	var dataIn schemas.TransactionFilter
+	var dataOut []schemas.Transaction
 
 	// парсинг query-параметров
 	if err = ctx.Bind(&dataIn); err != nil {

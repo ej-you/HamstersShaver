@@ -9,6 +9,7 @@ import (
 	"github.com/ej-you/HamstersShaver/rest_api_mongo/mongo/schemas"
 
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api_mongo/core/validator"
+	"github.com/ej-you/HamstersShaver/rest_api_mongo/settings"
 )
 
 
@@ -20,7 +21,7 @@ import (
 // @Success 200 object schemas.Transaction "Запись транзакции, подходящей под фильтр"
 // @Success 404 "Если с данным фильтром запись монеты не была найдена"
 // @Tag transactions
-// @Route /transactions [get]
+// @Route /transactions/get-one [get]
 func GetOne(ctx echo.Context) error {
 	var err error
 	var dataIn schemas.TransactionFilter
@@ -43,6 +44,9 @@ func GetOne(ctx echo.Context) error {
 			return echo.NewHTTPError(404, map[string]string{"transactions": err.Error()})
 		}
 		return err
-	}
+	}	
+	// настройка временной зоны
+	dataOut.CreatedAt = dataOut.CreatedAt.In(settings.TimeZone)
+
 	return ctx.JSON(200, dataOut)
 }

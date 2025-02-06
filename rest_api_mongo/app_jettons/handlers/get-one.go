@@ -9,6 +9,7 @@ import (
 	"github.com/ej-you/HamstersShaver/rest_api_mongo/mongo/schemas"
 
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api_mongo/core/validator"
+	"github.com/ej-you/HamstersShaver/rest_api_mongo/settings"
 )
 
 
@@ -46,5 +47,8 @@ func GetOne(ctx echo.Context) error {
 		}
 		return err
 	}
+	// настройка временной зоны
+	dataOut.CreatedAt = dataOut.CreatedAt.In(settings.TimeZone)
+
 	return ctx.JSON(200, dataOut)
 }

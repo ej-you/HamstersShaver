@@ -33,6 +33,12 @@ components:
       type: object
     Jetton:
       properties:
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:37:41+03:00"
+          format: date-time
+          readOnly: true
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -58,6 +64,11 @@ components:
       type: object
     JettonFilter:
       properties:
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:37:41+03:00"
+          format: date-time
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -89,6 +100,11 @@ components:
           $ref: '#/components/schemas/ActionsEnum'
           description: Продажа/покупка монет
           example: buy
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:46:36+03:00"
+          format: date-time
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -164,6 +180,12 @@ components:
           $ref: '#/components/schemas/ActionsEnum'
           description: Продажа/покупка монет
           example: buy
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:46:36+03:00"
+          format: date-time
+          readOnly: true
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -242,6 +264,12 @@ components:
           $ref: '#/components/schemas/ActionsEnum'
           description: Продажа/покупка монет
           example: buy
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:46:36+03:00"
+          format: date-time
+          readOnly: true
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -302,6 +330,10 @@ components:
       type: object
     TransactionFilter:
       properties:
+        finished:
+          description: Завершена ли транзакция
+          example: true
+          type: boolean
         hash:
           description: Хэш первой операции цепочки транзакций
           example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
@@ -311,6 +343,10 @@ components:
           example: invalid example
           items: {}
           type: array
+        type:
+          $ref: '#/components/schemas/TypesEnum'
+          description: Тип транзакции
+          example: auto
       type: object
     TransactionUpdater:
       properties:
@@ -376,6 +412,12 @@ components:
       type: object
     schemas.Jetton:
       properties:
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:37:41+03:00"
+          format: date-time
+          readOnly: true
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -405,6 +447,11 @@ components:
           $ref: '#/components/schemas/ActionsEnum'
           description: Продажа/покупка монет
           example: buy
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:46:36+03:00"
+          format: date-time
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -480,6 +527,12 @@ components:
           $ref: '#/components/schemas/ActionsEnum'
           description: Продажа/покупка монет
           example: buy
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:46:36+03:00"
+          format: date-time
+          readOnly: true
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -558,6 +611,12 @@ components:
           $ref: '#/components/schemas/ActionsEnum'
           description: Продажа/покупка монет
           example: buy
+        createdAt:
+          description: Время создания записи (в формате RFC3339)
+          example: "2025-02-06T21:46:36+03:00"
+          format: date-time
+          readOnly: true
+          type: string
         dex:
           $ref: '#/components/schemas/DEXesEnum'
           description: DEX-биржа
@@ -618,6 +677,10 @@ components:
       type: object
     schemas.TransactionFilter:
       properties:
+        finished:
+          description: Завершена ли транзакция
+          example: true
+          type: boolean
         hash:
           description: Хэш первой операции цепочки транзакций
           example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
@@ -627,6 +690,10 @@ components:
           example: invalid example
           items: {}
           type: array
+        type:
+          $ref: '#/components/schemas/TypesEnum'
+          description: Тип транзакции
+          example: auto
       type: object
     uuid.UUID:
       items: {}
@@ -774,37 +841,6 @@ paths:
       tags:
       - jettons
   /transactions:
-    get:
-      description: ' Get one transaction from DB by filter (All parameters is optional)'
-      parameters:
-      - description: UUID записи
-        example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d
-        in: query
-        name: ID
-        schema:
-          description: UUID записи
-          format: string
-          type: string
-      - description: Hash первой операции транзакции
-        example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
-        in: query
-        name: Hash
-        schema:
-          description: Hash первой операции транзакции
-          format: string
-          type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Transaction'
-          description: Запись транзакции, подходящей под фильтр
-        "404":
-          description: Если с данным фильтром запись монеты не была найдена
-      summary: Get one by filter
-      tags:
-      - transactions
     patch:
       description: ' Update transactions in DB by filter (All parameters is optional)'
       requestBody:
@@ -881,6 +917,86 @@ paths:
                 $ref: '#/components/schemas/TransactionCreator'
           description: Данные созданной записи о транзакции
       summary: Create "trade" transaction document
+      tags:
+      - transactions
+  /transactions/get-many:
+    get:
+      description: ' Get transactions list from DB by filter (All parameters is optional)'
+      parameters:
+      - description: UUID записи
+        example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d
+        in: query
+        name: ID
+        schema:
+          description: UUID записи
+          format: string
+          type: string
+      - description: Хэш первой операции цепочки транзакций
+        example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+        in: query
+        name: Hash
+        schema:
+          description: Хэш первой операции цепочки транзакций
+          format: string
+          type: string
+      - description: Тип транзакции
+        example: auto
+        in: query
+        name: Type
+        schema:
+          $ref: '#/components/schemas/TypesEnum'
+      - description: Завершена ли транзакция
+        example: "true"
+        in: query
+        name: Finished
+        schema:
+          description: Завершена ли транзакция
+          format: boolean
+          type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Transaction'
+                type: array
+          description: Список записей транзакций, подходящих под фильтр
+        "204":
+          description: Пустой ответ, если не найдено ни одной записи
+      summary: Get many by filter
+      tags:
+      - transactions
+  /transactions/get-one:
+    get:
+      description: ' Get one transaction from DB by filter (All parameters is optional)'
+      parameters:
+      - description: UUID записи
+        example: 715c0b81-bf1b-46c4-bf08-5c137cc6ec4d
+        in: query
+        name: ID
+        schema:
+          description: UUID записи
+          format: string
+          type: string
+      - description: Hash первой операции транзакции
+        example: 009f801c3ab128fb53e5fca0ffe47b2dcfec3f6e28a07cf992ace5297363b72f
+        in: query
+        name: Hash
+        schema:
+          description: Hash первой операции транзакции
+          format: string
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+          description: Запись транзакции, подходящей под фильтр
+        "404":
+          description: Если с данным фильтром запись монеты не была найдена
+      summary: Get one by filter
       tags:
       - transactions
 security:

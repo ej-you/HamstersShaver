@@ -11,8 +11,9 @@ func RouterGroup(group *echo.Group) {
 	group.POST("/create-trade", handlers.CreateTrade)
 	group.POST("/create-auto", handlers.CreateAuto)
 
-	group.GET("", handlers.GetOne)
-	
+	group.GET("/get-one", handlers.GetOne)
+	group.GET("/get-many", handlers.GetMany)
+
 	group.PATCH("", handlers.Update)
 	group.PATCH("/commit-init-trans", handlers.CommitInitTrans)
 }
