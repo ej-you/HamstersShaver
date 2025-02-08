@@ -12,15 +12,12 @@ TON_API_WALLET_HASH="sample4ch9wko3g3rkjowfw3lpgfkejg5h49eomi45g"
 TON_API_WALLET_SEED_PHRASE="your long seed phrase containing twenty four words"
 
 REST_API_TON_API_PORT=8000
-REST_API_TON_API_KEY="your-own-key-for-this-app"
+MY_APIS_KEY="your-own-key-for-this-app"
 
 # comma-separated allowed origins for CORS
 REST_API_TON_API_CORS_ALLOWED_ORIGINS="*"
 # comma-separated allowed methods for CORS
 REST_API_TON_API_CORS_ALLOWED_METHODS="GET,HEAD,POST"
-
-# TON API key for SSE requests (received from TON Console)
-SSE_API_TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 
 ```
 
@@ -43,12 +40,10 @@ SSE_API_TON_API_TOKEN="F4WMGCSOMEV3K5APINOH34FKEY5TDDMQ8WH5"
 3. `/api/transactions/cell/pre-request` - returns info about pre-request cell transaction
 4. `/api/transactions/cell/send` - send cell transaction to blockchain
 5. `/api/transactions/info` - get transaction info by its hash
-6. `/api/transactions/wait-next` - wait the end of next transaction
 
 #### - services
-1. `/api/services/beauty-balance` - returns rounded string balance converted from given int64 balance
-2. `/api/services/jetton-amount-from-percent` - returns not rounded jettons amount from percent of its balance
-3. `/api/services/ton-amount-from-percent` - returns not rounded TON amount from percent of its balance
+1. `/api/services/jetton-amount-from-percent` - returns not rounded jettons amount from percent of its balance
+2. `/api/services/ton-amount-from-percent` - returns not rounded TON amount from percent of its balance
 
 
 ### Swagger Docs can be found at `/api/swagger`

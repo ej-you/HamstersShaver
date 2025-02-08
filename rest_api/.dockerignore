@@ -1,4 +1,6 @@
 Makefile
 DockerfileRestAPI
 
+README.md
+
 *_test.go

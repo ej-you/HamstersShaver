@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 
-	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
-	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/services"
-	"github.com/ej-you/HamstersShaver/rest_api/app_services/serializers"
+	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/account"
+	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/services"
 
 	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
@@ -19,24 +17,35 @@ import (
 )
 
 
+// структура входных данных для получения кол-ва TON проценту от их баланса
+type TonAmountFromPercentIn struct {
+	Percent int `query:"percent" json:"percent" validate:"required,min=1,max=100"`
+}
+
+// структура выходных данных получения кол-ва TON по проценту от их баланса
+type TonAmountFromPercentOut struct {
+	TonAmount string `json:"tonAmount" example:"1.533915351" description:"строковое кол-во TON, эквивалентное проценту от баланса"`
+}
+
+
 // эндпоинт получения кол-ва TON по проценту от их баланса
 // @Title Get TON amount from percent of its balance
 // @Description Get TON amount from percent of its balance (in string format and not floored)
 // @Param Percent query int true "процент от баланса TON" "100"
-// @Success 200 object serializers.TonAmountFromPercentOut "TonAmountFromPercent value"
+// @Success 200 object TonAmountFromPercentOut "TonAmountFromPercent value"
 // @Tag services
 // @Route /services/ton-amount-from-percent [get]
 func TonAmountFromPercent(ctx echo.Context) error {
 	var err error
-	var dataIn serializers.TonAmountFromPercentIn
-	var dataOut serializers.TonAmountFromPercentOut
+	var dataIn TonAmountFromPercentIn
+	var dataOut TonAmountFromPercentOut
 
 	// парсинг query-параметров
 	if err = ctx.Bind(&dataIn); err != nil {
 		return err
 	}
 	// валидация полученной структуры
-	if err = coreValidator.Validate(&dataIn); err != nil {
+	if err = coreValidator.GetValidator().Struct(&dataIn); err != nil {
 		return err
 	}
 
@@ -63,7 +72,7 @@ func TonAmountFromPercent(ctx echo.Context) error {
 		return coreErrors.New(
 			fmt.Errorf("get TON amount from percent: %s", errText),
 			errText,
-			"rest_api",
+			"restApi",
 			400,
 		)
 	}
@@ -77,9 +86,9 @@ func TonAmountFromPercent(ctx echo.Context) error {
 	}
 
 	// формирование структуры с кол-вом монет (перевод в строку без округления)
-	dataOut = serializers.TonAmountFromPercentOut{
+	dataOut = TonAmountFromPercentOut{
 		TonAmount: myTonapiServices.StringJettonAmountFromFloat64(tonPercentAmount, tonInfo.Decimals),
 	}
 
-	return ctx.JSON(http.StatusOK, dataOut)
+	return ctx.JSON(200, dataOut)
 }

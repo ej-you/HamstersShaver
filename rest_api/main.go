@@ -16,9 +16,9 @@ import (
 )
 
 // Настройка Swagger документации
-// @Version 1.5.0
+// @Version 1.6.1
 // @Title RESTful API for TON API interaction
-// @Description RESTful API for TON API interaction written on Golang using "Stonfi" API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key in query.
+// @Description RESTful API for TON API interaction written on Golang using "Stonfi" API, SDK "tonapi-go" and SDK "tongo". All resources is protected with api-key in header.
 // @Server http://150.241.82.68:8000/api Remote server
 // @Server http://127.0.0.1:8000/api Local machine
 // @SecurityScheme APIKey apiKey header Authorization
@@ -27,9 +27,8 @@ func main() {
 	// проверка, что эти переменные окружения заданы
 	env.MustBePresented(
 		"TON_API_WALLET_HASH", "TON_API_WALLET_SEED_PHRASE",
-		"REST_API_TON_API_PORT", "REST_API_TON_API_KEY",
+		"REST_API_TON_API_PORT", "MY_APIS_KEY",
 		"REST_API_TON_API_CORS_ALLOWED_ORIGINS", "REST_API_TON_API_CORS_ALLOWED_METHODS",
-		"SSE_API_TON_API_TOKEN",
 	)
 
 	echoApp := echo.New()
@@ -75,9 +74,9 @@ func main() {
 		Validator: func(key string, context echo.Context) (bool, error) {
 			// для более простой отладки делаем API-ключ "debug" доступным для авторизации
 			if echoApp.Debug {
-				return key == settings.RestApiKey || key == "debug", nil
+				return key == settings.MyApisKey || key == "debug", nil
 			}
-			return key == settings.RestApiKey, nil
+			return key == settings.MyApisKey, nil
 		},
 		ErrorHandler: coreErrorHandler.CustomApiKeyErrorHandler,
 	}))

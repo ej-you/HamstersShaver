@@ -1,16 +1,21 @@
 package handlers
 
 import (
-	"net/http"
-
 	echo "github.com/labstack/echo/v4"
 
-	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tongo/transactions"
-	"github.com/ej-you/HamstersShaver/rest_api/app_transactions/serializers"
+	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/transactions"
 	
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
+
+
+// структура входных данных для получения информации о последующей транзакции продажи
+type CellPreRequestIn struct {
+	JettonCA string `query:"jettonCA" json:"jettonCA" validate:"required"`
+	Amount float64 `query:"amount" json:"amount" validate:"required"`
+	Slippage int `query:"slippage" json:"slippage" validate:"required,min=1,max=100"`
+}
 
 
 // эндпоинт получения информации о последующей транзакции продажи монет
@@ -24,7 +29,7 @@ import (
 // @Route /transactions/cell/pre-request [get]
 func CellPreRequest(ctx echo.Context) error {
 	var err error
-	var dataIn serializers.CellPreRequestIn
+	var dataIn CellPreRequestIn
 	var dataOut myTongoTransactions.PreRequestCellJetton
 
 	// парсинг query-параметров
@@ -32,7 +37,7 @@ func CellPreRequest(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = coreValidator.Validate(&dataIn); err != nil {
+	if err = coreValidator.GetValidator().Struct(&dataIn); err != nil {
 		return err
 	}
 
@@ -43,5 +48,5 @@ func CellPreRequest(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, dataOut)
+	return ctx.JSON(200, dataOut)
 }

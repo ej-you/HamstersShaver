@@ -3,11 +3,10 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 
-	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/tonapi/account"
+	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/account"
 
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
@@ -42,5 +41,5 @@ func GetJettons(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, dataOut)
+	return ctx.JSON(200, dataOut)
 }

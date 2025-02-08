@@ -1,17 +1,21 @@
 package handlers
 
 import (
-	"net/http"
-
 	echo "github.com/labstack/echo/v4"
 
-	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api_rest/stonfi/jettons"
-	"github.com/ej-you/HamstersShaver/rest_api/app_jettons/serializers"
+	myStonfiJettons "github.com/ej-you/HamstersShaver/rest_api/ton_api/stonfi/jettons"
 
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
+
+
+// структура входных данных для получения информации о монете по её адресу
+type GetInfoIn struct {
+	// мастер-адрес монеты (jetton_master)
+	MasterAddress string `query:"masterAddress" json:"masterAddress" validate:"required"`
+}
 
 
 // эндпоинт получения информации о монете
@@ -23,7 +27,7 @@ import (
 // @Route /jettons/get-info [get]
 func GetInfo(ctx echo.Context) error {
 	var err error
-	var dataIn serializers.GetInfoIn
+	var dataIn GetInfoIn
 	var dataOut myStonfiJettons.JettonParams
 
 	// парсинг JSON-body
@@ -31,7 +35,7 @@ func GetInfo(ctx echo.Context) error {
 		return err
 	}
 	// валидация полученной структуры
-	if err = coreValidator.Validate(&dataIn); err != nil {
+	if err = coreValidator.GetValidator().Struct(&dataIn); err != nil {
 		return err
 	}
 
@@ -42,5 +46,5 @@ func GetInfo(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, dataOut)
+	return ctx.JSON(200, dataOut)
 }
