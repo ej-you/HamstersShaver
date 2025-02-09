@@ -41,8 +41,8 @@ services:
 
   tg_bot:
     build:
-      context: .
-      dockerfile: DockerfileTGBot
+      context: ./tg_bot
+      dockerfile: Dockerfile
     container_name: hamsters_shaver_tg_bot
     restart: always
     env_file:
