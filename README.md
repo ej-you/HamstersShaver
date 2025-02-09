@@ -3,6 +3,7 @@
 ## Telegram bot for fast transactions on TON
 
 #### About REST API for TON API interaction read [here](./rest_api/README.md)
+#### About REST API for for MongoDB read [here](./rest_api_mongo/README.md)
 
 ### Needed `.env` variables:
 
