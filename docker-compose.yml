@@ -1,0 +1,75 @@
+services:
+  redis:
+    image: redis/redis-stack-server:6.2.6-v15
+    container_name: hamsters_shaver_redis
+    restart: always
+    expose:
+      - "6379"
+    networks:
+      proj_network:
+        ipv4_address: 172.20.1.2
+
+  mongo:
+    image: mongo:7.0-jammy
+    container_name: hamsters_shaver_mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db:rw
+    expose:
+      - "27017"
+    networks:
+      proj_network:
+        ipv4_address: 172.20.1.3
+
+  rest_api:
+    build:
+      context: ./rest_api
+      dockerfile: DockerfileRestAPI
+    container_name: hamsters_shaver_rest_api
+    restart: always
+    env_file:
+      - ./env/ton_api.env
+      - ./env/rest_api_ton_api.env
+      - ./env/sse_api_ton_api.env
+    volumes:
+      - rest_api_logs:/logs:rw
+    expose:
+      - "8000"
+    networks:
+      proj_network:
+        ipv4_address: 172.20.1.4
+
+  tg_bot:
+    build:
+      context: .
+      dockerfile: DockerfileTGBot
+    container_name: hamsters_shaver_tg_bot
+    restart: always
+    env_file:
+      - ./env/tg_bot.env
+      - ./env/redis.env
+      - ./env/mongo.env
+      - ./env/rest_api_ton_api.env
+    volumes:
+      - tg_bot_logs:/logs:rw
+    networks:
+      proj_network:
+        ipv4_address: 172.20.1.5
+    depends_on:
+      - redis
+      - mongo
+      - rest_api
+
+
+networks:
+  proj_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.1.0/24
+
+
+volumes:
+  mongo_data:
+  rest_api_logs:
+  tg_bot_logs:
