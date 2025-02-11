@@ -44,12 +44,10 @@ retry: 1000
 ```
 event: error
 data: {
-	"path": "/sse/account-traces",
-    "timestamp": "25-01-21 17:29:25 +03",
     "status": "error",
     "statusCode": 500,
     "errors": {
-        "sse_error": "some error desc"
+        "sseError": "some error desc"
     }
 }
 id: b86f5fff-b878-4989-a209-0c45e6369316

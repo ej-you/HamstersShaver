@@ -3,7 +3,6 @@ package error_handler
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -13,10 +12,8 @@ import (
 
 
 type ResponseError struct {
-	Path 		string `json:"path"`
-	Timestamp 	string `json:"timestamp"`
-	Status 		string `json:"status"`
 	StatusCode 	int `json:"statusCode"`
+	Status 		string `json:"status"`
 	Errors 		map[string]string `json:"errors"`
 }
 
@@ -24,17 +21,14 @@ type ResponseError struct {
 // настройка обработчика ошибок
 func CustomErrorHandler(echoApp *echo.Echo) {
 	echoApp.HTTPErrorHandler = func(err error, ctx echo.Context) {
-		// поля для обрабатываемой ошибки любого типа
-		errMessage := ResponseError{
-			Path: ctx.Path(),
-			Timestamp: time.Now().Format(settings.TimeFmt),
-			Status: "error",
-		}
+		// структура для обрабатываемой ошибки любого типа
+		var errMessage ResponseError
 
 		// если ошибка является customErrors.SseError ошибкой
 		if sseErr, ok := err.(customErrors.SseError); ok {
 			errMessage.StatusCode = 500
-			errMessage.Errors = map[string]string{"sse_error": sseErr.Error()}
+			errMessage.Status = "sseError"
+			errMessage.Errors = map[string]string{"sseError": sseErr.Error()}
 
 			// отправка ответа (для customErrors.SseError ошибки)
 			respWriter := ctx.Response()
@@ -47,7 +41,11 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 			message := fmt.Sprintf("event: error\ndata: %s\n\n", string(byteErrMessage))
 			_, _ = fmt.Fprint(respWriter, message)
 			respWriter.Flush()
+
+			// логируем ошибку в STDERR
+			settings.ErrorLog.Printf("Path: %v | Error: %#v", ctx.Path(), errMessage)
 			return
+
 		// если ошибка является структурой *echo.HTTPError
 		} else if httpErr, ok := err.(*echo.HTTPError); ok {
 			// приведение httpError.Message типа interface{} к map[string]string
@@ -56,13 +54,18 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 				errorsInMessage = map[string]string{"unknown": httpErr.Error()}
 			}
 			errMessage.StatusCode = httpErr.Code
+			errMessage.Status = "error"
 			errMessage.Errors = errorsInMessage
 
 		// если неизвестная ошибка
 		} else {
 			errMessage.StatusCode = 500
+			errMessage.Status = "unknownError"
 			errMessage.Errors = map[string]string{"unknown": err.Error()}
 		}
+
+		// логируем ошибку в STDERR
+		settings.ErrorLog.Printf("Path: %v | Error: %#v", ctx.Path(), errMessage)
 
 		// отправка ответа (для *echo.HTTPError или неизвестной ошибки)
 		respErr := ctx.JSON(errMessage.StatusCode, errMessage)
