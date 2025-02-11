@@ -61,5 +61,8 @@ func sendErrorResponse(ctx *echo.Context, errMessage *ResponseError) {
 	respErr := (*ctx).JSON((*errMessage).StatusCode, *errMessage)
 	if respErr != nil {
 		settings.ErrorLog.Println("failed to send error response:", respErr)
+		return
 	}
+	// логируем ошибку в STDERR
+	settings.ErrorLog.Printf("Path: %v | Error: %#v", (*ctx).Path(), *errMessage)
 }
