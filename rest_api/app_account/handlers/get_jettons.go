@@ -39,5 +39,9 @@ func GetJettons(ctx echo.Context) error {
 		return err
 	}
 
+	// если ни одна монета не была найдена на счету аккаунта
+	if len(dataOut) == 0 {
+		return ctx.NoContent(204)
+	}
 	return ctx.JSON(200, dataOut)
 }

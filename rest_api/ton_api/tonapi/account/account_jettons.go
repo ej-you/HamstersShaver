@@ -83,10 +83,5 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 		}
 		accountJettonsList = append(accountJettonsList, loopAccountJetton)
 	}
-
-	// если ни одна монета не была найдена на счету аккаунта
-	if len(accountJettonsList) == 0 {
-		return accountJettonsList, fmt.Errorf("get account jettons using tonapi: empty account jettons list: %w", coreErrors.RestApiError)
-	}
 	return accountJettonsList, nil
 }
