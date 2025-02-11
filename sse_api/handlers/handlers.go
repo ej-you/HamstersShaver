@@ -46,7 +46,7 @@ func SubscribeToAccountTraces(ctx echo.Context) error {
 		// trading bot wallet for tests: UQA4mfrV45OEIuTyJKDQe41FX1X0XD8IPJ9UYb7Tpu3gK6kO
 		streamingAPI := tonapi.NewStreamingAPI(tonapi.WithStreamingToken(settings.TonApiToken))
 		err := streamingAPI.SubscribeToTraces(subscribeCtx,
-			[]string{settings.WalletHash, "UQA4mfrV45OEIuTyJKDQe41FX1X0XD8IPJ9UYb7Tpu3gK6kO"},
+			[]string{settings.WalletHash},
 			func(data tonapi.TraceEventData) {
 				settings.InfoLog.Printf("Got txHash %s for client %s\n", data.Hash, clientID)
 				// создание сообщения с хэшем полученной транзы
