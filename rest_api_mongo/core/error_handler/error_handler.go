@@ -58,11 +58,13 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 
 // отправка ответа с сообщением об ошибке
 func sendErrorResponse(ctx *echo.Context, errMessage *ResponseError) {
+	// логируем ошибку в STDERR
+	settings.ErrorLog.Printf("Path: %v | Error: %#v", (*ctx).Path(), *errMessage)
+
+	// отправляем ошибку клиенту
 	respErr := (*ctx).JSON((*errMessage).StatusCode, *errMessage)
 	if respErr != nil {
 		settings.ErrorLog.Println("failed to send error response:", respErr)
 		return
 	}
-	// логируем ошибку в STDERR
-	settings.ErrorLog.Printf("Path: %v | Error: %#v", (*ctx).Path(), *errMessage)
 }
