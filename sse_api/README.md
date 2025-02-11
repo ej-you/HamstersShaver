@@ -45,7 +45,6 @@ retry: 1000
 event: error
 data: {
     "status": "error",
-    "statusCode": 500,
     "errors": {
         "sseError": "some error desc"
     }

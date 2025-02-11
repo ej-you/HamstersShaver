@@ -59,6 +59,10 @@ func SubscribeToAccountTraces(ctx echo.Context) error {
 					return
 				}
 
+				// // error for testing error handlers
+				// errChan <- customErrors.NewSseErrorf("test error")
+				// return
+
 				// отправка данных из буфера клиенту без ожидания окончания запроса
 				respWriter.Flush()
 			},
