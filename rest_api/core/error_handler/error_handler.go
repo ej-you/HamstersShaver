@@ -2,7 +2,6 @@ package error_handler
 
 import (
 	"errors"
-	"time"
 
 	echo "github.com/labstack/echo/v4"
 
@@ -16,10 +15,8 @@ import (
 
 
 type ResponseError struct {
+	StatusCode 	int `json:"-"`
 	Status 		string `json:"status"`
-	StatusCode 	int `json:"statusCode"`
-	Path 		string `json:"path"`
-	Timestamp 	string `json:"timestamp"`
 	Errors 		map[string]string `json:"errors"`
 }
 
@@ -27,16 +24,13 @@ type ResponseError struct {
 // настройка обработчика ошибок
 func CustomErrorHandler(echoApp *echo.Echo) {
 	echoApp.HTTPErrorHandler = func(err error, ctx echo.Context) {
-		errMessage := ResponseError{
-			Path: ctx.Path(),
-			Timestamp: time.Now().Format(settings.TimeFmt),
-		}
+		var errMessage ResponseError
 
 		// проверка на ошибки валидации
 		validateErrors, ok := err.(validatorModule.ValidationErrors)
 		if ok {
-			errMessage.Status = "validateError"
 			errMessage.StatusCode = 400
+			errMessage.Status = "validateError"
 			errMessage.Errors = myValidatorModule.GetTranslatedMap(validateErrors, coreValidator.GetTranslator())
 			sendErrorResponse(&ctx, &errMessage)
 			return
@@ -50,8 +44,8 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 			if !ok {
 				errorsInMessage = map[string]string{"unknown": httpError.Error()}
 			}
-			errMessage.Status = "error"
 			errMessage.StatusCode = httpError.Code
+			errMessage.Status = "error"
 			errMessage.Errors = errorsInMessage
 			sendErrorResponse(&ctx, &errMessage)
 			return
@@ -59,8 +53,8 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 
 		// иначе приводим ошибку к APIError
 		apiErr := coreErrors.AssertAPIError(err)
-		errMessage.Status = apiErr.ErrStatus
 		errMessage.StatusCode = apiErr.ErrCode
+		errMessage.Status = apiErr.ErrStatus
 		errMessage.Errors = map[string]string{apiErr.ErrType: apiErr.Description}
 		sendErrorResponse(&ctx, &errMessage)
 	}
@@ -69,6 +63,10 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 
 // отправка ответа с сообщением об ошибке
 func sendErrorResponse(ctx *echo.Context, errMessage *ResponseError) {
+	// логируем ошибку в STDERR
+	settings.ErrorLog.Printf("Path: %v | Error: %#v", (*ctx).Path(), *errMessage)
+
+	// отправляем ошибку клиенту
 	respErr := (*ctx).JSON((*errMessage).StatusCode, *errMessage)
 	if respErr != nil {
 		settings.ErrorLog.Println("failed to send error response:", respErr)

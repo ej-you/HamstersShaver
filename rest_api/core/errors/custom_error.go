@@ -19,7 +19,7 @@ type APIError struct {
 func New(rawError error, description, errType string, errCode int) APIError {
 	return APIError{
 		RawError: rawError,
-		ErrStatus: "error",
+		ErrStatus: "apiError",
 		ErrCode: errCode,
 		ErrType: errType,
 		Description: description,
