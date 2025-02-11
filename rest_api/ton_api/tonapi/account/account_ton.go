@@ -30,25 +30,17 @@ func GetAccount(ctx context.Context, tonapiClient *tonapi.Client) (*tonapi.Accou
 	// получение аккаунта по его адресу
 	account, err := tonapiClient.GetAccount(ctx, accountParams)
 	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get account using tonapi: %w", err),
-			"failed to get account",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return account, apiErr
+		// ошибка таймаута
+		if coreErrors.IsTimeout(err) {
+			return account, fmt.Errorf("get account using tonapi: %w", coreErrors.TimeoutError)
+		}
+		// неизвестная ошибка
+		return account, fmt.Errorf("get account using tonapi: %v: %w", err, coreErrors.TonApiError)
 	}
 
 	// проверка того, что аккаунт активен
 	if account.Status != "active" {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get account using tonapi: interact with account: account is not active"),
-			"account is not active",
-			"tonApi",
-			500,
-		)
-		return account, apiErr
+		return account, fmt.Errorf("get account using tonapi: account is not active: %w", coreErrors.TonApiError)
 	}
 
 	return account, nil

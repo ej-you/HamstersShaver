@@ -44,8 +44,7 @@ func GetJetton(ctx echo.Context) error {
 	// создание API клиента TON для tonapi-go
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get account jetton using tonapi: %w", err))
-		return err
+		return fmt.Errorf("get account jetton using tonapi: %w", err)
 	}
 
 	// создание контекста с таймаутом
@@ -55,7 +54,6 @@ func GetJetton(ctx echo.Context) error {
 	// получение информации о монете аккаунта
 	dataOut, err = myTonapiAccount.GetAccountJetton(getAccountJettonContext, tonapiClient, dataIn.MasterAddress)
 	if err != nil {
-		settings.ErrorLog.Println(err)
 		return err
 	}
 

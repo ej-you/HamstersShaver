@@ -25,8 +25,7 @@ func GetTon(ctx echo.Context) error {
 	// создание API клиента TON для tonapi-go
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get account ton balance using tonapi: %w", err))
-		return err
+		return fmt.Errorf("get account ton balance using tonapi: %w", err)
 	}
 
 	// создание контекста с таймаутом
@@ -36,7 +35,6 @@ func GetTon(ctx echo.Context) error {
 	// получение баланса TON аккаунта
 	dataOut, err = myTonapiAccount.GetBalanceTON(getBalanceTONContext, tonapiClient)
 	if err != nil {
-		settings.ErrorLog.Println(err)
 		return err
 	}
 

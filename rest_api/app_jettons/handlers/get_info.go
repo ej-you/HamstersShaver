@@ -7,7 +7,6 @@ import (
 
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
-	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -42,7 +41,6 @@ func GetInfo(ctx echo.Context) error {
 	// получение информации о монете
 	dataOut, err = myStonfiJettons.GetJettonInfoByAddressWithTimeout(dataIn.MasterAddress, constants.GetJettonInfoByAddressTimeout)
 	if err != nil {
-		settings.ErrorLog.Println(err)
 		return err
 	}
 

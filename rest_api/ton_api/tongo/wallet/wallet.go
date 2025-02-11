@@ -20,14 +20,7 @@ func GetWallet(tongoClient *tongo.Client) (tongoWallet.Wallet, error) {
 	realWallet, err = tongoWallet.DefaultWalletFromSeed(settings.GetJsonWallet().SeedPhrase, tongoClient)
 	
 	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get wallet using tongo: %w", err),
-			"get wallet",
-			"tonApi",
-			500,
-		)
-		return realWallet, apiErr
+		return realWallet, fmt.Errorf("get wallet using tongo: %v: %w", err, coreErrors.TonApiError)
 	}
-
 	return realWallet, nil
 }

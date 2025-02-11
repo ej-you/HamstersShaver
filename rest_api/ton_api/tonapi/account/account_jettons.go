@@ -36,14 +36,12 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 	// получение всех монет аккаунта
 	rawJettons, err := tonapiClient.GetAccountJettonsBalances(ctx, accountJettonsParams)
 	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get account jettons using tonapi: %w", err),
-			"failed to get account jettons",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return accountJettonsList, apiErr
+		// ошибка таймаута
+		if coreErrors.IsTimeout(err) {
+			return accountJettonsList, fmt.Errorf("get account jettons using tonapi: %w", coreErrors.TimeoutError)
+		}
+		// неизвестная ошибка
+		return accountJettonsList, fmt.Errorf("get account jettons using tonapi: %v: %w", err, coreErrors.TonApiError)
 	}
 
 	// перебор всех найденных монет аккаунта (сохраняется вся история монет, которые были на кошельке)
@@ -88,14 +86,7 @@ func GetBalanceJettons(ctx context.Context, tonapiClient *tonapi.Client) ([]Acco
 
 	// если ни одна монета не была найдена на счету аккаунта
 	if len(accountJettonsList) == 0 {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get account jettons using tonapi: empty account jettons list: no one account jetton was gotten"),
-			"no one account jetton was gotten",
-			"restApi",
-			500,
-		)
-		return accountJettonsList, apiErr
+		return accountJettonsList, fmt.Errorf("get account jettons using tonapi: empty account jettons list: %w", coreErrors.RestApiError)
 	}
-
 	return accountJettonsList, nil
 }

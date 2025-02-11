@@ -17,14 +17,12 @@ func GetAccountSeqno(ctx context.Context, tonapiClient *tonapi.Client, realWalle
 	// получение seqno
 	seqno, err := tonapiClient.GetSeqno(ctx, realWallet.GetAddress())
 	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get account seqno using tonapi: %w", err),
-			"failed to get account seqno",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return seqno, apiErr
+		// ошибка таймаута
+		if coreErrors.IsTimeout(err) {
+			return seqno, fmt.Errorf("get account seqno using tonapi: %w", coreErrors.TimeoutError)
+		}
+		// неизвестная ошибка
+		return seqno, fmt.Errorf("get account seqno using tonapi: %v: %w", err, coreErrors.TonApiError)
 	}
 	return seqno, nil
 }

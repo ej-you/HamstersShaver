@@ -2,11 +2,13 @@ package account
 
 import (
 	"context"
+	"errors"
 	"os"
 	"time"
 	tonapi "github.com/tonkeeper/tonapi-go"
 
 	myTongoWallet "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/wallet"
+	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
 
 	"testing"
@@ -96,7 +98,7 @@ func TestGetAccountJetton(t *testing.T) {
 		// Out
 		gotAccountJetton, err := GetAccountJetton(tonApiContext, tonapiClient, masterAddress)
 		if assert.Error(t, err) {
-			if assert.Containsf(t, err.Error(), "Failed to get account jetton info: decode response: error: code 4", "\t%s\tFailed: %s", failedMarker, err.Error()) {
+			if errors.Is(err, coreErrors.JettonNotFoundError) {
 				t.Logf("\t%s\tOutput: %s", successMarker, err.Error())
 			}
 		} else {
@@ -115,7 +117,7 @@ func TestGetAccountJetton(t *testing.T) {
 		// Out
 		gotAccountJetton, err := GetAccountJetton(tonApiContext, tonapiClient, masterAddress)
 		if assert.Error(t, err) {
-			if assert.Containsf(t, err.Error(), "Failed to get account jetton info: decode response: error: code 404: {Error:account", "\t%s\tFailed: %s", failedMarker, err.Error()) {
+			if errors.Is(err, coreErrors.AccountHasNotJettonError) {
 				t.Logf("\t%s\tOutput: %s", successMarker, err.Error())
 			}
 		} else {

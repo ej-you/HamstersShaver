@@ -49,14 +49,12 @@ func getTransactionInfo(ctx context.Context, txHash string) (TransactionInfo, er
 	// получаем список со всеми операциями транзакции
 	fullTrace, err := tonapiClient.GetTrace(ctx, tonapi.GetTraceParams{TraceID: txHash})
 	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get transaction info using tonapi: get transaction trace: %w", err),
-			"failed to get transaction trace",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return transInfo, apiErr
+		// ошибка таймаута
+		if coreErrors.IsTimeout(err) {
+			return transInfo, fmt.Errorf("get transaction info using tonapi: get transaction trace: %w", coreErrors.TimeoutError)
+		}
+		// неизвестная ошибка
+		return transInfo, fmt.Errorf("get transaction info using tonapi: get transaction trace: %v: %w", err, coreErrors.TonApiError)
 	}
 	// получаем информацию о последней операции
 	lastTransInfo := unwrapTrace(fullTrace).Transaction
@@ -81,13 +79,7 @@ func GetTransactionInfoWithStatusOK(ctx context.Context, txHash, action string) 
 	var transInfo TransactionInfo
 
 	if action != "buy" && action != "cell" {
-		apiErr := coreErrors.New(
-			fmt.Errorf("get transaction info with status: invalid action parameter was given: %s", action),
-			"invalid action parameter",
-			"restApi",
-			400,
-		)
-		return transInfo, apiErr
+		return transInfo, fmt.Errorf("get transaction info with status: invalid action parameter: %s: %w", action, coreErrors.RestApiError)
 	}
 
 	// получение структуры TransactionInfo

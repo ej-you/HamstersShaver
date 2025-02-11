@@ -51,11 +51,33 @@ func CustomErrorHandler(echoApp *echo.Echo) {
 			return
 		}
 
-		// иначе приводим ошибку к APIError
-		apiErr := coreErrors.AssertAPIError(err)
-		errMessage.StatusCode = apiErr.ErrCode
-		errMessage.Status = apiErr.ErrStatus
-		errMessage.Errors = map[string]string{apiErr.ErrType: apiErr.Description}
+		switch {
+			case errors.Is(err, coreErrors.RestApiError):
+				errMessage.StatusCode = 500
+				errMessage.Status = "error"
+				errMessage.Errors = map[string]string{"restApi": err.Error()}
+			case errors.Is(err, coreErrors.TonApiError):
+				errMessage.StatusCode = 500
+				errMessage.Status = "error"
+				errMessage.Errors = map[string]string{"tonApi": err.Error()}
+			case errors.Is(err, coreErrors.TimeoutError):
+				errMessage.StatusCode = 500
+				errMessage.Status = "timeout"
+				errMessage.Errors = map[string]string{"timeout": err.Error()}
+			case errors.Is(err, coreErrors.JettonNotFoundError):
+				errMessage.StatusCode = 400
+				errMessage.Status = "validateError"
+				errMessage.Errors = map[string]string{"jetton": err.Error()}
+			case errors.Is(err, coreErrors.AccountHasNotJettonError):
+				errMessage.StatusCode = 404
+				errMessage.Status = "error"
+				errMessage.Errors = map[string]string{"jetton": err.Error()}
+			// неизвестная ошибка
+			default:
+				errMessage.StatusCode = 500
+				errMessage.Status = "unknownError"
+				errMessage.Errors = map[string]string{"unknown": err.Error()}
+		}
 		sendErrorResponse(&ctx, &errMessage)
 	}
 }

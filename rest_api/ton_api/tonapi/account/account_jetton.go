@@ -30,7 +30,6 @@ type AccountJetton struct {
 func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA string) (AccountJetton, error) {
 	var accountJettonInfo AccountJetton
 	var rawJetton *tonapi.JettonBalance
-	var apiErr coreErrors.APIError
 
 	// конфиг API для получения инфы о монете аккаунта
 	accountJettonParams := tonapi.GetAccountJettonBalanceParams{
@@ -44,45 +43,25 @@ func GetAccountJetton(ctx context.Context, tonapiClient *tonapi.Client, jettonCA
 	if err != nil {
 		// если такой монеты нет у данного аккаунта
 		if strings.HasPrefix(err.Error(), "decode response: error: code 404: {Error:account") {
-			apiErr = coreErrors.New(
-				fmt.Errorf("get account jetton using tonapi: account has not given jetton: %w", err),
-				"account has not given jetton",
-				"tonApi",
-				404,
-			)
-			return accountJettonInfo, apiErr
+			return accountJettonInfo, fmt.Errorf("get account jetton using tonapi: %v: %w", err, coreErrors.AccountHasNotJettonError)
+		}
 		// если был дан неверный адрес
-		} else if strings.HasPrefix(err.Error(), "decode response: error: code 4") {
-			apiErr = coreErrors.New(
-				fmt.Errorf("get account jetton using tonapi: invalid jetton address was given: %w", err),
-				"invalid jetton address was given",
-				"tonApi",
-				400,
-			)
-			return accountJettonInfo, apiErr
+		if strings.HasPrefix(err.Error(), "decode response: error: code 4") {
+			return accountJettonInfo, fmt.Errorf("get account jetton using tonapi: invalid jetton address was given: %v: %w", err, coreErrors.JettonNotFoundError)
+		}
+		// ошибка таймаута
+		if coreErrors.IsTimeout(err) {
+			return accountJettonInfo, fmt.Errorf("get account jetton using tonapi: %w", coreErrors.TimeoutError)
 		}
 		// неизвестная ошибка
-		apiErr = coreErrors.New(
-			fmt.Errorf("get account jetton using tonapi: %w", err),
-			"failed to get account jetton",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return accountJettonInfo, apiErr
+		return accountJettonInfo, fmt.Errorf("get account jetton using tonapi: %v: %w", err, coreErrors.TonApiError)
 	}
 	
 	jettonDecimals := rawJetton.Jetton.Decimals
 	// перевод баланса монеты из строкового целого представления в int64
 	intJettonBalance, err := strconv.ParseInt(rawJetton.Balance, 10, 64)
 	if err != nil {
-		apiErr = coreErrors.New(
-			fmt.Errorf("get account jetton using tonapi: parse int64 from string jetton balance: %w", err),
-			"failed to get account jetton",
-			"restApi",
-			500,
-		)
-		return accountJettonInfo, apiErr
+		return accountJettonInfo, fmt.Errorf("get account jetton using tonapi: parse int64 from string jetton balance: %v: %w", err, coreErrors.RestApiError)
 	}
 	// преобразование баланса в строку с точкой
 	beautyJettonBalance := services.BeautyJettonAmountFromInt64(intJettonBalance, jettonDecimals)

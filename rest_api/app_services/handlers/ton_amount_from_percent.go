@@ -10,7 +10,6 @@ import (
 	myTonapiAccount "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/account"
 	myTonapiServices "github.com/ej-you/HamstersShaver/rest_api/ton_api/tonapi/services"
 
-	coreErrors "github.com/ej-you/HamstersShaver/rest_api/core/errors"
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
 	"github.com/ej-you/HamstersShaver/rest_api/settings"
@@ -52,8 +51,7 @@ func TonAmountFromPercent(ctx echo.Context) error {
 	// создание API клиента TON для tonapi-go
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get TON amount from percent: %w", err))
-		return err
+		return fmt.Errorf("get TON amount from percent: %w", err)
 	}
 	// создание контекста с таймаутом
 	getBalanceTONContext, cancel := context.WithTimeout(context.Background(), constants.GetBalanceTONContextTimeout)
@@ -61,20 +59,14 @@ func TonAmountFromPercent(ctx echo.Context) error {
 	// получение информации о TON у аккаунта
 	tonInfo, err := myTonapiAccount.GetBalanceTON(getBalanceTONContext, tonapiClient)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get TON amount from percent: %w", err))
-		return err
+		return fmt.Errorf("get TON amount from percent: %w", err)
 	}
 
 	tonBalanceFloat64 := float64(tonInfo.Balance) / math.Pow10(tonInfo.Decimals)
 	// проверка на наличие хотя бы constants.GasAmountFloat64 TON для газа
 	if tonBalanceFloat64 <= constants.GasAmountFloat64 {
-		errText := fmt.Sprintf("TON balance must be greater than %v (gas amount)", constants.GasAmountFloat64)
-		return coreErrors.New(
-			fmt.Errorf("get TON amount from percent: %s", errText),
-			errText,
-			"restApi",
-			400,
-		)
+		errText := fmt.Sprintf("get TON amount from percent: TON balance must be greater than %v (gas amount)", constants.GasAmountFloat64)
+		return echo.NewHTTPError(400, map[string]string{"restApi": errText})
 	}
 
 	// получение части от баланса TON в соответствии с процентом

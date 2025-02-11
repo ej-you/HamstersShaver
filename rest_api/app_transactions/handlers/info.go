@@ -9,7 +9,6 @@ import (
 	
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
-	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -49,7 +48,6 @@ func Info(ctx echo.Context) error {
 	// получение информации о транзакции
 	dataOut, err = myTonapiTransactions.GetTransactionInfoWithStatusOK(getTransInfoContext, dataIn.TransactionHash, dataIn.Action)
 	if err != nil {
-		settings.ErrorLog.Println(err)
 		return err
 	}
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -23,13 +24,6 @@ type JettonParams struct {
 	PriceUSD 		float64 `json:"priceUsd" example:"0.002695039717551585" description:"цена монеты в долларах (USD)"`
 }
 
-
-// структура для получения результата от горутины в функции с таймаутом
-type jettonInfoByAddress struct {
-	JettonInfo 	JettonParams
-	Error 		error
-}
-
 // для десериализации json'а с инфой о монете в структуру
 type AssetJettonParams struct {
 	Asset struct{
@@ -43,109 +37,62 @@ type AssetJettonParams struct {
 }
 
 
-// получение инфы о монете по её адресу
-func getJettonInfoByAddress(jettonAddr string) jettonInfoByAddress {
+// получение инфы о монете по её адресу с таймаутом
+func GetJettonInfoByAddressWithTimeout(jettonAddr string, timeout time.Duration) (JettonParams, error) {
+	var jettonInfo JettonParams
 	var jettonInfoParse AssetJettonParams
-	var apiErr coreErrors.APIError
+	var apiErr error
 
 	// запрос к API
-	resp, err := http.Get(apiUrl + jettonAddr)
+	client := http.Client{Timeout: timeout}
+	resp, err := client.Get(apiUrl + jettonAddr)
 	if err != nil {
-		apiErr = coreErrors.New(
-			fmt.Errorf("get jetton data from Stonfi API: %w", err),
-			"failed to get jetton data",
-			"stonfiApi",
-			500,
-		)
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
+		urlErr := err.(*url.Error)
+		// если ошибка таймаута
+		if urlErr.Timeout() {
+			apiErr = fmt.Errorf("get jetton data from Stonfi API: %w", coreErrors.TimeoutError)
+		// неизвестная ошибка
+		} else {
+			apiErr = fmt.Errorf("get jetton data from Stonfi API: failed to send request: %v: %w", err, coreErrors.RestApiError)
+		}
+		return jettonInfo, apiErr
 	}
 
 	defer resp.Body.Close()
 	// чтение байт тела ответа от API
 	rawJsonBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		apiErr = coreErrors.New(
-			fmt.Errorf("get jetton data from Stonfi API: read data from response body: %w", err),
-			"failed to get jetton data",
-			"stonfiApi",
-			500,
-		)
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
+		apiErr = fmt.Errorf("get jetton data from Stonfi API: failed to read data from response body: %w", coreErrors.RestApiError)
+		return jettonInfo, apiErr
 	}
 
 	// десериализация JSON-ответа в структуру jsonPairs
 	err = json.Unmarshal(rawJsonBytes, &jettonInfoParse)
 	if err != nil {
-		apiErr = coreErrors.New(
-			fmt.Errorf("get jetton data from Stonfi API: jetton was not found: unmarshal json: %w", err),
-			"jetton was not found",
-			"stonfiApi",
-			400,
-		)
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
+		apiErr = fmt.Errorf("get jetton data from Stonfi API: unmarshal json: %v: %w", err, coreErrors.JettonNotFoundError)
+		return jettonInfo, apiErr
 	}
 
 	// если не было найдено информации о жетоне
 	if (jettonInfoParse == AssetJettonParams{}) {
-		apiErr = coreErrors.New(
-			fmt.Errorf("get jetton data from Stonfi API: jetton was not found"),
-			"jetton was not found",
-			"stonfiApi",
-			400,
-		)
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
+		apiErr = fmt.Errorf("get jetton data from Stonfi API: %w", coreErrors.JettonNotFoundError)
+		return jettonInfo, apiErr
 	}
 
 	// перевод цены монеты из строки во float64
 	parsePriceToFloat, err := strconv.ParseFloat(jettonInfoParse.Asset.StringPriceUSD, 64)
 	if err != nil {
-		apiErr = coreErrors.New(
-			fmt.Errorf("get jetton data from Stonfi API: parse float from StringPriceUSD: %w", err),
-			"failed to get jetton data",
-			"restApi",
-			500,
-		)
-		return jettonInfoByAddress{JettonInfo: JettonParams{}, Error: apiErr}
+		apiErr = fmt.Errorf("get jetton data from Stonfi API: failed to parse float from StringPriceUSD: %w", coreErrors.RestApiError)
+		return jettonInfo, apiErr
 	}
 
 	// формирование выходной структуры с данными
-	jettonInfo := JettonParams{
+	jettonInfo = JettonParams{
 		Symbol: jettonInfoParse.Asset.Symbol,
 		Decimals: jettonInfoParse.Asset.Decimals,
 		MasterAddress: jettonInfoParse.Asset.MasterAddress,
 		PriceUSD: parsePriceToFloat,
 	}
 
-	return jettonInfoByAddress{JettonInfo: jettonInfo, Error: nil}
-}
-
-// получение инфы о монете по её адресу с таймаутом
-func GetJettonInfoByAddressWithTimeout(jettonAddr string, timeout time.Duration) (JettonParams, error) {
-	// если таймаут равен 0
-	if timeout == 0 {
-		result := getJettonInfoByAddress(jettonAddr)
-		return result.JettonInfo, result.Error
-	}
-
-	// создание небуферизированного канала
-	ch := make(chan jettonInfoByAddress)
-	// вызов горутины
-	go func() {
-		ch <- getJettonInfoByAddress(jettonAddr)
-	}()
-
-	select {
-		// если данные получены, то возвращаем их
-		case result := <- ch:
-			return result.JettonInfo, result.Error
-		// если прошло время timeout, а данные не получены, то возвращаем ошибку таймаута
-		case <- time.After(timeout):
-			timeoutAPIError := coreErrors.NewTimeout(
-				fmt.Errorf("get jetton data from Stonfi API: timeout error"),
-				"get jetton data via stonfi: timeout error",
-				"timeout",
-				500,
-			)
-			return JettonParams{}, timeoutAPIError
-	}
+	return jettonInfo, nil
 }

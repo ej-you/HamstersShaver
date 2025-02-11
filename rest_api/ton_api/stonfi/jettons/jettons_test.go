@@ -69,7 +69,8 @@ func TestGetJettonInfoByAddressWithTimeout(t *testing.T) {
 		// Out
 		gotJettonParams, err := GetJettonInfoByAddressWithTimeout(masterAddress, timeout)
 		if assert.Error(t, err) {
-			if assert.Equalf(t, err.Error(), "Jetton was not found", "\t%s\tFailed: %s", failedMarker, err.Error()) {
+			expectedErr := "get jetton data from Stonfi API: unmarshal json: invalid character ':' after top-level value: jetton not found"
+			if assert.Equalf(t, err.Error(), expectedErr, "\t%s\tFailed: %s", failedMarker, err.Error()) {
 				t.Logf("\t%s\tOutput: %s", successMarker, err.Error())
 			}
 		} else {

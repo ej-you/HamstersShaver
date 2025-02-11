@@ -6,7 +6,6 @@ import (
 	myTongoTransactions "github.com/ej-you/HamstersShaver/rest_api/ton_api/tongo/transactions"
 	
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
-	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -44,7 +43,6 @@ func BuyPreRequest(ctx echo.Context) error {
 	// получение примерных данных о будующей транзакции
 	dataOut, err = myTongoTransactions.GetPreRequestBuyJetton(dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
 	if err != nil {
-		settings.ErrorLog.Println(err)
 		return err
 	}
 

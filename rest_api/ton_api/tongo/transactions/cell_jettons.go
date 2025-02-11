@@ -102,14 +102,11 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	// структура с информацией для Swap транзакции на DEX Stonfi
 	stonfiStruct, err := tongoStonfi.NewStonfi(ctx, tongoClient, jettonRouter, jettonMaster0, jettonMaster1)
 	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("send cell transaction: create new stonfiStruct: %w", err),
-			"failed to prepare message",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return apiErr
+		// ошибка таймаута
+		if coreErrors.IsTimeout(err) {
+			return fmt.Errorf("send cell transaction: failed to create new stonfiStruct: %w", coreErrors.TimeoutError)
+		}
+		return fmt.Errorf("send cell transaction: failed to create new stonfiStruct: %v: %w", err, coreErrors.TonApiError)
 	}
 
 	// TON для газовой комиссии
@@ -131,28 +128,23 @@ func CellJetton(ctx context.Context, jettonCA string, amount float64, slippage i
 	// структура для совершения Swap транзакции
 	jettonTransfer, err := stonfiStruct.MakeSwapMessage(gasToncoins, forwardToncoins, *bigIntAmount, *minOut, senderAddrID)
 	if err != nil {
-		return coreErrors.New(
-			fmt.Errorf("send cell transaction: make swap message: %w", err),
-			"failed to make swap message",
-			"tonApi",
-			500,
-		)
+		return fmt.Errorf("send cell transaction: failed to make swap message: %v: %w", err, coreErrors.TonApiError)
 	}
 
-	// отправка сообщения в блокчейн
-	transHash, err := realWallet.SendV2(ctx, 0, jettonTransfer)
-	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("send cell transaction: send transfer message: %w", err),
-			"failed to send transfer message",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return apiErr
-	}
+	fmt.Println("jettonTransfer:", jettonTransfer)
+	fmt.Println("realWallet:", realWallet)
 
-	fmt.Printf("\ntransHash: %v\nhex transHash: %s\n", transHash, transHash.Hex())
+	// // отправка сообщения в блокчейн
+	// transHash, err := realWallet.SendV2(ctx, 0, jettonTransfer)
+	// if err != nil {
+	// 	// ошибка таймаута
+	// 	if coreErrors.IsTimeout(err) {
+	// 		return fmt.Errorf("send cell transaction: failed to send transfer message: %w", coreErrors.TimeoutError)
+	// 	}
+	// 	return fmt.Errorf("send cell transaction: failed to send transfer message: %v: %w", err, coreErrors.TonApiError)
+	// }
+
+	// fmt.Printf("\ntransHash: %v\nhex transHash: %s\n", transHash, transHash.Hex())
 	
 	return nil
 }

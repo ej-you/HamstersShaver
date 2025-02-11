@@ -9,7 +9,6 @@ import (
 	
 	coreValidator "github.com/ej-you/HamstersShaver/rest_api/core/validator"
 	"github.com/ej-you/HamstersShaver/rest_api/settings/constants"
-	"github.com/ej-you/HamstersShaver/rest_api/settings"
 )
 
 
@@ -53,7 +52,6 @@ func CellSend(ctx echo.Context) error {
 	// отправка транзакции на продажу
 	err = myTongoTransactions.CellJetton(sendCellJettonContext, dataIn.JettonCA, dataIn.Amount, dataIn.Slippage)
 	if err != nil {
-		settings.ErrorLog.Println(err)
 		return err
 	}
 

@@ -105,14 +105,11 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 	jettonToBuy := tongoJetton.New(jettonMaster1, tongoClient)
 	routersJettonWallet, err := jettonToBuy.GetJettonWallet(ctx, jettonRouter)
 	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("send buy transaction: get jetton wallet using jetton master: %w", err),
-			"failed to get jetton wallet",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return apiErr
+		// ошибка таймаута
+		if coreErrors.IsTimeout(err) {
+			return fmt.Errorf("send buy transaction: failed to get jetton wallet using jetton master: %w", coreErrors.TimeoutError)
+		}
+		return fmt.Errorf("send buy transaction: failed to get jetton wallet using jetton master: %v: %w", err, coreErrors.TonApiError)
 	}
 
 	// кол-во TON для покупки монет (в *big.Int)
@@ -162,20 +159,20 @@ func BuyJetton(ctx context.Context, jettonCA string, amount float64, slippage in
 		ForwardPayload:   	 cell,
 	}
 
-	// отправка сообщения в блокчейн
-	transHash, err := realWallet.SendV2(ctx, 0, jettonTransfer)
-	if err != nil {
-		apiErr := coreErrors.New(
-			fmt.Errorf("send buy transaction: send transfer message: %w", err),
-			"failed to send transfer message",
-			"tonApi",
-			500,
-		)
-		apiErr.CheckTimeout()
-		return apiErr
-	}
+	fmt.Println("jettonTransfer:", jettonTransfer)
+	fmt.Println("realWallet:", realWallet)
 
-	fmt.Printf("\ntransHash: %v\nhex transHash: %s\n", transHash, transHash.Hex())
+	// // отправка сообщения в блокчейн
+	// transHash, err := realWallet.SendV2(ctx, 0, jettonTransfer)
+	// if err != nil {
+	// 	// ошибка таймаута
+	// 	if coreErrors.IsTimeout(err) {
+	// 		return fmt.Errorf("send buy transaction: failed to send transfer message: %w", coreErrors.TimeoutError)
+	// 	}
+	// 	return fmt.Errorf("send buy transaction: failed to send transfer message: %v: %w", err, coreErrors.TonApiError)
+	// }
+
+	// fmt.Printf("\ntransHash: %v\nhex transHash: %s\n", transHash, transHash.Hex())
 
 	return nil
 }

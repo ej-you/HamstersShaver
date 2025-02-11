@@ -39,11 +39,10 @@ func TestGetPreRequestBuyJetton(t *testing.T) {
 		var masterAddress string = "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
 		var tonAmount float64 = 0.1
 		var slippage int = 20
-		var timeout time.Duration = 5*time.Second
-		t.Logf("\t\tInput: masterAddress=%q | tonAmount=%f | slippage=%d | timeout=%v", masterAddress, tonAmount, slippage, timeout)
+		t.Logf("\t\tInput: masterAddress=%q | tonAmount=%f | slippage=%d", masterAddress, tonAmount, slippage)
 
 		// Out
-		buyPreRequestInfo, err := GetPreRequestBuyJetton(masterAddress, tonAmount, slippage, timeout)
+		buyPreRequestInfo, err := GetPreRequestBuyJetton(masterAddress, tonAmount, slippage)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tOutput (got buy pre-request info): %v", successMarker, buyPreRequestInfo)
 		}
@@ -63,11 +62,10 @@ func TestGetPreRequestCellJetton(t *testing.T) {
 		var masterAddress string = "EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS"
 		var jettonAmount float64 = 2000
 		var slippage int = 20
-		var timeout time.Duration = 5*time.Second
-		t.Logf("\t\tInput: masterAddress=%q | jettonAmount=%f | slippage=%d | timeout=%v", masterAddress, jettonAmount, slippage, timeout)
+		t.Logf("\t\tInput: masterAddress=%q | jettonAmount=%f | slippage=%d", masterAddress, jettonAmount, slippage)
 
 		// Out
-		cellPreRequestInfo, err := GetPreRequestCellJetton(masterAddress, jettonAmount, slippage, timeout)
+		cellPreRequestInfo, err := GetPreRequestCellJetton(masterAddress, jettonAmount, slippage)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tOutput (got cell pre-request info): %v", successMarker, cellPreRequestInfo)
 		}
@@ -95,11 +93,10 @@ func TestBuyJetton(t *testing.T) {
 		var masterAddress string = "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O"
 		var tonAmount float64 = 0.1
 		var slippage int = 20
-		var timeout time.Duration = 10*time.Second
-		t.Logf("\t\tInput: masterAddress=%q | tonAmount=%f | slippage=%d | timeout=%v", masterAddress, tonAmount, slippage, timeout)
+		t.Logf("\t\tInput: masterAddress=%q | tonAmount=%f | slippage=%d", masterAddress, tonAmount, slippage)
 
 		// Out
-		err := BuyJetton(buyJettonContext, timeout, masterAddress, tonAmount, slippage)
+		err := BuyJetton(buyJettonContext, masterAddress, tonAmount, slippage)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tSuccessfully!", successMarker)
 		}
@@ -127,11 +124,10 @@ func TestCellJetton(t *testing.T) {
 		var masterAddress string = "EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS"
 		var jettonAmount float64 = 2000
 		var slippage int = 20
-		var timeout time.Duration = 10*time.Second
-		t.Logf("\t\tInput: masterAddress=%q | jettonAmount=%f | slippage=%d | timeout=%v", masterAddress, jettonAmount, slippage, timeout)
+		t.Logf("\t\tInput: masterAddress=%q | jettonAmount=%f | slippage=%d", masterAddress, jettonAmount, slippage)
 
 		// Out
-		err := CellJetton(cellJettonContext, timeout, masterAddress, jettonAmount, slippage)
+		err := CellJetton(cellJettonContext, masterAddress, jettonAmount, slippage)
 		if assert.NoErrorf(t, err, "\t%s\tFailed: %v", failedMarker, err) {
 			t.Logf("\t%s\tSuccessfully!", successMarker)
 		}

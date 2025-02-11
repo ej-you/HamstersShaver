@@ -30,21 +30,18 @@ func GetSeqno(ctx echo.Context) error {
 	// создание API клиента TON для tongo
 	tongoClient, err := settings.GetTonClientTongoWithTimeout("mainnet", constants.TongoClientTimeout)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
-		return err
+		return fmt.Errorf("get account seqno: %w", err)
 	}
 	// получение данных о кошельке через tongo
 	realWallet, err := myTongoWallet.GetWallet(tongoClient)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
-		return err
+		return fmt.Errorf("get account seqno: %w", err)
 	}
 
 	// создание API клиента TON для tonapi-go
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get account seqno: %w", err))
-		return err
+		return fmt.Errorf("get account seqno: %w", err)
 	}
 	// создание контекста с таймаутом
 	getAccountSeqnoContext, cancel := context.WithTimeout(context.Background(), constants.GetAccountSeqnoContextTimeout)
@@ -53,7 +50,6 @@ func GetSeqno(ctx echo.Context) error {
 	// получение значения Seqno
 	seqno, err := myTonapiAccount.GetAccountSeqno(getAccountSeqnoContext, tonapiClient, realWallet)
 	if err != nil {
-		settings.ErrorLog.Println(err)
 		return err
 	}
 

@@ -53,8 +53,7 @@ func JettonAmountFromPercent(ctx echo.Context) error {
 	// создание API клиента TON для tonapi-go
 	tonapiClient, err := settings.GetTonClientTonapiWithTimeout("mainnet", constants.TonapiClientTimeout)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get jetton amount from percent: %w", err))
-		return err
+		return fmt.Errorf("get jetton amount from percent: %w", err)
 	}
 	// создание контекста с таймаутом
 	getAccountJettonContext, cancel := context.WithTimeout(context.Background(), constants.GetAccountJettonContextTimeout)
@@ -62,8 +61,7 @@ func JettonAmountFromPercent(ctx echo.Context) error {
 	// получение информации о монете аккаунта
 	jettonInfo, err := myTonapiAccount.GetAccountJetton(getAccountJettonContext, tonapiClient, dataIn.MasterAddress)
 	if err != nil {
-		settings.ErrorLog.Println(fmt.Errorf("get jetton amount from percent: %w", err))
-		return err
+		return fmt.Errorf("get jetton amount from percent: %w", err)
 	}
 
 	// получение части от баланса монеты в соответствии с процентом
