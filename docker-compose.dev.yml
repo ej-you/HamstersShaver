@@ -1,26 +1,26 @@
 services:
-  # mongo:
-  #   image: mongo:7.0-jammy
-  #   container_name: hamsters_shaver_mongo
-  #   restart: always
-  #   volumes:
-  #     - mongo_data:/data/db:rw
-  #   expose:
-  #     - "27017"
-  #   networks:
-  #     proj_network:
-  #       ipv4_address: 172.20.1.3
+  mongo:
+    image: mongo:7.0-jammy
+    container_name: hamsters_shaver_mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db:rw
+    expose:
+      - "27017"
+    networks:
+      proj_network:
+        ipv4_address: 172.20.1.2
 
   rest_api:
     build:
       context: ./rest_api
-      dockerfile: DockerfileRestAPI
+      dockerfile: Dockerfile
     container_name: hamsters_shaver_rest_api
     restart: always
     env_file:
       - ./env/ton_api.env
       - ./env/rest_api_ton_api.env
-      - ./env/sse_api_ton_api.env
+      - ./env/my_apis.env
     volumes:
       - rest_api_logs:/logs:rw
     ports:
@@ -28,6 +28,43 @@ services:
     networks:
       proj_network:
         ipv4_address: 172.20.1.4
+
+  sse_api:
+    build:
+      context: ./sse_api
+      dockerfile: Dockerfile
+    container_name: hamsters_shaver_sse_api
+    restart: always
+    env_file:
+      - ./env/ton_api.env
+      - ./env/sse_api_ton_api.env
+    volumes:
+      - rest_api_logs:/logs:rw
+    ports:
+      - "8001:8001"
+    networks:
+      proj_network:
+        ipv4_address: 172.20.1.5
+
+  rest_api_mongo:
+    build:
+      context: ./rest_api_mongo
+      dockerfile: Dockerfile
+    container_name: hamsters_shaver_rest_api_mongo
+    restart: always
+    env_file:
+      - ./env/rest_api_mongo.env
+      - ./env/my_apis.env
+      - ./env/mongo.env
+    volumes:
+      - rest_api_logs:/logs:rw
+    ports:
+      - "8002:8002"
+    networks:
+      proj_network:
+        ipv4_address: 172.20.1.6
+    depends_on:
+      - mongo
 
 
 networks:
@@ -39,5 +76,7 @@ networks:
 
 
 volumes:
-  # mongo_data:
+  mongo_data:
   rest_api_logs:
+  sse_api_logs:
+  rest_api_mongo_logs:
