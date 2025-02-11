@@ -22,7 +22,7 @@ var MongoDB string = os.Getenv("MONGO_DB")
 
 // настройки для REST API
 var RestApiHost string = os.Getenv("REST_API_TON_API_HOST")
-var RestApiKey string = os.Getenv("REST_API_TON_API_KEY")
+var RestApiKey string = os.Getenv("MY_APIS_KEY")
 
 
 // логеры

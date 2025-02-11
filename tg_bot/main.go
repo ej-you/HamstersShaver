@@ -26,7 +26,7 @@ func main() {
 	// проверка, что эти переменные окружения заданы
 	env.MustBePresented(
 		"TG_BOT_TOKEN", "TG_BOT_ALLOWED_USERS",
-		"REST_API_TON_API_HOST", "REST_API_TON_API_KEY",
+		"REST_API_TON_API_HOST", "MY_APIS_KEY",
 		"REDIS_HOST", "REDIS_PORT",
 		"MONGO_HOST", "MONGO_PORT", "MONGO_DB",
 	)

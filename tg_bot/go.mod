@@ -1,4 +1,4 @@
-module github.com/ej-you/HamstersShaver
+module github.com/ej-you/HamstersShaver/tg_bot
 
 go 1.22.2
 
