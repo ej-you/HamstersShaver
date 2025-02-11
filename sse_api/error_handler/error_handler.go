@@ -12,7 +12,7 @@ import (
 
 
 type ResponseError struct {
-	StatusCode 	int `json:"statusCode"`
+	StatusCode 	int `json:"-"`
 	Status 		string `json:"status"`
 	Errors 		map[string]string `json:"errors"`
 }
